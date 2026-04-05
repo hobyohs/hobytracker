@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
+
+{% block body %}
+    {{ global_back_link | raw }}
+    <h1>{{ group.printLetterGroup | raw }}</h1>
+
+           
+    <h2>Ambassadors</h2>
+    <table class="table table-striped table-bordered" id="group-thankyou-table">
+    	<thead>
+    		<tr>
+    			<th>View</th>
+    			<th>First Name</th>
+    			<th>Last Name</th>
+    			<th>Thank You Type</th>
+    			<th>Thank You Assignment</th>
+    		</tr>
+    	</thead>
+        <tbody>
+        
+        	{% for ambassador in group.ambassadors %}
+				<tr>
+					<td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+		            <td>{{ambassador.consolidatedFirstName}}</td>
+		            <td>{{ambassador.lastName}}</td>
+		            <td>{{ambassador.thankyouType}}</td>
+		            <td>{{ambassador.thankyouName}}</td>
+				</tr>
+	        {% endfor %}
+           
+        </tbody>
+    </table>
+       
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
+
+{% block body %}
+    {{ global_back_link | raw }}
+    <h1>{{ group.printLetterGroup | raw }}</h1>
+    <h4>{{ group.homeBuilding }} {{ group.homeRoom }}</h4>
+
+    <h2>Facilitators</h2>
+    <table class="table table-striped table-bordered" id="group-facilitators-table">
+    	<thead>
+    		<tr>
+    			<th>View</th>
+    			<th>First Name</th>
+    			<th>Last Name</th>
+    			<th>Position</th>
+    			<th class="hidden">Sort</th>
+    		</tr>
+    	</thead>
+        <tbody>
+        
+        	{% for user in group.facilitators %}
+        		<tr>
+					<td class="view-link"><a href="{{ path('app_user_show', { 'id': user.id }) }}">{{ global_view_link | raw }}</a></td>
+		            <td>{{user.consolidatedFirstName}}</td>
+		            <td>{{user.lastName}}</td>
+		            <td>{{user.position}}</td>
+		            <td class="hidden">{{user.getSortRank}}</td>
+        		</tr>
+	            
+	        {% endfor %}
+           
+        </tbody>
+    </table>
+        
+    <h2>Ambassadors</h2>
+    {% if app.user.letterGroup == group %}
+        <table class="table table-striped table-bordered" id="my-group-ambassadors-table">
+    {% else %}
+        <table class="table table-striped table-bordered" id="group-ambassadors-table">
+    {% endif %}
+    	<thead>
+    		<tr>
+    			<th>View</th>
+    			<th>First Name</th>
+    			<th>Last Name</th>
+    			<th>Cell</th>
+    			<th>School</th>
+    			{% if app.user.letterGroup == group %}
+                    <th>Forms Submitted</th>
+                    <th>Key Deposit</th>
+                {% endif %}
+    		</tr>
+    	</thead>
+        <tbody>
+        
+        	{% for ambassador in group.ambassadors %}
+				<tr>
+					<td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+		            <td>{{ambassador.consolidatedFirstName}}</td>
+		            <td>{{ambassador.lastName}}</td>
+		            <td>{{ambassador.cellPhone}}</td>
+		            <td>{{ambassador.school}}</td>
+		            
+		            {% if app.user.letterGroup == group %}
+		                {% if ambassador.isCheckinPaperwork %}
+                            <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                        {% else %}
+                            <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                        {% endif %}
+                        {% if ambassador.isCheckinDeposit %}
+                            <td class="gridblock yay">
+                            
+                                {% if ambassador.getCheckinDepositMethod == "PayPal" %}
+                                    <span class="fab fa-cc-paypal fa-2x">
+                                {% elseif ambassador.getCheckinDepositMethod == "Check" %}
+                                    <span class="fas fa-money-check fa-2x">
+                                {% elseif ambassador.getCheckinDepositMethod == "Cash" %}
+                                    <span class="fas fa-money-bill-alt fa-2x">
+                                {% else %}
+                                    <span class="fas fa-check">
+                                {% endif %}
+                                
+                                <span class="hidden">TRUE</span></span>
+                                
+                            </td>
+                        {% else %}
+                            <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                        {% endif %}
+		            {% endif %}
+				</tr>
+	        {% endfor %}
+           
+        </tbody>
+    </table>
+       
+{% endblock %}

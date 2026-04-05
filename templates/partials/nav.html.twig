@@ -1,0 +1,133 @@
+<nav class="main-nav" role="navigation">
+    <input id="main-menu-state" type="checkbox">
+    <label class="main-menu-btn" for="main-menu-state">
+        <span class="main-menu-btn-icon"></span> Toggle main menu visibility
+    </label>
+
+    <h2 class="nav-brand">
+        <a href="{{ path('homepage') }}">
+            <img src="{{ asset('assets/images/logo.png') }}" alt="HOBYTracker">
+        </a>
+    </h2>
+
+    <ul id="main-menu" class="sm sm-simple">
+        <li><a href="{{ path('homepage') }}">Home</a></li>
+        
+        {% if is_granted('ROLE_USER') %}
+        
+        <li><a href="{{ path('program_index') }}">Program</a></li> 
+        
+            {% if not app.user.letterGroup is empty %}
+                <li>
+                    <a href="{{ path('app_letter_group_show', {'letter': app.user.letterGroup.letter}) }}">My Group</a>
+                    <ul>
+                        <li><a href="{{ path('app_letter_group_show_faces', {'letter': app.user.letterGroup.letter}) }}">Faces</a></li>
+                        <li><a href="{{ path('app_letter_group_calls', {'letter': app.user.letterGroup.letter}) }}">Pre-Seminar Calls</a></li>
+                        <li><a href="{{ path('app_letter_group_show_thankyous', {'letter': app.user.letterGroup.letter}) }}">Thank Yous</a></li>
+                        <li><a href="{{ path('ambeval_index', {'letter': app.user.letterGroup.letter}) }}">Amb. Evaluations</a></li>
+                        <li><a href="{{ path('staffeval_index', {'letter': app.user.letterGroup.letter}) }}">Co-Fac. Evaluations</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+        
+            <li><a href="{{ path('app_ambassador_index') }}">Ambassadors</a>
+                <ul>
+                    <li><a href="{{ path('app_ambassador_faces') }}">Faces</a></li>
+                    {% if app.user.controlledAge >= 21 %}
+                        <li><a href="{{ path('app_comings_and_goings_index') }}">Comings &amp; Goings</a></li>
+                        <li><a href="{{ path('app_ambassador_bus') }}">Bus List</a></li>
+                        {% if is_granted('ROLE_BOARD') %}
+                            <li><a href="{{ path('app_ambassador_thankyous') }}">Thank You Assignments</a></li>
+                            <li><a href="{{ path('app_ambassador_psm') }}">Pre-Seminar Materials Report</a></li>
+                            <li><a href="{{ path('app_ambassador_calls') }}">Pre-Seminar Calls Report</a></li>
+                            <li><a href="{{ path('app_ambassador_noshows') }}">No Shows</a></li>
+                        {% endif %} 
+                    {% endif %}
+                </ul>
+            </li>
+            
+             <li><a href="{{ path('app_user_index') }}">Staff</a>
+
+                <ul>
+                    <li><a href="{{ path('app_user_faces') }}">Faces</a></li>
+                 {% if is_granted('ROLE_BOARD') %}
+                    <li><a href="{{ path('app_user_requirements') }}">Requirements Report</a></li>
+                    {% if is_granted('ROLE_DOF') %}
+                            <li><a href="{{ path('app_applicant_index') }}">Staff Applications</a></li>
+                    {% endif %}
+                {% endif %}
+                </ul>
+
+                
+            </li>
+            
+            <li><a href="#">Other Lists</a>
+                <ul>
+                        <li><a href="{{ path('all_groups') }}">All Groups</a></li>
+                        <li><a href="{{ path('app_letter_group_index') }}">Homerooms</a></li>
+                        <li><a href="{{ path('dorm_list') }}">Dorm List</a></li>
+                        <li><a href="{{ path('app_letter_group_interviews') }}">Interview Assignments</a></li>
+                        {% if is_granted('ROLE_BOARD') %}
+                            <li><a href="{{ path('emergency_contacts') }}">Emergency Contact</a></li>
+                            <li><a href="{{ path('dietary') }}">Dietary Needs</a></li>
+                        {% endif %}
+                        {% if is_granted('ROLE_NURSE') %}<li><a href="{{ path('medical') }}">Medical Report</a></li>{% endif %}
+
+                </ul>
+            </li>
+            <li><a href="#">Duties</a>
+                <ul>
+                    {% if is_granted('ROLE_BOARD') %}
+                        <li><a href="#">Assignments</a>
+                            <ul>
+                                <li><a href="{{ path('app_user_checkin_assignments') }}">Check In</a></li>
+                                <li><a href="{{ path('app_user_cc_assignments') }}">Closing Ceremony</a></li>
+                                <li><a href="{{ path('app_user_checkout_assignments') }}">Check Out</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    <li><a href="{{ path('app_user_my_assignments') }}">My Assignments</a></li>
+                    {% if app.user.controlledAge >= 21 %}
+                        <li><a href="{{ path('app_ambassador_checkin') }}">Check In</a>
+                            <ul>
+                                <li><a href="{{ path('app_ambassador_checkin') }}">Registration</a></li>
+                                <li><a href="{{ path('dorm_list') }}">Keys</a></li>
+                                <li><a href="{{ path('app_ambassador_psm') }}">Paperwork</a></li>
+                                <li><a href="{{ path('app_ambassador_keydeposits') }}">Key Deposits</a></li> 
+                            </ul>
+                        </li>
+    
+                        <li><a href="{{ path('app_ambassador_checkout') }}">Check Out</a></li>
+                        <li><a href="{{ path('app_ambassador_bedchecks') }}">Bed Checks</a></li>
+                    {% endif %}
+                </ul>
+            </li>
+            
+            {% if is_granted('ROLE_ADMIN') %}
+            
+                <li><a href="{{ path('admin') }}">Admin</a></li>
+            
+            {% endif %}
+            
+            <li>
+                <a href="#"><span class="fa fa-user"></span>&nbsp;&nbsp;{{app.user.consolidatedFirstName}}</a>
+                <ul>
+                    <a href="{{ path('app_forgot_password_request') }}">Change Password</a>
+                    <a href="{{ path('app_logout') }}">Log Out</a>
+                </ul>
+            </li>
+            
+        {% endif %}
+        
+        
+{#
+            
+            
+           <li><a href="https://hobyohs.slack.com/" target="_blank">Slack</a></li>  #}
+            
+           
+
+            
+
+    </ul>
+</nav>

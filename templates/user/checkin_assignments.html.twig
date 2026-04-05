@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Check-In Duties</h1>
+
+    <table class="standard-view table table-striped table-bordered" id="staff-duty-assignments-table">
+        <thead>
+            <tr>
+                <th class="no-export">View</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Position</th>
+                <th>Assignment</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                {% if user.assignmentCheckIn is not null or user.assignmentCheckInNotes is not null %}
+                    <tr>
+                        <td class="view-link"><a href="{{ path('app_user_show', { 'id': user.id }) }}">{{ global_view_link | raw }}</a></td>
+                        <td>{{ user.consolidatedFirstName }}</td>
+                        <td>{{ user.lastName }}</td>
+                        <td>{{ user.position }}</td>
+                        <td>{{ user.assignmentCheckIn }}</td>
+                        <td>{{ user.assignmentCheckInNotes }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

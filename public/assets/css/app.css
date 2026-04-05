@@ -1,0 +1,649 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap");
+body {
+  max-width: 2000px;
+  margin: auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.hidden-ui {
+  display: none;
+}
+
+.center {
+  text-align: center;
+}
+
+.callout, nav, body main .form-page {
+  border: 1px solid #bbb;
+  background: #fff;
+  padding: 1.5em;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+.callout h1, nav h1, body main .form-page h1 {
+  padding-bottom: 0.2em;
+  border-bottom: #ddd 1px solid;
+  margin-bottom: 0.7em;
+}
+
+.green-text {
+  color: #44bf37;
+}
+
+.red-text {
+  color: #bf3838;
+}
+
+.yellow-text {
+  color: #eade00;
+}
+
+.gray-text {
+  color: #4e4e4e;
+}
+
+.table-striped thead {
+  background-color: #5e7790;
+  color: #fff;
+}
+.table-striped > tbody > tr th {
+  font-weight: bold;
+}
+@media only screen and (min-width: 768px) {
+  .table-striped > tbody > tr th {
+    width: 50%;
+  }
+}
+.table-striped > tbody > tr:nth-child(2n):not(.stripe-override) > td, .table-striped > tbody > tr:nth-child(2n):not(.stripe-override) > th {
+  background-color: #dce4eb;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #ffffff !important;
+  --bs-table-striped-bg: #ffffff;
+}
+
+#calendar {
+  height: auto !important;
+}
+#calendar a {
+  color: white !important;
+  font-size: 1em;
+  text-decoration: none !important;
+  cursor: default !important;
+  padding: 3px;
+}
+
+body {
+  background: #efefef;
+  padding: 10px;
+  font-family: "Montserrat", "Helvetica Neue", "Helvetica", sans-serif;
+}
+@media only screen and (min-width: 768px) {
+  body {
+    padding: 0.5em;
+  }
+}
+body main {
+  padding: 0.5em 0;
+}
+@media only screen and (min-width: 768px) {
+  body main {
+    padding: 20px 10%;
+  }
+  body main.wide {
+    padding: 1.2em 3% !important;
+  }
+  body main.narrow {
+    padding: 1.2em 30% !important;
+  }
+}
+body main button {
+  background: #5e7790 !important;
+  color: #fff !important;
+  border-color: #5e7790 !important;
+}
+body main button:hover {
+  background: rgb(65.8, 83.3, 100.8) !important;
+}
+body main #quote {
+  margin: 50px auto;
+  width: 90%;
+  background: #ccc;
+  padding: 20px;
+}
+@media only screen and (min-width: 768px) {
+  body main #quote {
+    width: 50%;
+  }
+}
+body main #quote p {
+  font-size: 2em;
+}
+@media only screen and (min-width: 768px) {
+  body main #quote p {
+    font-size: 3em;
+  }
+}
+body main #quote p .quoties {
+  font-family: "Times New Roman", "Times", serif;
+}
+body main #quote p em {
+  margin-top: 10px;
+  text-align: right;
+  display: block;
+}
+body main .error, body main .alert-error {
+  background: #ffcbcb;
+  color: #760000;
+  border: 1px solid #760000;
+  padding: 15px;
+  margin-bottom: 25px;
+}
+body main .half-page, body main .form-page {
+  margin: 50px auto;
+  width: 90%;
+}
+@media only screen and (min-width: 768px) {
+  body main .half-page, body main .form-page {
+    width: 50%;
+  }
+}
+body main .form-page {
+  background: white;
+}
+@media only screen and (min-width: 768px) {
+  body main .form-page.threequarter {
+    width: 75%;
+  }
+}
+body main .form-page h1 {
+  margin-bottom: 20px;
+}
+body main .form-page label {
+  font-weight: bold;
+}
+body main .form-page .form-readonly {
+  background: #efefef;
+  padding: 0.5em;
+}
+body main .show-header {
+  display: flex;
+  align-items: center;
+}
+body main .show-header * {
+  flex-grow: 1;
+}
+body main .show-header * img {
+  max-width: 200px;
+}
+body main #staff-face-table, body main #amb-group-face-table {
+  font-size: 2em;
+}
+body main #staff-face-table tr td, body main #amb-group-face-table tr td {
+  vertical-align: middle;
+}
+body main #staff-face-table tr td:nth-child(2), body main #amb-group-face-table tr td:nth-child(2) {
+  text-align: center;
+}
+body main #staff-face-table tr td.view-link a, body main #amb-group-face-table tr td.view-link a {
+  font-size: 1em !important;
+}
+body main #staff-face-table tr td img, body main #amb-group-face-table tr td img {
+  max-width: 50px;
+}
+@media only screen and (min-width: 768px) {
+  body main #staff-face-table tr td img, body main #amb-group-face-table tr td img {
+    max-width: 200px;
+  }
+}
+body main h2 {
+  clear: both;
+}
+body main h4.subtitle, body main h5.subtitle {
+  color: #7f7f7f;
+  font-style: italic;
+}
+body main h1 {
+  font-size: 2.3rem;
+}
+body main h2 {
+  font-size: 1.45rem;
+}
+body main h3 {
+  font-size: 1.35rem;
+}
+body main h4 {
+  font-size: 1.2rem;
+}
+body main h5 {
+  font-size: 1rem;
+}
+body main a {
+  text-decoration: none;
+  color: #5e7790;
+  border-bottom: 1px dotted #5e7790;
+  transition: text-shadow 0.1s;
+}
+body main a:hover {
+  text-shadow: 0 0 0.65px #5e7790, 0 0 0.65px #5e7790;
+}
+body main a.red {
+  color: #bf3838 !important;
+}
+body main a.back-link {
+  color: black;
+}
+body main a.back-link:hover {
+  text-decoration: none;
+}
+@media only screen and (min-width: 768px) {
+  body main.show {
+    width: 60%;
+    margin: auto;
+  }
+}
+@media only screen and (min-width: 768px) {
+  body main.show.bigger {
+    width: 100%;
+  }
+}
+body main.show h1 {
+  font-size: 1.8em;
+}
+@media only screen and (min-width: 768px) {
+  body main.show h1 {
+    font-size: 3em;
+  }
+}
+body main.show h2 {
+  font-variant: small-caps;
+  font-size: 1.6em;
+}
+body main #checkin-header {
+  text-align: center;
+}
+body main #checkin-header img {
+  max-height: 100px;
+  margin-top: 15px;
+}
+@media only screen and (min-width: 768px) {
+  body main #checkin-header {
+    text-align: left;
+  }
+  body main #checkin-header h1 {
+    margin-left: 20px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  body main #checkin-header img {
+    margin-top: 0;
+    max-height: 200px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+body main .checkin-form-group {
+  font-size: 1.8em;
+}
+body main .card {
+  margin-bottom: 20px;
+}
+body main .card .card-heading {
+  padding: 0.5em;
+}
+body main .card .card-heading.card-success {
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+  color: #3c763d;
+}
+body main .card .card-heading.card-danger {
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  color: #a94442;
+}
+body main .card .card-heading.card-info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #31708f;
+}
+body main .card .card-body {
+  padding: 0.5em;
+}
+body main .card .card-body ul li:not(:last-child) {
+  margin-bottom: 1em;
+}
+body main .sticker {
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  margin-right: 10px;
+  float: left;
+}
+body main .sticker.green {
+  background: #44bf37;
+}
+body main .sticker.red {
+  background: #bf3838;
+}
+body main .sticker.yellow {
+  background: #eade00;
+}
+body main .sticker.blue {
+  background: #4217ec;
+}
+body main .checkin-button {
+  width: 100%;
+  height: 100px;
+  font-size: 1.6em;
+  text-transform: uppercase;
+}
+body main #calendar-key {
+  margin: 15px 0;
+}
+@media only screen and (min-width: 768px) {
+  body main #calendar-key {
+    display: flex;
+    width: 100%;
+  }
+}
+body main #calendar-key div {
+  color: #fff;
+  font-weight: bold;
+  padding: 5px;
+  text-align: center;
+}
+@media only screen and (min-width: 768px) {
+  body main #calendar-key div {
+    flex-grow: 1;
+  }
+}
+body main .applicant-summary {
+  background: #fff;
+  padding: 1em;
+}
+body main .applicant-summary .applicant-counts {
+  text-align: center;
+}
+body main .applicant-summary h3 {
+  text-align: center;
+}
+body main .applicant-summary table {
+  width: 50%;
+  margin: auto;
+  text-align: left;
+}
+body main .applicant-summary table tr {
+  border-bottom: 1px solid #ccc;
+}
+body main .ae-form div, body main .se-form div {
+  margin-bottom: 35px;
+}
+body main .applicant-form div.row {
+  margin-bottom: 1em;
+}
+body main .faces .card:hover {
+  transform: scale(1.2);
+  z-index: 100;
+  transition: 0.2s;
+}
+body main .faces .card .card-img-top {
+  height: 300px;
+  object-fit: cover;
+}
+body main .faces .card .card-body .card-title {
+  font-weight: bold;
+}
+body main .faces .card .card-body a {
+  color: inherit;
+}
+body main .faces .card .card-body a:hover {
+  text-decoration: none;
+}
+body main .dataTables_wrapper .table > tbody > tr > td {
+  vertical-align: middle;
+}
+body main .dataTables_wrapper .table > :not(:last-child) > :last-child > * {
+  border-bottom-color: inherit !important;
+}
+body main .dataTables_wrapper .dataTables_filter {
+  display: block;
+  text-align: left;
+}
+@media only screen and (min-width: 768px) {
+  body main .dataTables_wrapper .dataTables_filter {
+    float: right;
+    text-align: right;
+  }
+}
+body main .dataTables_wrapper .btn-group {
+  display: none;
+}
+@media only screen and (min-width: 768px) {
+  body main .dataTables_wrapper .btn-group {
+    display: inline-flex;
+  }
+}
+body main .dataTables_wrapper .dtr-control a {
+  border-bottom: 0;
+}
+body main .dataTables_wrapper tr.odd > * {
+  box-shadow: none !important;
+  background: #ffffff;
+}
+body main .dataTables_wrapper .view-link {
+  text-align: center;
+  vertical-align: middle !important;
+}
+body main .dataTables_wrapper .view-link:first-child:before {
+  top: 50% !important;
+}
+body main .dataTables_wrapper .user-highlight {
+  background: #c3c3e5 !important;
+  font-weight: bold;
+}
+body main .dataTables_wrapper .user-highlight > td {
+  background: #c3c3e5 !important;
+  font-weight: bold;
+}
+body main .dataTables_wrapper .gridblock {
+  color: white;
+  text-align: center;
+  vertical-align: middle;
+}
+body main .dataTables_wrapper .gridblock.yay {
+  background: #44bf37 !important;
+}
+body main .dataTables_wrapper .gridblock.nay {
+  background: #bf3838 !important;
+}
+body main .dataTables_wrapper .gridblock.pray {
+  background: #eade00 !important;
+}
+body main .dataTables_wrapper .gridblock.okay {
+  background: #b7b7b7 !important;
+}
+body main .dataTables_wrapper .gridblock.oyvey {
+  background: #4e4e4e !important;
+}
+body main .letter {
+  font-weight: bold;
+}
+body main .letter.yellow {
+  color: #eade00 !important;
+}
+body main .letter.blue {
+  color: #4217ec !important;
+}
+body main .letter.red {
+  color: #bf3838 !important;
+}
+body main .letter.green {
+  color: #44bf37 !important;
+}
+body main a.letter {
+  border-bottom: 1px dotted;
+  font-weight: bold;
+}
+body main a.letter:hover, body main a.letter:active {
+  text-decoration: none;
+  border-bottom: 2px solid;
+}
+@media only screen and (min-width: 768px) {
+  body main.filter-left .dataTables_wrapper .dataTables_filter {
+    float: left;
+  }
+}
+
+nav {
+  padding: 5px 15px;
+}
+nav:after {
+  clear: both;
+  content: " ";
+  display: block;
+  height: 0;
+  font: 0/0 serif;
+  overflow: hidden;
+}
+nav .nav-brand {
+  float: left;
+  margin: 0;
+  padding: 0;
+}
+nav .nav-brand a {
+  padding: 0 !important;
+}
+nav .nav-brand img {
+  max-height: 41px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+nav #main-menu {
+  clear: both;
+  border: 0;
+  box-shadow: none;
+}
+@media only screen and (min-width: 1050px) {
+  nav #main-menu {
+    float: right;
+    clear: none;
+  }
+}
+@media only screen and (min-width: 768px) {
+  nav #main-menu > li {
+    float: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-left: 0;
+  }
+  nav #main-menu > li:first-child {
+    border-top: 0;
+  }
+}
+@media only screen and (min-width: 1050px) {
+  nav #main-menu > li {
+    float: left;
+    border-top: 0;
+    border-left: 1px solid #eee;
+  }
+  nav #main-menu > li:first-child {
+    border-left: 0;
+  }
+}
+@media only screen and (min-width: 1050px) {
+  nav #main-menu > li > a {
+    height: 50px;
+    line-height: 28px;
+  }
+}
+nav a {
+  font-family: "Montserrat", "Helvetica Neue", "Helvetica", sans-serif !important;
+  padding: 11px 12px !important;
+}
+nav a.has-submenu {
+  padding: 11px 22px 11px 10px !important;
+}
+nav a.has-submenu span.sub-arrow {
+  right: 10px !important;
+}
+nav .main-menu-btn {
+  float: right;
+  margin: 5px 10px;
+  position: relative;
+  display: inline-block;
+  width: 29px;
+  height: 29px;
+  text-indent: 29px;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+@media only screen and (min-width: 1050px) {
+  nav .main-menu-btn {
+    position: absolute;
+    top: -99999px;
+  }
+}
+nav .main-menu-btn .main-menu-btn-icon, nav .main-menu-btn .main-menu-btn-icon:before, nav .main-menu-btn .main-menu-btn-icon:after {
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  height: 2px;
+  width: 24px;
+  background: #555;
+  -webkit-transition: all 0.25s;
+  transition: all 0.25s;
+}
+nav .main-menu-btn .main-menu-btn-icon:before {
+  content: "";
+  top: -7px;
+  left: 0;
+}
+nav .main-menu-btn .main-menu-btn-icon:after {
+  content: "";
+  top: 7px;
+  left: 0;
+}
+nav #main-menu-state:checked ~ .main-menu-btn .main-menu-btn-icon {
+  height: 0;
+  background: transparent;
+}
+nav #main-menu-state:checked ~ .main-menu-btn .main-menu-btn-icon:before {
+  top: 0;
+  -webkit-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+nav #main-menu-state:checked ~ .main-menu-btn .main-menu-btn-icon:after {
+  top: 0;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+nav #main-menu-state {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+#main-menu-state:not(:checked) ~ #main-menu {
+  display: none;
+}
+@media only screen and (min-width: 1050px) {
+  #main-menu-state:not(:checked) ~ #main-menu {
+    display: block;
+  }
+}
+
+#main-menu-state:checked ~ #main-menu {
+  display: block;
+}
+
+/*# sourceMappingURL=app.css.map */

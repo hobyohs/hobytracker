@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
+
+{% block body %}
+    {{ global_back_link | raw }}
+    <h1>{{ group.printLetterGroup | raw }}</h1>
+    <h4>{{ group.homeBuilding }} {{ group.homeRoom }}</h4>
+    
+    <div class="container faces">
+        <div class="row">
+            {% for ambassador in group.ambassadors %}
+                
+                    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+                        <div class="card border-0 shadow">
+                            <img src="{{ ambassador.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="card-img-top" alt="{{ ambassador.fullName }}">
+                            <div class="card-body text-center">
+                                <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="stretched-link">
+                                    <h5 class="card-title mb-0">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</h5>
+                                    <div class="card-text">
+                                        {{ ambassador.school }}
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                
+            {% endfor %}
+        </div>
+    
+    </div>
+       
+{% endblock %}

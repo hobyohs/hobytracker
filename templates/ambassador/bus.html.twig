@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block maintag %}<main class="wide">{% endblock %}
+{% block body %}
+    <h1>Ambassador Bus Report</h1>
+    <table class="standard-view table table-striped table-bordered" id="bus-table">
+        <thead>
+            <tr>
+                <th>View</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Group</th>
+                <th>School</th>
+                <th>Bus To: Contact</th>
+                <th>Bus From: Contact</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td>
+                    <td>{{ ambassador.lastName }}</td>
+                    <td class="center">
+                    	{% if ambassador.letterGroup == "Staff" %}
+                    		Staff
+                    	{% elseif not ambassador.letterGroup is empty %}
+                    		<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
+                    	{% endif %}
+                    </td>
+                    <td>{{ ambassador.school }}</td>
+                    <td>
+                        {% if not ambassador.busToContact is empty %}{{ ambassador.busToContact }}, {{ ambassador.busToPhone }}{% endif %}
+                    </td>
+                    <td>
+                        {% if not ambassador.busFromContact is empty %}{{ ambassador.busFromContact }}, {{ ambassador.busFromPhone }}{% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

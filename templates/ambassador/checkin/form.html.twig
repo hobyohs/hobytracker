@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div id="checkin-header"><img src="{{ ambassador.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="img-thumbnail">&nbsp;<h1>Checking In {{ambassador.consolidatedFirstName}} {{ambassador.lastName}}</h1></div>
+	<a href="{{ path('app_ambassador_checkin') }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
+	<div class="checkin-form-group">
+		{{ form_start(edit_form) }}
+		
+			<div class="card">
+				<div class="card-heading {{ cg_status ? 'card-danger' : 'card-success' }}">{{ambassador.consolidatedFirstName}} <strong>{{ cg_status ? 'IS NOT' : 'IS' }}</strong> scheduled to attend the entire seminar. Please confirm this.</div>
+				
+				<div class="card-body">
+					{% if cg_status %}
+						<ul>
+							{% for cg in ambassador.comingsAndGoings %}
+								{% if cg.departure is not null %}<li>Leaving {{cg.departure|date('D M j \\a\\t g:iA')}}</li>{% endif %}
+								{% if cg.arrival is not null %}<li>Returning {{cg.arrival|date('D M j \\a\\t g:iA')}}</li>{% endif %}
+								
+							{% endfor %}
+						</ul>
+					{% else %}
+						If {{ambassador.consolidatedFirstName}} indicates they are not planning to attend the entire seminar, apply a yellow sticker to their nametag and instruct them to visit the Missing Paperwork table.
+					{% endif %}
+				</div>
+				
+			</div>
+			
+{#
+			<div class="card card-info">
+				<div class="card-heading">Remind {{ambassador.consolidatedFirstName}} that if they drove {{ambassador.getReflexivePronoun}} to the seminar, they'll need to turn their keys in to their facilitators.</div>
+			</div>
+#}
+
+			<div class="card">
+				<div class="card-heading {{ psm_status ? 'card-success' : 'card-danger' }}">{{ambassador.consolidatedFirstName}} {{ (psm_status ? '<strong>DID</strong> fill out all pre-seminar forms' : '<strong>DID NOT</strong> fill out at least one required pre-seminar form' ) }}.</div>
+				{% if not psm_status %}
+					<div class="card-body">
+						<div class="yellow sticker"></div>Apply a yellow sticker to their nametag and instruct {{ambassador.consolidatedFirstName}} to visit the Missing Paperwork table.
+					</div>
+				{% endif %}
+			</div>
+			
+			<div class="card">
+				<div class="card-heading {{ deposit_status ? 'card-success' : 'card-danger' }}">{{ambassador.consolidatedFirstName}} <strong>{{ deposit_status ? 'DID' : 'DID NOT' }}</strong> pay their key deposit.</div>
+				{% if not deposit_status %}
+					<div class="card-body">
+						<div class="green sticker"></div>Apply a green sticker to their nametag and instruct {{ambassador.consolidatedFirstName}} to visit the HOBY Store to pay their key deposit.
+					</div>
+				{% endif %}
+			</div>
+			
+			<div class="card">
+				<div class="card-heading {{ meds_status ? 'card-danger' : 'card-success' }}">{{ambassador.consolidatedFirstName}} <strong>{{ meds_status ? 'DOES' : 'DOES NOT' }}</strong> have prescription drugs to turn in.</div>
+				
+				<div class="card-body">
+					{% if meds_status %}
+						<div class="red sticker"></div>Apply a red sticker to their nametag
+					{% else %}
+						Confirm that this is correct. If not, apply a red sticker and send {{ambassador.consolidatedFirstName}} to the med table.
+					{% endif %}
+				</div>
+			</div>
+				
+			<div class="card">
+				{% if ambassador.dormRoom is not null %}
+					<div class="card-heading card-info">Let {{ambassador.consolidatedFirstName}} know they are assigned to <strong>{{ambassador.dorm}} Hall</strong>.</div>
+				{% else %}
+					<div class="card-heading card-danger">{{ambassador.consolidatedFirstName}} does not have a dorm assignment yet.</div>
+				{% endif %}
+				<div class="card-body">
+	
+						Tell the family to visit the {# {{ambassador.dorm}} Hall  #}key table once any stickers are resolved.
+
+				</div>
+			</div>
+			
+		{{ form_end(edit_form) }}
+	</div>
+{% endblock %}

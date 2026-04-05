@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="show user">{% endblock %}
+
+{% block body %}
+    {{ global_back_link | raw }}
+    <div class="show-header">
+        <div>
+            <h1>{{ user.consolidatedFirstName}} {{ user.lastName }}</h1>
+            <h4>{{ user.position }}</h4>
+            <h4>
+                {% if not user.letterGroup is null %}
+                    <a href="{{ path('app_letter_group_show', { 'letter': user.letterGroup.letter }) }}" class="letter {{user.letterGroup.color}}">{{ user.letterGroup.printLetterGroup | raw }}</a>
+                {% endif %}
+            </h4>
+        </div>
+        <div><img src="{{ user.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="img-thumbnail"></div>
+    </div>
+    <h2>Check In</h2>
+    <table class="table table-striped table-bordered">
+        <tbody>
+
+            {{ global_columnizer.spitShowRow(user, 'assignmentCheckIn', true) | raw }}
+            {{ global_columnizer.spitShowRow(user, 'assignmentCheckInNotes', true) | raw }}
+           
+        </tbody>
+    </table>
+        
+    <h2>Closing Ceremony</h2>
+    <table class="table table-striped table-bordered">
+        <tbody>
+
+            {{ global_columnizer.spitShowRow(user, 'assignmentClosingCeremonies', true) | raw }}
+            {{ global_columnizer.spitShowRow(user, 'assignmentClosingCeremoniesNotes', true) | raw }}
+           
+        </tbody>
+    </table>
+        
+    <h2>Check Out</h2>
+    <table class="table table-striped table-bordered">
+        <tbody>
+    
+            {{ global_columnizer.spitShowRow(user, 'assignmentCheckOut', true) | raw }}
+            {{ global_columnizer.spitShowRow(user, 'assignmentCheckOutNotes', true) | raw }}
+           
+        </tbody>
+    </table>
+
+
+{% endblock %}

@@ -1,0 +1,12 @@
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes: ['bootstrap_5_layout.html.twig']
+    globals:
+        global_view_link: '<span class="fa fa-eye"></span>'
+        global_edit_link: '<span class="fa fa-pencil"></span>'
+        global_back_link: '<a href="javascript:history.back()" class="back-link"><span class="fa fa-circle-left"></span> Back</a>'
+        global_columnizer: "@app.columnizer"
+
+when@test:
+    twig:
+        strict_variables: true

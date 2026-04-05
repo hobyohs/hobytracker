@@ -1,0 +1,19 @@
+@use "sass:map";
+@use "../settings/settings";
+
+@charset "UTF-8";
+
+/// Return a Bourbon setting.
+///
+/// @argument {string} $setting
+///
+/// @return {boolean | color | list | number | string}
+///
+/// @example scss
+///   _fetch-bourbon-setting(rails-asset-pipeline)
+///
+/// @access private
+
+@function fetch-bourbon-setting($setting) {
+  @return map.get(map.merge(settings.$bourbon-defaults, settings.$bourbon), $setting);
+}

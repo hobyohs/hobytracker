@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>{% if page_title is defined %}{{ page_title }}{% else %}Ambassadors{% endif %}</h1>
+    
+    
+    <table class="standard-view table table-striped table-bordered" id="ambassadors-table">
+        <thead>
+            <tr>
+                <th class="no-export">View</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Group</th>
+                <th>School</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td>
+                    <td>{{ ambassador.lastName }}</td>
+                    <td class="center">
+
+                    	{% if not ambassador.letterGroup is empty %}
+                    		<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
+                    	{% endif %}
+                    </td>
+                    <td>{{ ambassador.school }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

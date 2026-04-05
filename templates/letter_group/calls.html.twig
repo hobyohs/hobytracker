@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
+
+{% block body %}
+	{{ global_back_link | raw }}
+	<h1>{{ group.printLetterGroup | raw }}</h1>
+
+		
+	<h2>Pre-Seminar Calls</h2>
+		<table class="table table-striped table-bordered" id="my-group-calls-ambassadors-table">
+		<thead>
+			<tr>
+				<th>View</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>School</th>
+				<th>Current Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ambassador in group.ambassadors %}
+				<tr>
+					<td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+					<td>{{ambassador.consolidatedFirstName}}</td>
+					<td>{{ambassador.lastName}}</td>
+					<td>{{ambassador.school}}</td>
+					
+					{% if ambassador.juniorCallDisposition == 'spoke_with_ambassador' %}
+						<td class="gridblock yay"><span class="fa fa-check"></span>&nbsp; Complete!</td>
+					{% elseif ambassador.juniorCallDisposition == 'spoke_with_family' or ambassador.juniorCallDisposition == 'left_message' %}
+						<td class="gridblock pray"><span class="fa fa-phone"></span> Needs a call back</td>
+					{% elseif ambassador.juniorCallDisposition == 'wrong_number' or ambassador.juniorCallDisposition == 'other' %}
+						<td class="gridblock okay"><span class="fa fa-circle-question"></span> Other</td>
+					{% else %}
+						<td class="gridblock oyvey"><span class="fa fa-phone"></span> Not yet called</td>
+					{% endif %}
+					
+					<td class="center"><a href="{{ path('app_ambassador_call_form', {'id': ambassador.id}) }}" class="btn btn-primary" role="button">Call</button></td>
+				</tr>
+			{% endfor %}
+		   
+		</tbody>
+	</table>
+	   
+{% endblock %}

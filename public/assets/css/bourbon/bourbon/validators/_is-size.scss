@@ -1,0 +1,21 @@
+@use "contains";
+@use "is-length";
+
+@charset "UTF-8";
+
+/// Checks for a valid CSS size.
+///
+/// @argument {string} $value
+///
+/// @return {boolean}
+///
+/// @require {function} _contains
+///
+/// @require {function} _is-length
+///
+/// @access private
+
+@function is-size($value) {
+  @return is-length.is-length($value)
+    or contains.contains("fill" "fit-content" "min-content" "max-content", $value);
+}

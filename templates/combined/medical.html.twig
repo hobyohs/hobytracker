@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="wide">{% endblock %}
+
+{% block body %}
+    <h1>Medical Report</h1>
+
+    <table class="standard-view table table-striped table-bordered" id="med-table">
+        <thead>
+            <tr>
+                <th class="no-export">View</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Group</th>
+                <th>Current Rx</th>
+                <th>Current Conditions</th>
+                <th>Exercise Limits</th>
+                <th>Allergies</th>
+                <th>Medical Allergies</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for person in people %}
+                <tr>
+                    <td class="view-link"><a href="{{ path(person.showpath, { 'id': person.id }) }}" class="view-link">{{ global_view_link | raw }}</a></td>
+                    <td>{{ person.firstName }}</td>
+                    <td>{{ person.lastName }}</td>
+                    <td class="center">
+                    	{% if person.group == "Staff" %}
+                    		Staff
+                    	{% elseif not person.group is empty %}
+                    		<a href="{{ path('app_letter_group_show', { 'letter': person.group.letter }) }}" class="letter {{person.group.color}}">{{ person.group.letter }}</a>
+                    	{% endif %}
+                    </td>
+                    <td>{{ person.currentRx }}</td>
+                    <td>{{ person.currentConditions }}</td>
+                    <td>{{ person.exerciseLimits }}</td>
+                    <td>{{ person.allergies }}</td>
+                    <td>{{ person.medAllergies }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Checking Out {{ambassador.consolidatedFirstName}} {{ambassador.lastName}}</h1>
+    <a href="{{ path('app_ambassador_checkout') }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
+    <div class="checkin-form-group">
+        {{ form_start(edit_form) }}
+            
+
+            <div class="card">
+                <div class="card-heading card-info">Collect {{ambassador.consolidatedFirstName}}'s key and keycard</div>
+                <div class="card-body">
+                    {{ambassador.dorm}} {{ambassador.room}}
+                </div>
+            </div>
+            
+            {% if ambassador.isCheckinDeposit and (ambassador.getCheckinDepositMethod != "Waived") %}
+                <div class="card">
+                    <div class="card-heading card-info">What would {{ambassador.consolidatedFirstName}} like to do with their deposit?</div>
+                    <div class="card-body">
+                        {{form_widget(edit_form.checkout_deposit_decision)}}
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-heading card-info">{{ambassador.consolidatedFirstName}} paid their key deposit by {{ ambassador.getCheckinDepositMethod }}</div>
+                    <div class="card-body hidden-ui" id="checkout-deposit-return">
+                    
+                        {% if ambassador.getCheckinDepositMethod == "PayPal" or ambassador.getCheckinDepositMethod == "QuickBooks" %}
+                            Inform {{ambassador.consolidatedFirstName}} that their deposit will be refunded to the credit or debit card it was paid with.
+                        {% elseif ambassador.getCheckinDepositMethod == "Check" %}
+                            Return {{ambassador.consolidatedFirstName}}'s check to them.
+                        {% elseif ambassador.getCheckinDepositMethod == "Cash" %}
+                            Return {{ambassador.consolidatedFirstName}} $30.00 in cash.
+                        {% endif %}
+                        
+                        {% if ambassador.getCheckinDepositNotes|length %}
+                            <br><br>
+                            <strong><u>Notes:</u></strong> {{ambassador.getCheckinDepositNotes}}
+                        {% endif %}
+                        
+                    </div>
+                    <div class="card-body hidden-ui" id="checkout-deposit-keep">
+                    
+                        We will keep {{ambassador.consolidatedFirstName}}'s deposit.
+                        
+                        {% if ambassador.getCheckinDepositNotes|length %}
+                            <br><br>
+                            <strong><u>Notes:</u></strong> {{ambassador.getCheckinDepositNotes}}
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            {% else %}
+                
+                <div class="card">
+                    <div class="card-heading card-danger">{{ambassador.consolidatedFirstName}} never paid a key deposit.</div>
+                    <div class="card-body">
+                        If they would still like the movie, they can pay $30.00 to HOBY Ohio South in cash or check given to you, or by credit card at the HOBY Store.
+                        {% if ambassador.getCheckinDepositNotes|length %}
+                            <br><br>
+                            <strong><u>Notes:</u></strong> {{ambassador.getCheckinDepositNotes}}
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="hidden">{{form_widget(edit_form.checkout_deposit_decision, { 'disabled': 'disabled' })}}</div>
+            {% endif %}
+            
+            {% if ambassador.isCheckinMeds %}
+                <div class="card card-danger">
+                    <div class="card-heading">{{ambassador.consolidatedFirstName}} brought prescription meds.</div>
+                    <div class="card-body">
+                       Please remind them to stop by the meds table to pick them up.
+                    </div>
+                </div>
+                
+            {% endif %}
+            
+            
+        {{ form_end(edit_form) }}
+    </div>
+{% endblock %}

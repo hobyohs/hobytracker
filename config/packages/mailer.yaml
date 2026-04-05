@@ -1,0 +1,7 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: 'info@hobyohiosouth.org'
+        headers:
+            From: 'HOBY Ohio South <info@hobyohiosouth.org>'

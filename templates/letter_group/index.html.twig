@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+   <h1>Letter Groups</h1>
+
+    <table class="standard-view table table-striped table-bordered" id="letter-index-table">
+        <thead>
+            <tr>
+                <th class="no-export">View</th>
+                <th>Letter</th>
+                <th>Color</th>
+                <th>Homeroom</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}">{{ global_view_link | raw }}</a></td>
+                    <td class="center">
+                       <a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}" class="letter {{group.color}}">{{ group.letter }}</a>
+                    </td>
+                    <td>{{ group.color }}</td>
+                    <td>{{ group.homeBuilding }} {{ group.homeRoom }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

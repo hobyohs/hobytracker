@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="wide">{% endblock %}
+
+{% block body %}
+	<h1>{{ group.printLetterGroup | raw }}</h1>
+
+		
+	<h2>Co-Facilitator Evaluations</h2>
+	<table class="table table-striped table-bordered" id="my-group-se-table">
+		<thead>
+			<tr>
+				<th>View</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Role</th>
+				<th>Completed?</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+				{% for fac in group.facilitators %}
+					{% if fac != app.user %}
+						<tr>
+							<td class="view-link"><a href="{{ path('staffeval_edit', { 'id': fac.id }) }}"><span class="fa fa-pencil"></span></a></td>
+							<td>{{fac.consolidatedFirstName}}</td>
+							<td>{{fac.lastName}}</td>
+							<td>{{fac.position}}</td>
+							<td>
+								{% if fac.evalstatus == 1 %}
+									Yes
+								{% elseif fac.evalstatus == 0 and fac.evalstatus is not null %}
+									No
+								{% endif %}
+							</td>
+						</tr>
+					{% endif %}
+			{% endfor %}
+		   
+		</tbody>
+	</table>
+	   
+{% endblock %}
+

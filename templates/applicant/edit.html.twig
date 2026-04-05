@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="form-page threequarter">
+		<h1>{{applicant.firstAndPrefName}} {{applicant.lastName}}</h1>
+		<a href="{{ path('app_applicant_index') }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
+		{{ form_start(edit_form, {'attr': {'class': 'applicant-form'}}) }}
+			<div class="row">
+				<div class="col">
+					<label for="app_applicant_firstName" class="form-label">First Name</label>
+					<div id="app_applicant_firstName" class="form-readonly">{{applicant.firstName}}</div>
+				</div>
+				{% if applicant.prefName is not empty %}
+					<div class="col">
+						<label for="app_applicant_prefName" class="form-label">Preferred Name</label>
+						<div id="app_applicant_prefName" class="form-readonly">{{applicant.prefName}}</div>
+					</div>
+				{% endif %}
+				<div class="col">
+					<label for="app_applicant_lastName" class="form-label">Last Name</label>
+					<div id="app_applicant_lastName" class="form-readonly">{{applicant.lastName}}</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<label for="app_applicant_pronouns" class="form-label">Pronouns</label>
+					<div id="app_applicant_pronouns" class="form-readonly">{{applicant.pronouns}}</div>
+				</div>
+				<div class="col">
+					<label for="app_applicant_age" class="form-label">Age at Seminar</label>
+					<div id="app_applicant_age" class="form-readonly">{{applicant.age}}</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<label for="app_applicant_email" class="form-label">Email</label>
+					<div id="app_applicant_email" class="form-readonly">{{applicant.email}}</div>
+				</div>
+				<div class="col">
+					<label for="app_applicant_cellphone" class="form-label">Cell Phone</label>
+					<div id="app_applicant_cellphone" class="form-readonly">{{applicant.cellPhone}}</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<label for="app_applicant_alumni_info" class="form-label">Alumni Info</label>
+					<div id="app_applicant_alumni_info" class="form-readonly">{{applicant.alumniInfo}}</div>
+				</div>
+				<div class="col">
+					<label for="app_applicant_highschool" class="form-label">High School</label>
+					<div id="app_applicant_highschool" class="form-readonly">{{applicant.highSchool}}</div>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+					<label for="app_applicant_q1" class="form-label">What is your relationship to HOBY Ohio South?</label>
+					<div id="app_applicant_q1" class="form-readonly">{{applicant.q1}}</div>
+			</div>
+			<div class="row">
+					<label for="app_applicant_q2" class="form-label">Have you previously been selected for staff and unable to attend the seminar? What circumstances kept you from fulfilling your staff role?</label>
+					<div id="app_applicant_q2" class="form-readonly">{{applicant.q2}}</div>
+			</div>
+			<div class="row">
+					<label for="app_applicant_q3" class="form-label">What’s a favorite team, group, or club you have been a part of and why?</label>
+					<div id="app_applicant_q3" class="form-readonly">{{applicant.q3}}</div>
+			</div>
+			<div class="row">
+					<label for="app_applicant_q4" class="form-label">What unique skills or talents can you add to the seminar or staff team?</label>
+					<div id="app_applicant_q4" class="form-readonly">{{applicant.q4}}</div>
+			</div>
+			<div class="row">
+					<label for="app_applicant_q5" class="form-label">Describe a time you had to problem solve quickly where you were successful. Describe a time you had to problem solve quickly and were unsuccessful. What did you learn from both experiences?</label>
+					<div id="app_applicant_q5" class="form-readonly">{{applicant.q5}}</div>
+			</div>
+			<div class="row">
+					<label for="app_applicant_q6" class="form-label">In three words, describe how you would like HOBY Ohio South to feel for our ambassadors.</label>
+					<div id="app_applicant_q6" class="form-readonly">{{applicant.q6}}</div>
+			</div>
+			<hr>
+			<div class="row">
+					<label for="app_applicant_q7" class="form-label">Please list any organizations, events, or nonprofit groups you have volunteered with in the past year.</label>
+					<div id="app_applicant_q7" class="form-readonly">{{applicant.q7}}</div>
+			</div>
+			<div class="row">
+					<label for="app_applicant_q8" class="form-label">Please provide the name, title, organization, and contact information of one professional or academic reference.</label>
+					<div id="app_applicant_q8" class="form-readonly">{{applicant.q8}}</div>
+			</div>
+			{% if applicant.rawVideoLink is not empty %}
+				<hr>
+				<div class="row">
+						<label for="app_applicant_video" class="form-label">Video</label>
+						<em><a href="{{applicant.rawVideoLink}}" target="_blank">direct link</a></em><br><br>
+						{% if applicant.videoSource == "Google Drive" %}
+							<iframe src="{{applicant.videoLink}}" width="800" height="600" allow="autoplay"></iframe>
+						{% elseif applicant.videoSource == "YouTube" %}
+							<iframe width="800" height="600" src="https://www.youtube.com/embed/{{applicant.videoLink}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+						{% endif %}
+				</div>
+			{% endif %}
+			{% if applicant.evalEvaluator is not empty or applicant.evalRecommendation is not empty or applicant.evalEngaged is not empty or applicant.evalService is not empty or applicant.evalPros is not empty or applicant.evalCons is not empty or applicant.evalComments is not empty %}
+				<hr>
+				<h2>Evaluation</h2>
+				{% if applicant.evalEvaluator is not empty or applicant.evalRecommendation is not empty %}
+					<div class="row">
+						{% if applicant.evalEvaluator is not empty %}
+							<div class="col">
+								<label for="app_applicant_evaluator" class="form-label">Evaluator(s)</label>
+								<div id="app_applicant_evaluator" class="form-readonly">{{applicant.evalEvaluator}}</div>
+							</div>
+						{% endif %}
+						{% if applicant.evalRecommendation is not empty %}
+							<div class="col">
+								<label for="app_applicant_recommendation" class="form-label">Recommendation</label>
+								<div id="app_applicant_recommendation" class="form-readonly">{{applicant.evalRecommendation|parse_recommendation}}</div>
+							</div>
+						{% endif %}
+					</div>
+				{% endif %}
+				{% if applicant.evalEngaged is not empty or applicant.evalService is not empty %}
+					<div class="row">
+						<div class="col">
+							<label for="app_applicant_engaged" class="form-label">This ambassador was engaged and added thoughtful input to our group conversations.</label>
+							<div id="app_applicant_engaged" class="form-readonly">{{applicant.evalEngaged|parse_likert}}</div>
+						</div>
+						<div class="col">
+							<label for="app_applicant_service" class="form-label">This ambassador is committed to community service and will likely complete 100 hours of volunteerism.</label>
+							<div id="app_applicant_service" class="form-readonly">{{applicant.evalService|parse_likert}}</div>
+						</div>
+					</div>
+				{% endif %}
+				{% if applicant.evalPros is not empty or applicant.evalCons is not empty %}
+					<div class="row">
+						<div class="col">
+							<label for="app_applicant_pros" class="form-label">Pros</label>
+							<div id="app_applicant_pros" class="form-readonly">{{applicant.evalPros}}</div>
+						</div>
+						<div class="col">
+							<label for="app_applicant_cons" class="form-label">Cons</label>
+							<div id="app_applicant_cons" class="form-readonly">{{applicant.evalCons}}</div>
+						</div>
+					</div>
+				{% endif %}
+				{% if applicant.evalComments is not empty %}
+					<div class="row">
+						<div class="col">
+							<label for="app_applicant_comments" class="form-label">Comments</label>
+							<div id="app_applicant_comments" class="form-readonly">{{applicant.evalComments}}</div>
+						</div>
+					</div>
+				{% endif %}
+			{% endif %}
+			<hr>
+			<div class="row">
+				<div class="col">
+					{{ form_label(edit_form.reviewer1_rating) }}
+					{{ form_errors(edit_form.reviewer1_rating) }}
+					{{ form_widget(edit_form.reviewer1_rating) }}
+				</div>
+				<div class="col">
+					{{ form_label(edit_form.reviewer1_notes) }}
+					{{ form_errors(edit_form.reviewer1_notes) }}
+					{{ form_widget(edit_form.reviewer1_notes) }}
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					{{ form_label(edit_form.reviewer2_rating) }}
+					{{ form_errors(edit_form.reviewer2_rating) }}
+					{{ form_widget(edit_form.reviewer2_rating) }}
+				</div>
+				<div class="col">
+					{{ form_label(edit_form.reviewer2_notes) }}
+					{{ form_errors(edit_form.reviewer2_notes) }}
+					{{ form_widget(edit_form.reviewer2_notes) }}
+				</div>
+			</div>
+			<div class="row">
+				{{ form_label(edit_form.decision) }}
+				{{ form_errors(edit_form.decision) }}
+				{{ form_widget(edit_form.decision) }}
+			</div>
+			<div><br>
+				<button class="col-12 btn btn-primary">Submit</button>
+			</div>
+			
+		{{ form_end(edit_form) }}
+	</div>
+
+{% endblock %}

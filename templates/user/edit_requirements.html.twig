@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ global_back_link | raw }}
+    <h1>Updating {{user.consolidatedFirstName}}'s Requirements Progress</h1>
+<br>
+    {{ form_start(form) }}
+    
+        {{ form_row(form.paperworkComplete) }}
+        {% if user.controlledAge >= 18 %}
+            {{ form_row(form.bgCheckSubmitted) }}
+            {{ form_row(form.bgCheckComplete) }}
+        {% else %}
+            {% do form.bgCheckSubmitted.setRendered() %}
+            {% do form.bgCheckComplete.setRendered() %}
+        {% endif %}
+        {{ form_row(form.hobyAppComplete) }}
+        {{ form_row(form.fundraisingComplete) }}
+        {% if user.controlledAge <= 21 %}
+            {{ form_row(form.hoursComplete) }}
+            {{ form_row(form.ambRegistered) }}
+            {# {{ form_row(form.planningComplete) }} #}
+        {% else %}
+            {% do form.hoursComplete.setRendered() %}
+            {% do form.ambRegistered.setRendered() %}
+            {# {% do form.planningComplete.setRendered() %} #}
+        {% endif %}
+        
+        {{ form_row(form.requirementNotes) }}
+        <input type="submit" value="Update" />
+    {{ form_end(form) }}
+
+        
+{% endblock %}

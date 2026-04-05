@@ -1,0 +1,111 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    app.columnNames:
+        firstName:  First Name
+        lastName:  Last Name
+        prefName:  Preferred Name
+        gender:  Gender
+        prefPronouns:  Pronouns
+        legalSex:  Legal Sex
+        ethnicity:  Ethnicity
+        prefGender:  Gender
+        prefGenderPronoun:  Gender Pronoun
+        prefHousing:  Preferred Housing
+        homeAddress1:  Home Address 1
+        homeAddress2:  Home Address 2
+        homeCity:  Home City
+        homeState:  Home State
+        homeZIP:  Home ZIP
+        homePhone:  Home Phone
+        cellPhone: Cell Phone
+        email: Email
+        twitter:   Twitter
+        school:  High School
+        tshirtSize:  T-Shirt Size
+        parent1FirstName:  Parent 1 First Name
+        parent1LastName:  Parent 1 Last Name
+        parent2FirstName:  Parent 2 First Name
+        parent2LastName:  Parent 2 Last Name
+        parent1Phone1:  Parent 1 Primary Phone
+        parent2Phone1:  Parent 2 Primary Phone
+        parent1Phone2:  Parent 1 Secondary Phone
+        parent2Phone2:  Parent 2 Secondary Phone
+        parent1Email:  Parent 1 Email
+        parent2Email:  Parent 2 Email
+        dateOfBirth:  Date of Birth
+        ecFirstName:  Emergency Contact First Name
+        ecLastName:  Emergency Contact Last Name
+        ecRelationship:  Emergency Contact Relationship
+        ecPhone1:  Emergency Contact Primary Phone
+        ecPhone2:  Emergency Contact Secondary Phone
+        currentConditions:  Current Conditions
+        exerciseLimits:  Physical Activity Limits
+        allergies:  Allergies
+        dietRestrictions:  Diet Restrictions
+        dietInfo:  Dietary Information
+        dietSeverity:  Food Allergy Severity
+        medAllergies:  Medical Allergies
+        currentRx:  Prescription Medication
+        approvedOtc:  Approved OTC
+        depositMethod:  Deposit Method
+        groupPhoto:  Purchased Group Photo
+        counselorFirstName:  Counselor First Name
+        counselorLastName:  Counselor Last Name
+        totalOwed:  Total Owed
+        totalPaid:  Total Paid
+        dorm:  Dorm
+        room:  Room
+        letterGroup:  Letter Group
+        regionGroup:  Region Group
+        checkedIn:  Checked In
+        missingForms:  Missing Forms
+        position: Position
+        age: Age
+        alumniSite: Alumni Site
+        highSchool: High School
+        skillsOffered: What skills do you offer the seminar?
+        fiveWords: Describe yourself in five words or fewer.
+        favoriteTeam: Which song best describes your leadership style? Explain why.
+        volExp: Please list any organizations, events, or nonprofit groups you have volunteered with in the past year.
+        youthOrgs: Please list all youth organizations you are currently affiliated with, or have been affiliated with in the past.
+        reference: Please provide the name, title, organization, and contact information of one professional reference.
+        videoLink: Video
+        priorHoby: Prior HOBY experience
+        feedbackSummary: Summary of feedback from facilitators or co-facilitator.
+        aloneOrOthers: Do you prefer to work alone or with others?
+        leaderGreat: What makes a leader great? Why?
+        problemSolve: Describe a time you had to problem solve quickly and what your solution was.
+        pronouns: Pronouns
+        assignmentCheckIn: Check In Assignment
+        assignmentCheckInNotes: Check In Assignment Notes
+        assignmentClosingCeremonies: Closing Ceremony Assignment
+        assignmentClosingCeremoniesNotes: Closing Ceremony Assignment Notes
+        assignmentCheckOut: Check Out Assignment
+        assignmentCheckOutNotes: Check Out Assignment Notes
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+    
+    # Columnizer service
+    app.columnizer:
+       class: App\Service\Columnizer
+       arguments: ['%app.columnNames%']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones

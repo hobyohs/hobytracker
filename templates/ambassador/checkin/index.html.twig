@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block maintag %}<main class="filter-left narrow">{% endblock %}
+{% block body %}
+	<h1>Check In</h1>
+	<h3>{{ checkedin }} of {{ totalamb }} checked in. {{ totalamb - checkedin }} ambassadors to go!</h3>
+	<table class="standard-view table table-striped table-bordered" id="checkin-table">
+		<thead>
+			<tr>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Check In</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for ambassador in ambassadors %}
+				<tr>
+					<td>{{ ambassador.consolidatedFirstName }}</td>
+					<td>{{ ambassador.lastName }}</td>
+					<td><a href="{{ path('app_ambassador_checkin_form', {'id': ambassador.id}) }}" class="btn btn-primary" role="button">Check In</button></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	
+{% endblock %}

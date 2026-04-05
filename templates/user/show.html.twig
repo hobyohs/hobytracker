@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="show user">{% endblock %}
+
+{% block body %}
+    {{ global_back_link | raw }}
+    <div class="show-header">
+        <div>
+            <h1>{{ user.consolidatedFirstName}} {{ user.lastName }}</h1>
+            <h4>{{ user.position }}</h4>
+            <h4>
+                {% if not user.letterGroup is null %}
+                    <a href="{{ path('app_letter_group_show', { 'letter': user.letterGroup.letter }) }}" class="letter {{user.letterGroup.color}}">{{ user.letterGroup.printLetterGroup | raw }}</a>
+                {% endif %}
+            </h4>
+        </div>
+        <div><img src="{{ user.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="img-thumbnail"></div>
+    </div>
+    <h2>Personal Information</h2>
+    <table class="table table-striped table-bordered">
+        <tbody>
+
+            {{ global_columnizer.spitShowRow(user, 'firstName', true) | raw }}
+            {% if user.prefName is not null %}
+                {{ global_columnizer.spitShowRow(user, 'prefName') | raw }}
+            {% endif %}
+            {{ global_columnizer.spitShowRow(user, 'lastName', true) | raw }}
+            {{ global_columnizer.spitShowRow(user, 'pronouns') | raw }}
+            {{ global_columnizer.spitShowRow(user, 'cellPhone', true) | raw }}
+            {{ global_columnizer.spitShowRow(user, 'email', true) | raw }}
+           
+        </tbody>
+    </table>
+        
+    <h2>Assignments</h2>
+    <table class="table table-striped table-bordered">
+        <tbody>
+
+            {{ global_columnizer.spitShowRow(user, 'dorm', true) | raw }}
+            {{ global_columnizer.spitShowRow(user, 'room', true) | raw }}
+           
+        </tbody>
+    </table>
+
+    {% if is_granted('ROLE_BOARD') %}
+        
+        <h2>Emergency Contact</h2>
+        <table class="table table-striped table-bordered">
+            <tbody>
+    
+                {{ global_columnizer.spitShowRow(user, 'ecFirstName') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'ecLastName') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'ecRelationship') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'ecPhone1') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'ecPhone2') | raw }}
+               
+            </tbody>
+        </table>
+    
+        <h2>Health Info</h2>
+        <table class="table table-striped table-bordered">
+            <tbody>
+    
+                {{ global_columnizer.spitShowRow(user, 'currentConditions') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'exerciseLimits') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'allergies') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'dietRestrictions') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'dietInfo') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'dietSeverity') | raw }}
+               
+            </tbody>
+        </table>
+    {% endif %}
+    {% if is_granted('ROLE_NURSE') %}
+        <h2>Medical Info</h2>
+        <table class="table table-striped table-bordered">
+            <tbody>
+    
+                {{ global_columnizer.spitShowRow(user, 'medAllergies') | raw }}
+                {{ global_columnizer.spitShowRow(user, 'currentRx') | raw }}
+               
+            </tbody>
+        </table>
+    {% endif %}
+
+
+{% endblock %}

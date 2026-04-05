@@ -1,0 +1,67 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title 'Shirt Sizes' %}
+
+{% block main %}
+
+	<div class="table-responsive table-striped mb-5 col-6">
+		<h3>Ambassador Shirt Sizes</h3>
+		<h5>Ambassador shirt sizes are based on family-provided Formstack info where available and nomination info otherwise. These numbers are an exact reflection of the sizes on record, and <strong>are not padded in any way</strong>.</h5>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Size</th>
+					<th>Count</th>
+				</tr>
+			</thead>
+	
+			<tbody>
+				{% for size in ambassador_sizes %}
+					<tr>
+						<td>
+							{{size.shirtSize}}
+						</td>
+						<td>
+							{{size.size_count}}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% if ambassador_nulls > 0 %}
+			<h5>There {{ ambassador_nulls == 1 ? 'is' : 'are' }} {{ ambassador_nulls }} {{ ambassador_nulls == 1 ? 'ambassador' : 'ambassadors' }} with no shirt size information.</h5>
+		{% endif %}
+	</div>
+	
+	<div class="table-responsive table-striped mb-5 col-6">
+		<h3>Staff Shirt Sizes</h3>
+		<h5>Staff shirt sizes are based on Formstack info where available and are not available otherwise. These sizes <strong>are not padded in any way</strong>.</h5>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Size</th>
+					<th>Count</th>
+				</tr>
+			</thead>
+	
+			<tbody>
+				{% for size in user_sizes %}
+					{% if size.shirtSize is not null %}
+						<tr>
+							<td>
+								{{size.shirtSize}}
+							</td>
+							<td>
+								{{size.size_count}}
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+		{% if user_nulls > 0 %}
+			<h5>There {{ user_nulls == 1 ? 'is' : 'are' }} {{ user_nulls }} {{ user_nulls == 1 ? 'staff member' : 'staff members' }} with no shirt size information.</h5>
+		{% endif %}
+	</div>
+
+{% endblock main %}

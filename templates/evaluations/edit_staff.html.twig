@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="form-page">
+		<h1>Evaluation: {{user.consolidatedFirstName}} {{user.lastName}}</h1>
+		<a href="{{ path('staffeval_index', {'letter': app.user.letterGroup.letter}) }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
+		{{ form_start(edit_form, {'attr': {'class': 'se-form'}}) }}
+			<div>
+				{{ form_label(edit_form.eval_pros) }}
+				{{ form_errors(edit_form.eval_pros) }}
+				{{ form_widget(edit_form.eval_pros) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_cons) }}
+				{{ form_errors(edit_form.eval_cons) }}
+				{{ form_widget(edit_form.eval_cons) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_discussions) }}
+				{{ form_errors(edit_form.eval_discussions) }}
+				{{ form_widget(edit_form.eval_discussions) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_enthusiastic) }}
+				{{ form_errors(edit_form.eval_enthusiastic) }}
+				{{ form_widget(edit_form.eval_enthusiastic) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_organized) }}
+				{{ form_errors(edit_form.eval_organized) }}
+				{{ form_widget(edit_form.eval_organized) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_equally) }}
+				{{ form_errors(edit_form.eval_equally) }}
+				{{ form_widget(edit_form.eval_equally) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_responsible) }}
+				{{ form_errors(edit_form.eval_responsible) }}
+				{{ form_widget(edit_form.eval_responsible) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_attentive) }}
+				{{ form_errors(edit_form.eval_attentive) }}
+				{{ form_widget(edit_form.eval_attentive) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_include) }}
+				{{ form_errors(edit_form.eval_include) }}
+				{{ form_widget(edit_form.eval_include) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_professional) }}
+				{{ form_errors(edit_form.eval_professional) }}
+				{{ form_widget(edit_form.eval_professional) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_punctual) }}
+				{{ form_errors(edit_form.eval_punctual) }}
+				{{ form_widget(edit_form.eval_punctual) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_whynot) }}
+				{{ form_errors(edit_form.eval_whynot) }}
+				{{ form_widget(edit_form.eval_whynot) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_comments) }}
+				{{ form_errors(edit_form.eval_comments) }}
+				{{ form_widget(edit_form.eval_comments) }}
+			</div>
+			<div>
+				<button class="col-12 btn btn-primary">Submit</button>
+			</div>
+		{{ form_end(edit_form) }}
+	</div>
+
+{% endblock %}

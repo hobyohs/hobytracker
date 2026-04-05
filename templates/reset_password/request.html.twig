@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+    <div class="form-page">
+        {% for flash_error in app.flashes('reset_password_error') %}
+            <div class="error" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+        
+        <h1>Reset your password</h1>
+    
+        {{ form_start(requestForm) }}
+            <div class="mb-3">
+                <label for="email" class="form-label">{{ form_label(requestForm.email) }}</label>
+                {{ form_widget(requestForm.email) }}
+                <div class="form-text">Enter your email address and we will send you a link to reset your password.</div>
+            </div>
+            <button class="mb-3 form-control btn btn-primary">Send password reset email</button>
+        {{ form_end(requestForm) }}
+    </div>
+{% endblock %}
+
+
+
+{# 
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="half-page">
+        {% if error %}
+            <div class="error">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+    
+        <form action="{{ path('app_login') }}" method="post">
+            
+            <div class="form-group">
+                <label for="username">Enter your email:</label>
+                <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" required="required" />
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="_password" required="required" />
+            </div>
+            
+            {#
+                <div class="form-check">
+                    <label for="remember_me" class="form-check-label">{{ 'security.login.remember_me'|trans }}
+                        <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me" value="on" />
+                    </label>
+                </div>
+            ##
+    
+            {# If you want to control the URL the user is redirected to on success
+            <input type="hidden" name="_target_path" value="/account"> ##
+    
+            <input type="submit" class="form-control" id="_submit" name="_submit" value="Log In" />
+            <small><em><a href="{{ path('app_forgot_password_request') }}">Reset password</a></em></small>
+        </form>
+    </div>
+{% endblock %} #}
+
+
+{#
+<div class="half-page">
+
+</div>
+#}

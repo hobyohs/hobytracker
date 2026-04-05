@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="form-page">
+		<h1>Evaluation: {{ambassador.consolidatedFirstName}} {{ambassador.lastName}}</h1>
+		<a href="{{ path('ambeval_index', {'letter': app.user.letterGroup.letter}) }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
+		{{ form_start(edit_form, {'attr': {'class': 'ae-form'}}) }}
+			<div>
+				{{ form_label(edit_form.eval_engaged) }}
+				{{ form_errors(edit_form.eval_engaged) }}
+				{{ form_widget(edit_form.eval_engaged) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_service) }}
+				{{ form_errors(edit_form.eval_service) }}
+				{{ form_widget(edit_form.eval_service) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_pros) }}
+				{{ form_errors(edit_form.eval_pros) }}
+				{{ form_widget(edit_form.eval_pros) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_cons) }}
+				{{ form_errors(edit_form.eval_cons) }}
+				{{ form_widget(edit_form.eval_cons) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_recommendation) }}
+				{{ form_errors(edit_form.eval_recommendation) }}
+				{{ form_widget(edit_form.eval_recommendation) }}
+			</div>
+			<div>
+				{{ form_label(edit_form.eval_comments) }}
+				{{ form_errors(edit_form.eval_comments) }}
+				{{ form_widget(edit_form.eval_comments) }}
+			</div>
+			<div>
+				<button class="col-12 btn btn-primary">Submit</button>
+			</div>
+		{{ form_end(edit_form) }}
+	</div>
+
+{% endblock %}

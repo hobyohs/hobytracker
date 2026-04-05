@@ -1,0 +1,14 @@
+@use "sass:meta";
+@charset "UTF-8";
+
+/// Checks for a valid CSS color.
+///
+/// @argument {string} $color
+///
+/// @return {boolean}
+///
+/// @access private
+
+@function is-color($color) {
+  @return (meta.type-of($color) == color) or ($color == "currentColor");
+}

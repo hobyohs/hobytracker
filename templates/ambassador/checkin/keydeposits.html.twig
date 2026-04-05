@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Key Deposit Report</h1>
+    <table class="standard-view table table-striped table-bordered" id="kd-table">
+        <thead>
+            <tr>
+                <th>View</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Group</th>
+                {# <th>Gender</th> #}
+                <th>Key Deposit</th>
+                <th>Key Deposit Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td>
+                    <td>{{ ambassador.lastName }}</td>
+                    <td class="center">
+                    	{% if ambassador.letterGroup == "Staff" %}
+                    		Staff
+                    	{% elseif not ambassador.letterGroup is empty %}
+                    		<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
+                    	{% endif %}
+                    </td>
+                    {# <td>{{ ambassador.gender }}</td> #}
+                    
+
+                    
+                    {% if ambassador.isCheckinDeposit %}
+                        <td class="gridblock yay">
+                        
+                            {% if ambassador.getCheckinDepositMethod == "PayPal" %}
+                                <span class="fab fa-cc-paypal fa-2x">
+                            {% elseif ambassador.getCheckinDepositMethod == "Check" %}
+                                <span class="fas fa-money-check fa-2x">
+                            {% elseif ambassador.getCheckinDepositMethod == "Cash" %}
+                                <span class="fas fa-money-bill-alt fa-2x">
+                            {% else %}
+                                <span class="fas fa-check">
+                            {% endif %}
+                            
+                            <span class="hidden">TRUE</span></span>
+                            
+                        </td>
+                    {% else %}
+                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% endif %}
+                    
+                    <td>{{ambassador.getCheckinDepositNotes}}</td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}

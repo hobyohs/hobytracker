@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<h1>Dorm List</h1>
+
+	<table class="standard-view table table-striped table-bordered" id="dorm-table">
+		<thead>
+			<tr>
+				<th class="no-export">View</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Group</th>
+				<th class="hidden">Floor</th>
+				<th class="hidden">Sort Order</th>
+				<th>Dorm</th>
+				<th>Room</th>
+				<th>Shirt Size</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for person in people %}
+				{% if person.type == "user" %}
+					<tr class="user-highlight stripe-override">
+				{% else %}
+					<tr>
+				{% endif %}
+					<td class="view-link"><a href="{{ path(person.showpath, { 'id': person.id }) }}" class="view-link">{{ global_view_link | raw }}</a></td>
+					<td>{{ person.firstName }}</td>
+					<td>{{ person.lastName }}</td>
+					<td class="center">
+						{% if person.group == "Staff" %}
+							Staff
+						{% elseif not person.group is empty %}
+							<a href="{{ path('app_letter_group_show', { 'letter': person.group.letter }) }}" class="letter {{person.group.color}}">{{ person.group.letter }}</a>
+						{% endif %}
+					</td>
+					<td class="hidden">{{ person.dormRoom.floor }}</td>
+					<td class="hidden">{{ person.dormRoom.sortOrder }}</td>
+					<td>{{ person.dorm }}</td>
+					<td>{{ person.room }}</td>
+					<td>{{ person.shirtSize }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	
+{% endblock %}

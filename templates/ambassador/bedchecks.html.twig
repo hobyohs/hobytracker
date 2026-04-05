@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+{% block maintag %}<main class="wide">{% endblock %}
+{% block body %}
+    <h1>Bed Checks</h1>
+
+    <table class="standard-view table table-striped table-bordered" id="bc-table">
+        <thead>
+            <tr>
+            	<th>View</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Group</th>
+                <th class="hidden">Floor</th>
+                <th class="hidden">Sort Order</th>
+                <th>Dorm</th>
+                <th>Room</th>
+
+                {% set day = "now"|date("l", "America/New_York") %}
+                
+                {% if day == "Friday" %}
+                    <th class="hidden">Thursday</th>
+                    <th>Friday</th>
+                    <th class="hidden">Saturday</th>
+                {% elseif day == "Saturday" %}
+                    <th class="hidden">Thursday</th>
+                    <th class="hidden">Friday</th>
+                    <th>Saturday</th>
+                {% else %}
+                    <th>Thursday</th>
+                    <th class="hidden">Friday</th>
+                    <th class="hidden">Saturday</th>
+                {% endif %}
+                
+            </tr>
+        </thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                {% if ambassador.dormRoom is not null %}
+                    <tr>
+                	    <td class="view-link">
+                		    <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a>
+                	    </td>
+                        <td>{{ ambassador.consolidatedFirstName }}</td>
+                        <td>{{ ambassador.lastName }}</td>
+                        <td class="center">
+                    	    {% if ambassador.letterGroup == "Staff" %}
+                    		    Staff
+                    	    {% elseif not ambassador.letterGroup is empty %}
+                    		    <a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
+                    	    {% endif %}
+                        </td>
+                        <td class="hidden">
+                            {% if ambassador.dormRoom.floor is defined and ambassador.dormRoom.floor is not null %}
+                                {{ ambassador.dormRoom.floor }}
+                            {% endif %}
+                        </td>
+                        <td class="hidden">
+                            {% if ambassador.dormRoom.sortOrder is defined and ambassador.dormRoom.sortOrder is not null %}
+                                {{ ambassador.dormRoom.sortOrder }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if ambassador.dorm is defined and ambassador.dorm is not null %}
+                                {{ ambassador.dorm }}
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if ambassador.room is defined and ambassador.room is not null %}
+                                {{ ambassador.room }}
+                            {% endif %}
+                        </td>
+                        
+                        
+                        {% if day == "Friday" %}
+                            <td class="hidden">
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedThursday" class="bc-checkbox"{% if ambassador.bedThursday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedThursday-user" class="byline">{% if ambassador.bedThursday %}by {{ambassador.bedThursdayUser}}{% endif %}</span>
+                            </td>
+                            <td>
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedFriday" class="bc-checkbox"{% if ambassador.bedFriday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedFriday-user" class="byline">{% if ambassador.bedFriday %}by {{ambassador.bedFridayUser}}{% endif %}</span>
+                            </td>
+                            <td class="hidden">
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedSaturday" class="bc-checkbox"{% if ambassador.bedSaturday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedSaturday-user" class="byline">{% if ambassador.bedSaturday %}by {{ambassador.bedSaturdayUser}}{% endif %}</span>
+                            </td>
+                        {% elseif day == "Saturday" %}
+                            <td class="hidden">
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedThursday" class="bc-checkbox"{% if ambassador.bedThursday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedThursday-user" class="byline">{% if ambassador.bedThursday %}by {{ambassador.bedThursdayUser}}{% endif %}</span>
+                            </td>
+                            <td class="hidden">
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedFriday" class="bc-checkbox"{% if ambassador.bedFriday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedFriday-user" class="byline">{% if ambassador.bedFriday %}by {{ambassador.bedFridayUser}}{% endif %}</span>
+                            </td>
+                            <td>
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedSaturday" class="bc-checkbox"{% if ambassador.bedSaturday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedSaturday-user" class="byline">{% if ambassador.bedSaturday %}by {{ambassador.bedSaturdayUser}}{% endif %}</span>
+                            </td>
+                        {% else %}
+                            <td>
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedThursday" class="bc-checkbox"{% if ambassador.bedThursday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedThursday-user" class="byline">{% if ambassador.bedThursday %}by {{ambassador.bedThursdayUser}}{% endif %}</span>
+                            </td>
+                            <td class="hidden">
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedFriday" class="bc-checkbox"{% if ambassador.bedFriday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedFriday-user" class="byline">{% if ambassador.bedFriday %}by {{ambassador.bedFridayUser}}{% endif %}</span>
+                            </td>
+                            <td class="hidden">
+                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedSaturday" class="bc-checkbox"{% if ambassador.bedSaturday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedSaturday-user" class="byline">{% if ambassador.bedSaturday %}by {{ambassador.bedSaturdayUser}}{% endif %}</span>
+                            </td>
+                        {% endif %}
+                        
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript">
+		$(document).ready(function() {     
+			$('input.bc-checkbox').change(function() {
+				console.log('checkbox initiated');
+				if($(this).is(":checked")) var field_status = 1;
+				else var field_status = 0;
+				
+				$.post("{{ path('bc_update') }}",
+                {
+                    amb_id: $(this).data('amb-id'),
+                    field: $(this).data('field'),
+                    field_status: field_status
+                });
+                
+                $(this).attr("disabled", true);
+				
+				$("#"+$(this).data('amb-id')+"-"+$(this).data('field')+"-user").text("by {{app.user.firstName}} {{app.user.lastName}}")
+				
+			});
+			
+		});
+	</script>
+{% endblock %}

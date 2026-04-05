@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+   <h1>Letter Group Interview Assignments</h1>
+
+    <table class="standard-view table table-striped table-bordered" id="letter-interview-table">
+        <thead>
+            <tr>
+                <th class="no-export">View</th>
+                <th>Letter</th>
+                <th>Interview Assignment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}">{{ global_view_link | raw }}</a></td>
+                    <td class="center">
+                       <a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}" class="letter {{group.color}}">{{ group.letter }}</a>
+                    </td>
+                    <td>{{ group.interviewAssignment }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

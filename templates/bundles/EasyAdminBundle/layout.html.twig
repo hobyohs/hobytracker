@@ -1,0 +1,34 @@
+{# templates/bundles/EasyAdminBundle/layout.html.twig #}
+
+{# DO THIS: the '!' symbol tells Symfony to extend from the original template #}
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block head_stylesheets %}
+	{{ parent() }}
+	<style type="text/css">
+		.ea-detail .field-group.field-boolean .field-label {
+			flex: unset;
+			min-width: 0;
+			margin: 0 15px 0 0 !important;
+			width: 130px !important;
+			text-align: right !important;
+		}
+		
+		.ea-detail .field-group.field-boolean {
+			flex-direction: row !important;
+		}
+		
+		.ea-detail .field-group.field-boolean .field-value {
+			flex: 1 !important;
+			min-width: 66% !important;
+			text-align: left !important;
+		}
+	</style>
+{% endblock head_stylesheets %}
+
+{% block header_logo %}
+	<a class="logo" title="HOBYTracker" href="{{ path('homepage') }}">
+		<span class="logo-custom"><img src="{{ asset('assets/images/logo.png') }}" alt="HOBYTracker"></span>
+		<span class="logo-compact"><i class="fas fa-home"></i></span>
+	</a>
+{% endblock header_logo %}

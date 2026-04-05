@@ -1,0 +1,68 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title 'Letter Group Demographics' %}
+
+{% block main %}
+	<div class="table-responsive table-striped">
+		<table class="table">
+			<thead>
+			{% block table_head %}
+				<tr>
+					<th>ID</th>
+					<th>Group</th>
+					<th>Total Ambassadors</th>
+					<th>Boys</th>
+					<th>Girls</th>
+					<th>Other Gender</th>
+					<th>White</th>
+					<th>POC</th>
+					<th>Race Unknown</th>
+					<th>Franklin County</th>
+					<th>Not Franklin County</th>
+				</tr>
+			{% endblock table_head %}
+			</thead>
+	
+			<tbody>
+				{% for group in groups %}
+					<tr>
+					<td>
+							{{group.id}}
+						</td>
+						<td>
+							{{group.letter}}
+						</td>
+						<td>
+							{{group.ambassadors}}
+						</td>
+						<td>
+							{{group.boys}}
+						</td>
+						<td>
+							{{group.girls}}
+						</td>
+						<td>
+							{{group.other_gender}}
+						</td>
+						<td>
+							{{group.whites}}
+						</td>
+						<td>
+							{{group.nonwhites}}
+						</td>
+						<td>
+							{{group.unknown}}
+						</td>
+						<td>
+							{{group.fc}}
+						</td>
+						<td>
+							{{group.nonfc}}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+{% endblock main %}

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block maintag %}<main class="wide">{% endblock %}
+
+{% block body %}
+	<h1>{{ group.printLetterGroup | raw }}</h1>
+
+		
+	<h2>Ambassador Evaluations</h2>
+	<table class="table table-striped table-bordered" id="my-group-ae-table">
+		<thead>
+			<tr>
+				<th>View</th>
+				<th>First Name</th>
+				<th>Last Name</th>
+				<th>Engagement</th>
+				<th>Service</th>
+				<th>Strengths</th>
+				<th>Challenges</th>
+				<th>Rec.</th>
+				<th>Comments</th>
+			</tr>
+		</thead>
+		<tbody>
+		
+			{% for ambassador in group.ambassadors %}
+				<tr>
+					<td class="edit-link view-link"><a href="{{ path('ambeval_edit', { 'id': ambassador.id }) }}"><span class="fa fa-pencil"></span></a></td>
+					<td>{{ambassador.consolidatedFirstName}}</td>
+					<td>{{ambassador.lastName}}</td>
+					<td>{{ (ambassador.evalengaged is not null ? ambassador.evalengaged ~ '/5') }}</td>
+					<td>{{ (ambassador.evalservice is not null ? ambassador.evalservice ~ '/5') }}</td>
+					<td>{{ambassador.evalpros}}</td>
+					<td>{{ambassador.evalcons}}</td>
+					<td>
+						{% if ambassador.evalrecommendation == 1 %}
+							Yes
+						{% elseif ambassador.evalrecommendation == 0 and ambassador.evalrecommendation is not null %}
+							No
+						{% endif %}
+					</td>
+					<td>{{ambassador.evalcomments}}</td>
+				</tr>
+			{% endfor %}
+		   
+		</tbody>
+	</table>
+	   
+{% endblock %}
+
