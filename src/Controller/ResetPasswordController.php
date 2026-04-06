@@ -170,7 +170,8 @@ class ResetPasswordController extends AbstractController
         try {
             $mailer->send($email);
         } catch (TransportExceptionInterface $e) {
-            stop($e->getDebug());
+            $this->addFlash('error', 'There was a problem sending the password reset email. Please try again later.');
+return $this->redirectToRoute('app_forgot_password_request');
         }
 
         // Store the token object in session for retrieval in check-email route.
