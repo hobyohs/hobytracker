@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\LetterGroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -41,6 +42,9 @@ class LetterGroup
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $interview_assignment = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $seminarYear = null;
 
     public function __construct()
     {
@@ -201,6 +205,18 @@ class LetterGroup
     public function setInterviewAssignment(?string $interview_assignment): self
     {
         $this->interview_assignment = $interview_assignment;
+
+        return $this;
+    }
+
+    public function getSeminarYear(): ?int
+    {
+        return $this->seminarYear;
+    }
+
+    public function setSeminarYear(int $seminarYear): self
+    {
+        $this->seminarYear = $seminarYear;
 
         return $this;
     }

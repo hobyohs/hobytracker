@@ -240,6 +240,12 @@ class Ambassador
     #[ORM\ManyToOne(inversedBy: 'ambassadors')]
     private ?DormRoom $dormRoom = null;
 
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $seminarYear = null;
+
+    #[ORM\Column(length: 20)]
+    private ?string $status = 'registered';
+
     public function __construct()
     {
         $this->comingsAndGoings = new ArrayCollection();
@@ -1183,6 +1189,30 @@ class Ambassador
     public function setJuniorCallDisposition(?string $juniorCallDisposition): self
     {
         $this->juniorCallDisposition = $juniorCallDisposition;
+
+        return $this;
+    }
+
+    public function getSeminarYear(): ?int
+    {
+        return $this->seminarYear;
+    }
+
+    public function setSeminarYear(int $seminarYear): self
+    {
+        $this->seminarYear = $seminarYear;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }

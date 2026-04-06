@@ -52,6 +52,9 @@ class ComingsAndGoings
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $notes = null;
 
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $seminarYear = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -149,6 +152,18 @@ class ComingsAndGoings
     public function setNotes(?string $notes): self
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    public function getSeminarYear(): ?int
+    {
+        return $this->seminarYear;
+    }
+
+    public function setSeminarYear(int $seminarYear): self
+    {
+        $this->seminarYear = $seminarYear;
 
         return $this;
     }
