@@ -42,10 +42,10 @@ class StaffAssignment
     #[ORM\Column(nullable: true)]
     private ?int $age = null;
 
-    #[ORM\ManyToOne(inversedBy: 'staffAssignments')]
+    #[ORM\ManyToOne]
     private ?LetterGroup $letterGroup = null;
 
-    #[ORM\ManyToOne(inversedBy: 'staffAssignments')]
+    #[ORM\ManyToOne]
     private ?DormRoom $dormRoom = null;
 
     // Emergency contact
