@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 
@@ -206,6 +207,62 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $assignmentCheckOutNotes = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: StaffAssignment::class)]
+    private Collection $staffAssignments;
+
+    public function __construct()
+    {
+        $this->staffAssignments = new ArrayCollection();
+    }
+
+    public function getStaffAssignments(): Collection
+    {
+        return $this->staffAssignments;
+    }
+
+    public function addStaffAssignment(StaffAssignment $assignment): self
+    {
+        if (!$this->staffAssignments->contains($assignment)) {
+            $this->staffAssignments->add($assignment);
+            $assignment->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeStaffAssignment(StaffAssignment $assignment): self
+    {
+        if ($this->staffAssignments->removeElement($assignment)) {
+            if ($assignment->getUser() === $this) {
+                $assignment->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    public function getActiveAssignment(): ?StaffAssignment
+    {
+        $month = (int) date('n');
+        $year = (int) date('Y');
+        $seminarYear = $month >= 9 ? $year + 1 : $year;
+
+        foreach ($this->staffAssignments as $assignment) {
+            if ($assignment->getSeminarYear() === $seminarYear) {
+                return $assignment;
+            }
+        }
+        return null;
+    }
+
+    public function getAssignmentForYear(int $year): ?StaffAssignment
+    {
+        foreach ($this->staffAssignments as $assignment) {
+            if ($assignment->getSeminarYear() === $year) {
+                return $assignment;
+            }
+        }
+        return null;
+    }
 
     public function getId(): ?int
     {
