@@ -35,7 +35,7 @@ class LetterGroupCrudController extends AbstractCrudController
             'homeBuilding',
             'homeRoom',
             'interview_assignment',
-            AssociationField::new('facilitators')
+            AssociationField::new('staffAssignments', 'Facilitators')
                 ->setFormTypeOptions([
                     'by_reference' => false,
                     'multiple' => true

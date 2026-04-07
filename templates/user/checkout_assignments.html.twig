@@ -18,7 +18,7 @@
             {% for user in users %}
                 {% if user.assignmentCheckOut is not null or user.assignmentCheckOutNotes is not null %}
                     <tr>
-                        <td class="view-link"><a href="{{ path('app_user_show', { 'id': user.id }) }}">{{ global_view_link | raw }}</a></td>
+                        <td class="view-link"><a href="{{ path('app_user_show', { 'id': user.userId }) }}">{{ global_view_link | raw }}</a></td>
                         <td>{{ user.consolidatedFirstName }}</td>
                         <td>{{ user.lastName }}</td>
                         <td>{{ user.position }}</td>

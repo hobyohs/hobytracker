@@ -3,28 +3,23 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\Ambassador;
-use App\Entity\User;
-//use App\Form\AmbassadorType;
 use App\Repository\AmbassadorRepository;
-use App\Repository\UserRepository;
-//use Symfony\Component\HttpFoundation\Request;
-//use Symfony\Component\HttpFoundation\Response;
+use App\Repository\StaffAssignmentRepository;
+use App\Service\SeminarYearService;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/lists')]
 class CombinedController extends AbstractController
 {
-    
     #[Route('/all_groups', name: 'all_groups', methods: ['GET'])]
-    public function groupAction(AmbassadorRepository $ambassadorRepository, UserRepository $userRepository)
+    public function groupAction(AmbassadorRepository $ambassadorRepository, StaffAssignmentRepository $saRepo, SeminarYearService $yearService)
     {
-    
+        $year = $yearService->getActiveSeminarYear();
         $ambassadors = $ambassadorRepository->findAllWithGroups();
-        $users = $userRepository->findAllWithGroups();
-        
+        $staffAssignments = $saRepo->findActiveByYear($year);
+
         $people = [];
-        
+
         foreach ($ambassadors as $ambassador) {
             $people[] = [
                 'type' => 'ambassador',
@@ -35,42 +30,40 @@ class CombinedController extends AbstractController
                 'school' => $ambassador->getSchool(),
                 'role' => 'Ambassador',
                 'group' => $ambassador->getLetterGroup(),
-                'sort' => 4
+                'sort' => 4,
             ];
         }
-        
-        foreach ($users as $user) {
-            
-            $people[] = [
-                'type' => 'user',
-                'showpath' => 'app_user_show',
-                'id' => $user->getId(),
-                'lastName' => $user->getLastName(),
-                'firstName' => $user->getConsolidatedFirstName(),
-                'group' => $user->getLetterGroup(),
-                'school' => '',
-                'role' => $user->getPosition(),
-                'sort' => $user->getSortRank()
-            ];
-            
-            unset($sort);
-            
+
+        foreach ($staffAssignments as $sa) {
+            if ($sa->getLetterGroup() !== null) {
+                $people[] = [
+                    'type' => 'user',
+                    'showpath' => 'app_user_show',
+                    'id' => $sa->getUserId(),
+                    'lastName' => $sa->getLastName(),
+                    'firstName' => $sa->getConsolidatedFirstName(),
+                    'group' => $sa->getLetterGroup(),
+                    'school' => '',
+                    'role' => $sa->getPosition(),
+                    'sort' => $sa->getSortRank(),
+                ];
+            }
         }
-    
-        return $this->render('combined/letterGroups.html.twig', array(
-            'people' => $people
-        ));
+
+        return $this->render('combined/letterGroups.html.twig', [
+            'people' => $people,
+        ]);
     }
-    
+
     #[Route('/emergency', name: 'emergency_contacts', methods: ['GET'])]
-    public function ecAction(AmbassadorRepository $ambassadorRepository, UserRepository $userRepository)
+    public function ecAction(AmbassadorRepository $ambassadorRepository, StaffAssignmentRepository $saRepo, SeminarYearService $yearService)
     {
-    
+        $year = $yearService->getActiveSeminarYear();
         $ambassadors = $ambassadorRepository->findAllCombinedInfo();
-        $users = $userRepository->findAllCombinedInfo();
-        
+        $staffAssignments = $saRepo->findActiveByYear($year);
+
         $people = [];
-        
+
         foreach ($ambassadors as $ambassador) {
             $people[] = [
                 'type' => 'ambassador',
@@ -84,43 +77,43 @@ class CombinedController extends AbstractController
                 'ecLastName' => $ambassador->getEcLastName(),
                 'ecRelationship' => $ambassador->getEcRelationship(),
                 'ecPhone1' => $ambassador->getEcPhone1(),
-                'ecPhone2' => $ambassador->getEcPhone2()
+                'ecPhone2' => $ambassador->getEcPhone2(),
             ];
         }
-        
-        foreach ($users as $user) {
+
+        foreach ($staffAssignments as $sa) {
             $people[] = [
                 'type' => 'user',
                 'showpath' => 'app_user_show',
-                'id' => $user->getId(),
-                'lastName' => $user->getLastName(),
-                'firstName' => $user->getConsolidatedFirstName(),
-                'prefName' => $user->getPrefName(),
+                'id' => $sa->getUserId(),
+                'lastName' => $sa->getLastName(),
+                'firstName' => $sa->getConsolidatedFirstName(),
+                'prefName' => $sa->getPrefName(),
                 'group' => 'Staff',
-                'ecFirstName' => $user->getEcFirstName(),
-                'ecLastName' => $user->getEcLastName(),
-                'ecRelationship' => $user->getEcRelationship(),
-                'ecPhone1' => $user->getEcPhone1(),
-                'ecPhone2' => $user->getEcPhone2()
+                'ecFirstName' => $sa->getEcFirstName(),
+                'ecLastName' => $sa->getEcLastName(),
+                'ecRelationship' => $sa->getEcRelationship(),
+                'ecPhone1' => $sa->getEcPhone1(),
+                'ecPhone2' => $sa->getEcPhone2(),
             ];
         }
-    
-        return $this->render('combined/ec.html.twig', array(
-            'people' => $people
-        ));
+
+        return $this->render('combined/ec.html.twig', [
+            'people' => $people,
+        ]);
     }
-    
+
     #[Route('/dorms', name: 'dorm_list', methods: ['GET'])]
-    public function dormAction(AmbassadorRepository $ambassadorRepository, UserRepository $userRepository)
+    public function dormAction(AmbassadorRepository $ambassadorRepository, StaffAssignmentRepository $saRepo, SeminarYearService $yearService)
     {
-    
+        $year = $yearService->getActiveSeminarYear();
         $ambassadors = $ambassadorRepository->findAllCombinedInfo();
-        $users = $userRepository->findAllCombinedInfo();
-        
+        $staffAssignments = $saRepo->findActiveByYear($year);
+
         $people = [];
-        
+
         foreach ($ambassadors as $ambassador) {
-            if (!empty($ambassador->getDorm()) and !empty($ambassador->getRoom())) {
+            if (!empty($ambassador->getDorm()) && !empty($ambassador->getRoom())) {
                 $people[] = [
                     'type' => 'ambassador',
                     'showpath' => 'app_ambassador_show',
@@ -135,56 +128,50 @@ class CombinedController extends AbstractController
                 ];
             }
         }
-        
-        foreach ($users as $user) {
-            
-            if (!empty($user->getDorm()) and !empty($user->getRoom())) {
+
+        foreach ($staffAssignments as $sa) {
+            if (!empty($sa->getDorm()) && !empty($sa->getRoom())) {
                 $people[] = [
                     'type' => 'user',
                     'showpath' => 'app_user_show',
-                    'id' => $user->getId(),
-                    'lastName' => $user->getLastName(),
-                    'firstName' => $user->getConsolidatedFirstName(),
-                    'shirtSize' => $user->getShirtSize(),
-                    'dormRoom' => $user->getDormRoom(),
+                    'id' => $sa->getUserId(),
+                    'lastName' => $sa->getLastName(),
+                    'firstName' => $sa->getConsolidatedFirstName(),
+                    'shirtSize' => $sa->getShirtSize(),
+                    'dormRoom' => $sa->getDormRoom(),
                     'group' => 'Staff',
-                    'dorm' => $user->getDorm(),
-                    'room' => $user->getRoom(),
+                    'dorm' => $sa->getDorm(),
+                    'room' => $sa->getRoom(),
                 ];
-             }
-             
+            }
         }
-    
-        return $this->render('combined/dorms.html.twig', array(
-            'people' => $people
-        ));
+
+        return $this->render('combined/dorms.html.twig', [
+            'people' => $people,
+        ]);
     }
-    
+
     #[Route('/dietary', name: 'dietary', methods: ['GET'])]
-    public function dietAction(AmbassadorRepository $ambassadorRepository, UserRepository $userRepository)
+    public function dietAction(AmbassadorRepository $ambassadorRepository, StaffAssignmentRepository $saRepo, SeminarYearService $yearService)
     {
+        $year = $yearService->getActiveSeminarYear();
         $ambassadors = $ambassadorRepository->findAllCombinedInfo();
-        $users = $userRepository->findAllCombinedInfo();
-        
-        $people = [];
-    
+        $staffAssignments = $saRepo->findActiveByYear($year);
+
         $nullDietRestrictions = [
             "0",
             "I Eat Everything, no restrictions",
             "I Eat Everything no restrictions;",
             "I Eat Everything, no restrictions;",
             "None",
-            "I Eat Everything, no restrictions,"
+            "I Eat Everything, no restrictions,",
         ];
-        
+
+        $people = [];
+
         foreach ($ambassadors as $ambassador) {
-    
-            if(!in_array($ambassador->getDietRestrictions(), $nullDietRestrictions)) {
-                $restrictions = $ambassador->getDietRestrictions();
-            } else {
-                $restrictions = NULL;
-            }
-            if (!empty($restrictions) OR !empty($ambassador->getDietInfo()) OR !empty($ambassador->getDietSeverity())) {
+            $restrictions = !in_array($ambassador->getDietRestrictions(), $nullDietRestrictions) ? $ambassador->getDietRestrictions() : null;
+            if (!empty($restrictions) || !empty($ambassador->getDietInfo()) || !empty($ambassador->getDietSeverity())) {
                 $people[] = [
                     'type' => 'ambassador',
                     'showpath' => 'app_ambassador_show',
@@ -197,49 +184,40 @@ class CombinedController extends AbstractController
                     'dietSeverity' => $ambassador->getDietSeverity(),
                 ];
             }
-            unset($restrictions);
         }
-        
-        foreach ($users as $user) {
-            
-            if(!in_array($user->getDietRestrictions(), $nullDietRestrictions)) {
-                $restrictions = $user->getDietRestrictions();
-            } else {
-                $restrictions = NULL;
-            }
-            
-            if (!empty($restrictions) OR !empty($user->getDietInfo()) OR !empty($user->getDietSeverity())) {
-            
+
+        foreach ($staffAssignments as $sa) {
+            $restrictions = !in_array($sa->getDietRestrictions(), $nullDietRestrictions) ? $sa->getDietRestrictions() : null;
+            if (!empty($restrictions) || !empty($sa->getDietInfo()) || !empty($sa->getDietSeverity())) {
                 $people[] = [
                     'type' => 'user',
                     'showpath' => 'app_user_show',
-                    'id' => $user->getId(),
-                    'lastName' => $user->getLastName(),
-                    'firstName' => $user->getConsolidatedFirstName(),
+                    'id' => $sa->getUserId(),
+                    'lastName' => $sa->getLastName(),
+                    'firstName' => $sa->getConsolidatedFirstName(),
                     'group' => 'Staff',
                     'dietRestrictions' => $restrictions,
-                    'dietInfo' => $user->getDietInfo(),
-                    'dietSeverity' => $user->getDietSeverity(),
+                    'dietInfo' => $sa->getDietInfo(),
+                    'dietSeverity' => $sa->getDietSeverity(),
                 ];
             }
-            unset($restrictions);
         }
-        return $this->render('combined/dietary.html.twig', array(
-            'people' => $people
-        ));
+
+        return $this->render('combined/dietary.html.twig', [
+            'people' => $people,
+        ]);
     }
-    
+
     #[Route('/medical', name: 'medical', methods: ['GET'])]
-    public function medicalAction(AmbassadorRepository $ambassadorRepository, UserRepository $userRepository)
+    public function medicalAction(AmbassadorRepository $ambassadorRepository, StaffAssignmentRepository $saRepo, SeminarYearService $yearService)
     {
-        
+        $year = $yearService->getActiveSeminarYear();
         $ambassadors = $ambassadorRepository->findAllCombinedInfo();
-        $users = $userRepository->findAllCombinedInfo();
-        
+        $staffAssignments = $saRepo->findActiveByYear($year);
+
         $people = [];
-        
+
         foreach ($ambassadors as $ambassador) {
-        
             $people[] = [
                 'type' => 'ambassador',
                 'showpath' => 'app_ambassador_show',
@@ -254,27 +232,25 @@ class CombinedController extends AbstractController
                 'currentRx' => $ambassador->getCurrentRx(),
             ];
         }
-        
-        foreach ($users as $user) {
-            
+
+        foreach ($staffAssignments as $sa) {
             $people[] = [
                 'type' => 'user',
                 'showpath' => 'app_user_show',
-                'id' => $user->getId(),
-                'lastName' => $user->getLastName(),
-                'firstName' => $user->getConsolidatedFirstName(),
+                'id' => $sa->getUserId(),
+                'lastName' => $sa->getLastName(),
+                'firstName' => $sa->getConsolidatedFirstName(),
                 'group' => 'Staff',
-                'currentConditions' => $user->getCurrentConditions(),
-                'exerciseLimits' => $user->getExerciseLimits(),
-                'allergies' => $user->getAllergies(),
-                'medAllergies' => $user->getMedAllergies(),
-                'currentRx' => $user->getCurrentRx(),
+                'currentConditions' => $sa->getCurrentConditions(),
+                'exerciseLimits' => $sa->getExerciseLimits(),
+                'allergies' => $sa->getAllergies(),
+                'medAllergies' => $sa->getMedAllergies(),
+                'currentRx' => $sa->getCurrentRx(),
             ];
-                
         }
-        return $this->render('combined/medical.html.twig', array(
-            'people' => $people
-        ));
+
+        return $this->render('combined/medical.html.twig', [
+            'people' => $people,
+        ]);
     }
-    
 }

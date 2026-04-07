@@ -20,16 +20,16 @@
 		<tbody>
 		
 				{% for fac in group.facilitators %}
-					{% if fac != app.user %}
+					{% if fac.userId != app.user.id %}
 						<tr>
 							<td class="view-link"><a href="{{ path('staffeval_edit', { 'id': fac.id }) }}"><span class="fa fa-pencil"></span></a></td>
 							<td>{{fac.consolidatedFirstName}}</td>
 							<td>{{fac.lastName}}</td>
 							<td>{{fac.position}}</td>
 							<td>
-								{% if fac.evalstatus == 1 %}
+								{% if fac.evalStatus == 1 %}
 									Yes
-								{% elseif fac.evalstatus == 0 and fac.evalstatus is not null %}
+								{% elseif fac.evalStatus == 0 and fac.evalStatus is not null %}
 									No
 								{% endif %}
 							</td>

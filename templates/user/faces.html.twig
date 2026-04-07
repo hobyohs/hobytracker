@@ -12,7 +12,7 @@
 						<div class="card border-0 shadow">
 							<img src="{{ user.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="card-img-top" alt="{{ user.fullName }}"">
 							<div class="card-body text-center">
-								<a href="{{ path('app_user_show', { 'id': user.id }) }}" class="stretched-link">
+								<a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="stretched-link">
 									<h5 class="card-title mb-0">{{ user.fullName }}</h5>
 									<div class="card-text">
 										{{ user.position }}

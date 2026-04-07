@@ -92,7 +92,7 @@
 					<tr>
 						<td>
 							<a href="{{ ea_url()
-								.setController('App\\Controller\\Admin\\UserCrudController')
+								.setController('App\\Controller\\Admin\\StaffAssignmentCrudController')
 								.setAction('detail')
 								.setEntityId(user.id)
 							}}">{{user}}</a>
@@ -138,7 +138,7 @@
 							{{user.evalPunctual|parse_likert}}
 						</td>
 						<td>
-							{{user.evalWhyNot}}
+							{{user.evalWhynot}}
 						</td>
 						<td>
 							{{user.evalComments}}

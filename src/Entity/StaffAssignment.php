@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\StaffAssignmentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -42,10 +43,10 @@ class StaffAssignment
     #[ORM\Column(nullable: true)]
     private ?int $age = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'staffAssignments')]
     private ?LetterGroup $letterGroup = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'staffAssignments')]
     private ?DormRoom $dormRoom = null;
 
     // Emergency contact
@@ -212,6 +213,11 @@ class StaffAssignment
         return $this->user?->getEmail();
     }
 
+    public function getUserId(): ?int
+    {
+        return $this->user?->getId();
+    }
+
     public function getCellPhone(): ?string
     {
         return $this->user?->getCellPhone();
@@ -257,6 +263,13 @@ class StaffAssignment
     public function getRoom(): ?string
     {
         return $this->dormRoom?->getRoom() ?? '';
+    }
+
+    public function getCofacilitators(): ?ArrayCollection
+    {
+        $lg = $this->letterGroup;
+        if (is_null($lg)) return null;
+        return $lg->getFacilitatorsExcept($this->getUserId());
     }
 
     // ========== Standard getters and setters ==========

@@ -12,11 +12,10 @@ use Doctrine\Persistence\ManagerRegistry;
 #[ORM\Entity(repositoryClass: LetterGroupRepository::class)]
 class LetterGroup
 {
-    
     public function __toString() {
         return $this->getLetter();
     }
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,8 +36,8 @@ class LetterGroup
     #[ORM\OneToMany(mappedBy: 'letterGroup', targetEntity: Ambassador::class)]
     private Collection $ambassadors;
 
-    #[ORM\OneToMany(mappedBy: 'letterGroup', targetEntity: User::class)]
-    private Collection $facilitators;
+    #[ORM\OneToMany(mappedBy: 'letterGroup', targetEntity: StaffAssignment::class)]
+    private Collection $staffAssignments;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $interview_assignment = null;
@@ -49,14 +48,14 @@ class LetterGroup
     public function __construct()
     {
         $this->ambassadors = new ArrayCollection();
-        $this->facilitators = new ArrayCollection();
+        $this->staffAssignments = new ArrayCollection();
     }
-    
+
     public function printLetterOnly()
     {
         return "<span class=\"letter ".$this->color."\">".$this->letter."</span>";
     }
-    
+
     public function printLetterGroup()
     {
         return "<span class=\"letter ".$this->color."\">Group ".$this->letter."</span>";
@@ -75,7 +74,6 @@ class LetterGroup
     public function setLetter(string $letter): self
     {
         $this->letter = $letter;
-
         return $this;
     }
 
@@ -87,7 +85,6 @@ class LetterGroup
     public function setHomeBuilding(?string $homeBuilding): self
     {
         $this->homeBuilding = $homeBuilding;
-
         return $this;
     }
 
@@ -99,7 +96,6 @@ class LetterGroup
     public function setHomeRoom(?string $homeRoom): self
     {
         $this->homeRoom = $homeRoom;
-
         return $this;
     }
 
@@ -111,13 +107,12 @@ class LetterGroup
     public function setColor(?string $color): self
     {
         $this->color = $color;
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, Ambassador>
-     */
+    // ========== Ambassadors ==========
+
+    /** @return Collection<int, Ambassador> */
     public function getAmbassadors(): Collection
     {
         return $this->ambassadors;
@@ -129,73 +124,75 @@ class LetterGroup
             $this->ambassadors->add($ambassador);
             $ambassador->setLetterGroup($this);
         }
-
         return $this;
     }
 
     public function removeAmbassador(Ambassador $ambassador): self
     {
         if ($this->ambassadors->removeElement($ambassador)) {
-            // set the owning side to null (unless already changed)
             if ($ambassador->getLetterGroup() === $this) {
                 $ambassador->setLetterGroup(null);
             }
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection<int, User>
-     */
+    // ========== Staff Assignments (facilitators) ==========
+
+    /** @return Collection<int, StaffAssignment> */
+    public function getStaffAssignments(): Collection
+    {
+        return $this->staffAssignments;
+    }
+
+    /** Alias for template compatibility */
     public function getFacilitators(): Collection
     {
-        return $this->facilitators;
+        return $this->staffAssignments;
     }
-    
-    public function getFacilitatorsExcept($userid): ArrayCollection
+
+    public function getFacilitatorsExcept(int $userId): ArrayCollection
     {
-        $return_array = new ArrayCollection();
-        foreach($this->facilitators as $fac) {
-            if ($fac->getId() != $userid) {
-                $return_array[] = $fac;
+        $result = new ArrayCollection();
+        foreach ($this->staffAssignments as $sa) {
+            if ($sa->getUserId() !== $userId) {
+                $result[] = $sa;
             }
         }
-        return $return_array;
+        return $result;
     }
-    
+
     public function getJuniorFacilitators(): ArrayCollection
     {
-        $return_array = new ArrayCollection();
-        foreach($this->facilitators as $fac) {
-            if ($fac->getPosition() == "Junior Facilitator") {
-                $return_array[] = $fac;
+        $result = new ArrayCollection();
+        foreach ($this->staffAssignments as $sa) {
+            if ($sa->getPosition() == 'Junior Facilitator') {
+                $result[] = $sa;
             }
         }
-        return $return_array;
+        return $result;
     }
 
-    public function addFacilitator(User $facilitator): self
+    public function addStaffAssignment(StaffAssignment $sa): self
     {
-        if (!$this->facilitators->contains($facilitator)) {
-            $this->facilitators->add($facilitator);
-            $facilitator->setLetterGroup($this);
+        if (!$this->staffAssignments->contains($sa)) {
+            $this->staffAssignments->add($sa);
+            $sa->setLetterGroup($this);
         }
-
         return $this;
     }
 
-    public function removeFacilitator(User $facilitator): self
+    public function removeStaffAssignment(StaffAssignment $sa): self
     {
-        if ($this->facilitators->removeElement($facilitator)) {
-            // set the owning side to null (unless already changed)
-            if ($facilitator->getLetterGroup() === $this) {
-                $facilitator->setLetterGroup(null);
+        if ($this->staffAssignments->removeElement($sa)) {
+            if ($sa->getLetterGroup() === $this) {
+                $sa->setLetterGroup(null);
             }
         }
-
         return $this;
     }
+
+    // ========== Other ==========
 
     public function getInterviewAssignment(): ?string
     {
@@ -205,7 +202,6 @@ class LetterGroup
     public function setInterviewAssignment(?string $interview_assignment): self
     {
         $this->interview_assignment = $interview_assignment;
-
         return $this;
     }
 
@@ -217,7 +213,6 @@ class LetterGroup
     public function setSeminarYear(int $seminarYear): self
     {
         $this->seminarYear = $seminarYear;
-
         return $this;
     }
 }

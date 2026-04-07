@@ -15,7 +15,7 @@
         <tbody>
             {% for user in users %}
                 <tr>
-                    <td class="view-link"><a href="{{ path('app_user_show', { 'id': user.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td class="view-link"><a href="{{ path('app_user_show', { 'id': user.userId }) }}">{{ global_view_link | raw }}</a></td>
                     <td>{{ user.consolidatedFirstName }}</td>
                     <td>{{ user.lastName }}</td>
                     <td>{{ user.position }}</td>

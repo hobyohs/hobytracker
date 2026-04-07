@@ -18,12 +18,8 @@ class UserType extends AbstractType
             ->add('isVerified')
             ->add('firstName')
             ->add('lastName')
-            ->add('photo')
             ->add('prefName')
             ->add('cellPhone')
-            ->add('shirtSize')
-            ->add('dorm')
-            ->add('room')
         ;
     }
 
