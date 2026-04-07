@@ -29,11 +29,7 @@
                 {{ global_columnizer.spitShowRow(ambassador, 'prefName') | raw }}
             {% endif %}
             {{ global_columnizer.spitShowRow(ambassador, 'lastName', true) | raw }}
-            {% if is_granted('ROLE_BOARD') or (app.user.controlledAge >= 21 and app.user.letterGroup == ambassador.letterGroup) %}
-                {# {{ global_columnizer.spitShowRow(ambassador, 'gender', true) | raw }} #}
-            {% endif %}
             {{ global_columnizer.spitShowRow(ambassador, 'pronouns') | raw }}
-{#             {{ global_columnizer.spitShowRow(ambassador, 'dateOfBirth', true) | raw }} #}
             {{ global_columnizer.spitShowRow(ambassador, 'homePhone') | raw }}
             {{ global_columnizer.spitShowRow(ambassador, 'cellPhone') | raw }}
             {{ global_columnizer.spitShowRow(ambassador, 'email', true) | raw }}
@@ -46,12 +42,6 @@
         <tbody>
             {{ global_columnizer.spitShowRow(ambassador, 'dorm', true) | raw }}
             {{ global_columnizer.spitShowRow(ambassador, 'room', true) | raw }}
-{#
-            {{ global_columnizer.spitShowRow(ambassador, 'group') | raw }}
-            {{ global_columnizer.spitShowRow(ambassador, 'color') | raw }}
-            {{ global_columnizer.spitShowRow(ambassador, 'region') | raw }}
-#}
-           
         </tbody>
     </table>
     
