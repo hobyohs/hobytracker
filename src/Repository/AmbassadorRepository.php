@@ -44,7 +44,7 @@ class AmbassadorRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a', 'g')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->leftJoin('a.letterGroup', 'g')
             ->orderBy('a.lastName', 'ASC')
             ->getQuery()
@@ -56,7 +56,7 @@ class AmbassadorRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a', 'g')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->leftJoin('a.letterGroup', 'g')
             ->where('a.checkedOut = 0')
             ->orderBy('a.lastName', 'ASC')
@@ -74,7 +74,7 @@ class AmbassadorRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->orderBy('a.lastName', 'ASC')
             ->getQuery()
             ->getResult();
@@ -86,7 +86,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('a')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where($qb->expr()->isNotNull('a.letterGroup'))
             ->getQuery()
             ->getResult();
@@ -98,7 +98,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('a')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.takingBus = TRUE')
             ->getQuery()
             ->getResult();
@@ -110,7 +110,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('a')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.checkedIn = 0')
             ->getQuery()
             ->getResult();
@@ -122,7 +122,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.checkedIn = 1')
             ->getQuery()
             ->getSingleScalarResult();
@@ -134,7 +134,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('a')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.checkedOut = 0')
             ->andWhere('a.checkedIn = 1')
             ->getQuery()
@@ -147,7 +147,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.checkedOut = 1')
             ->getQuery()
             ->getSingleScalarResult();
@@ -159,7 +159,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.juniorCallMade = 1')
             ->getQuery()
             ->getSingleScalarResult();
@@ -171,7 +171,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.juniorCallMade = 1')
             ->andWhere('a.juniorCallDisposition = :dispo')
             ->setParameter('dispo', 'spoke_with_ambassador')
@@ -185,7 +185,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.checkin_paperwork = 1')
             ->getQuery()
             ->getSingleScalarResult();
@@ -197,7 +197,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         $sqlTime = $qb    
             ->select('a.psms_uploaded_on')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->orderBy('a.psms_uploaded_on', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
@@ -229,7 +229,7 @@ class AmbassadorRepository extends ServiceEntityRepository
                 else 10 end) as sort_order'
                 )
             ->groupBy('a.shirtSize')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.shirtSize IS NOT NULL')
             ->setParameter('s', 'S')
             ->setParameter('m', 'M')
@@ -248,7 +248,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.shirtSize IS NULL')
             ->getQuery()
             ->getSingleScalarResult();
@@ -259,7 +259,7 @@ class AmbassadorRepository extends ServiceEntityRepository
         return $this->getEntityManager()
             ->createQueryBuilder()
             ->select('a', 'g')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->leftJoin('a.letterGroup', 'g')
             ->where('a.eval_recommendation IS NOT NULL')
             ->orderBy('a.lastName', 'ASC')
@@ -273,7 +273,7 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->createQueryBuilder();
         return $qb    
             ->select('COUNT(a.id)')
-            ->from('App:Ambassador', 'a')
+            ->from('App\Entity\Ambassador', 'a')
             ->where('a.eval_recommendation IS NULL')
             ->getQuery()
             ->getSingleScalarResult();

@@ -47,7 +47,7 @@ class LetterGroupRepository extends ServiceEntityRepository
         $groups = $em
             ->createQueryBuilder()
             ->select('g')
-            ->from('App:LetterGroup', 'g')
+            ->from('App\Entity\LetterGroup', 'g')
             ->getQuery()
             ->getResult();
             
@@ -60,7 +60,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb1 = $em->createQueryBuilder();
             $boyAmb = $qb1
                 ->select($qb1->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.gender = :gender1 OR a.gender = :gender2')
@@ -73,7 +73,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             // $qb2 = $em->createQueryBuilder();   
             // $boyAmb = $maleAmb+$qb2
             //     ->select($qb2->expr()->count('a.id'))
-            //     ->from('App:LetterGroup', 'g')
+            //     ->from('App\Entity\LetterGroup', 'g')
             //     ->leftJoin('g.ambassadors', 'a')
             //     ->where('g = :group')
             //     ->andWhere('a.gender = :sex')
@@ -86,7 +86,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb3 = $em->createQueryBuilder();
             $girlAmb = $qb3
                 ->select($qb3->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.gender = :gender1 OR a.gender = :gender2')
@@ -99,7 +99,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb4 = $em->createQueryBuilder();   
             $otherGenderAmb = $qb4
                 ->select($qb4->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.gender <> :male')
@@ -117,7 +117,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb6 = $em->createQueryBuilder();
             $whiteAmb = $qb6
                 ->select($qb6->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.ethnicity = :old OR a.ethnicity = :new')
@@ -130,7 +130,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb7 = $em->createQueryBuilder();
             $nonwhiteAmb = $qb7
                 ->select($qb7->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.ethnicity <> :ethnicity')
@@ -142,7 +142,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb8 = $em->createQueryBuilder();
             $unknownAmb = $qb8
                 ->select($qb8->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.ethnicity is NULL')
@@ -153,7 +153,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb9 = $em->createQueryBuilder();
             $fcAmb = $qb9
                 ->select($qb9->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.county = :county')
@@ -165,7 +165,7 @@ class LetterGroupRepository extends ServiceEntityRepository
             $qb10 = $em->createQueryBuilder();
             $nonfcAmb = $qb10
                 ->select($qb10->expr()->count('a.id'))
-                ->from('App:LetterGroup', 'g')
+                ->from('App\Entity\LetterGroup', 'g')
                 ->leftJoin('g.ambassadors', 'a')
                 ->where('g = :group')
                 ->andWhere('a.county <> :county')

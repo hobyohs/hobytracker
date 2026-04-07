@@ -62,7 +62,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return $this->getEntityManager()
                 ->createQueryBuilder()
                 ->select('u')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->orderBy('u.lastName', 'ASC')
                 ->getQuery()
                 ->getResult();    
@@ -74,7 +74,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return $this->getEntityManager()
                 ->createQueryBuilder()
                 ->select('u')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->orderBy('u.lastName', 'ASC')
                 ->getQuery()
                 ->getResult();
@@ -87,7 +87,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return $this->getEntityManager()
                 ->createQueryBuilder()
                 ->select('u')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->orderBy('u.lastName', 'ASC')
                 ->where('u.letterGroup IS NOT NULL')
                 ->getQuery()
@@ -101,7 +101,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->createQueryBuilder();
             $sqlTime = $qb    
                 ->select('u.psmsUploadedOn')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->orderBy('u.psmsUploadedOn', 'DESC')
                 ->setMaxResults(1)
                 ->getQuery()
@@ -133,7 +133,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 else 10 end) as sort_order'
                 )
                 ->groupBy('u.shirtSize')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->where('u.shirtSize IS NOT NULL')
                 ->setParameter('s', 'S')
                 ->setParameter('m', 'M')
@@ -152,7 +152,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->createQueryBuilder();
             return $qb    
                 ->select('COUNT(u.id)')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->where('u.shirtSize IS NULL')
                 ->getQuery()
                 ->getSingleScalarResult();
@@ -163,7 +163,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             return $this->getEntityManager()
                 ->createQueryBuilder()
                 ->select('u', 'g')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->leftJoin('u.letterGroup', 'g')
                 ->where('u.eval_status = TRUE')
                 ->orderBy('u.lastName', 'ASC')
@@ -177,7 +177,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->createQueryBuilder();
             return $qb    
                 ->select('COUNT(u.id)')
-                ->from('App:User', 'u')
+                ->from('App\Entity\User', 'u')
                 ->where('u.eval_status = FALSE')
                 ->getQuery()
                 ->getSingleScalarResult();
