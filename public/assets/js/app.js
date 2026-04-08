@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (!calendarEl) return;
   var calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: 'timeGridDay',
-    googleCalendarApiKey: 'AIzaSyBEndjaolbHxZ7O8r6cx2pmyGwxoY_KoNk',
+    googleCalendarApiKey: 'AIzaSyDAbuEahdHQAFiBW88EkVUf9hlnPEGpLRk',
     events: { googleCalendarId: 'hobyohiosouth.org_kn2ogfi3d0ddfjef20h8hj7734@group.calendar.google.com' },
     height: 'auto',
     views: { timeGridDay: { slotDuration: '00:15:00', slotLabelInterval: '01:00:00', slotMinTime: '07:00:00' } },
