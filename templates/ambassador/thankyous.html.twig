@@ -1,37 +1,22 @@
 {% extends 'base.html.twig' %}
-{# {% block maintag %}<main class="wide">{% endblock %} #}
 {% block body %}
-    <h1>Thank You Assignments</h1>
-    <table class="standard-view table table-striped table-bordered" id="all-thankyous-table">
-        <thead>
-            <tr>
-                <th>View</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Group</th>
-                <th>Thank You Type</th>
-                <th>Thank You Assignment</th>
-            </tr>
-        </thead>
+<div class="ht-page-header"><h1>Thank You Assignments</h1></div>
+<div class="ht-dt-card">
+    <table class="table" id="all-thankyous-table">
+        <thead><tr>
+            <th>View</th><th>First Name</th><th>Last Name</th><th>Group</th>
+            <th>Thank You Type</th><th>Assignment</th>
+        </tr></thead>
         <tbody>
             {% for ambassador in ambassadors %}
                 <tr>
                     <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
-                    <td>{{ambassador.consolidatedFirstName}}</td>
-                    <td>{{ambassador.lastName}}</td>
-                    <td class="center">
-                        {% if ambassador.letterGroup == "Staff" %}
-                            Staff
-                        {% elseif not ambassador.letterGroup is empty %}
-                            <a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
-                        {% endif %}
-                    </td>
-                    <td>{{ambassador.thankyouType}}</td>
-                    <td>{{ambassador.thankyouName}}</td>
+                    <td>{{ambassador.consolidatedFirstName}}</td><td>{{ambassador.lastName}}</td>
+                    <td class="center">{% if not ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>{% endif %}</td>
+                    <td>{{ambassador.thankyouType}}</td><td>{{ambassador.thankyouName}}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    
+</div>
 {% endblock %}

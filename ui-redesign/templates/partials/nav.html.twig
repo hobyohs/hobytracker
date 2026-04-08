@@ -4,7 +4,7 @@
         <a href="{{ path('homepage') }}">
             <img src="{{ asset('assets/images/logo.png') }}" alt="HOBYTracker">
         </a>
-        <button type="button" id="sidebarClose" class="btn-close" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
 
@@ -122,12 +122,9 @@
     </div>
 </div>
 
-{# ── Sidebar backdrop #}
-<div id="sidebarBackdrop"></div>
-
 {# ── Top Header Bar ──────────────────────────────────────── #}
 <header class="ht-header">
-    <button class="ht-hamburger" type="button" aria-label="Open menu">
+    <button class="ht-hamburger" data-bs-toggle="offcanvas" data-bs-target="#mainSidebar" aria-controls="mainSidebar" aria-label="Open menu">
         <span></span>
         <span></span>
         <span></span>

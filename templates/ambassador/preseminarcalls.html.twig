@@ -1,64 +1,40 @@
 {% extends 'base.html.twig' %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
-	<h1>Pre-Seminar Call Report</h1>
-	<h3>{{ totalCalled }} of {{ totalAmb }} have had contact attempts. Of those, {{ totalSuccess }} have been successfully contacted, and {{ totalCalled - totalSuccess }} need calls back.</h3>
-	<h3>{{ totalAmb -  totalCalled}} ambassadors have not yet been called.</h3>
-	<table class="standard-view table table-striped table-bordered" id="calls-table">
-		<thead>
-			<tr>
-				<th class="no-export">View</th>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Cell Phone</th>
-				<th>School</th>
-				<th>Junior</th>
-				<th>Forms Submitted</th>
-				<th>Call Disposition</th>
-				<th>Call Notes</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for ambassador in ambassadors %}
-				<tr>
-					<td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
-					<td>{{ ambassador.consolidatedFirstName }}</td>
-					<td>{{ ambassador.lastName }}</td>
-					<td>{{ ambassador.cellPhone }}</td>
-					<td>{{ ambassador.school }}</td>
-					<td class="center">
-						{% for junior in ambassador.letterGroup.getJuniorFacilitators %}
-							{{junior.firstName}} {{junior.lastName}}<br>
-						{% endfor %}
-						<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">(Group {{ ambassador.letterGroup.letter }})</a>
-					</td>
-					
-					{% if ambassador.isCheckinPaperwork %}
-						<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-					{% else %}
-						<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-					{% endif %}
-
-					{% if ambassador.juniorCallDisposition == 'spoke_with_ambassador' %}
-						<td class="gridblock yay"><span class="fa fa-check"></span>&nbsp; Complete!</td>
-					{% elseif ambassador.juniorCallDisposition == 'left_message' %}
-						<td class="gridblock pray"><span class="fa fa-voicemail"></span> Left voicemail</td>
-					{% elseif ambassador.juniorCallDisposition == 'spoke_with_family'  %}
-						<td class="gridblock pray"><span class="fa fa-people-group"></span> Spoke with family</td>
-					{% elseif ambassador.juniorCallDisposition == 'wrong_number' %}
-						<td class="gridblock nay"><span class="fa fa-phone-slash"></span> Wrong number</td>
-					{% elseif ambassador.juniorCallDisposition == 'other' %}
-						<td class="gridblock okay"><span class="fa fa-circle-question"></span> Other</td>
-					{% else %}
-						<td class="gridblock oyvey"><span class="fa fa-phone"></span> Not yet called</td>
-					{% endif %}
-						
-					<td>{{ambassador.juniorCallNotes}}</td>
-
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	
+<div class="ht-page-header"><h1>Pre-Seminar Call Report</h1></div>
+<div class="ht-page-subtitle">
+    <strong>{{ totalCalled }}</strong> of <strong>{{ totalAmb }}</strong> contacted &middot;
+    <strong>{{ totalSuccess }}</strong> successful &middot;
+    {{ totalAmb - totalCalled }} not yet called
+</div>
+<div class="ht-dt-card">
+    <table class="table" id="calls-table">
+        <thead><tr>
+            <th class="no-export">View</th><th>First Name</th><th>Last Name</th><th>Cell Phone</th>
+            <th>School</th><th>Junior</th><th>Forms</th><th>Disposition</th><th>Notes</th>
+        </tr></thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td><td>{{ ambassador.lastName }}</td>
+                    <td>{{ ambassador.cellPhone }}</td><td>{{ ambassador.school }}</td>
+                    <td class="center">
+                        {% for junior in ambassador.letterGroup.getJuniorFacilitators %}{{junior.firstName}} {{junior.lastName}}<br>{% endfor %}
+                        <a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">({{ ambassador.letterGroup.letter }})</a>
+                    </td>
+                    {% if ambassador.isCheckinPaperwork %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                    {% if ambassador.juniorCallDisposition == 'spoke_with_ambassador' %}<td class="gridblock yay"><span class="fa fa-check"></span>&nbsp;Complete!</td>
+                    {% elseif ambassador.juniorCallDisposition == 'left_message' %}<td class="gridblock pray"><span class="fa fa-voicemail"></span> Left voicemail</td>
+                    {% elseif ambassador.juniorCallDisposition == 'spoke_with_family' %}<td class="gridblock pray"><span class="fa fa-people-group"></span> Spoke with family</td>
+                    {% elseif ambassador.juniorCallDisposition == 'wrong_number' %}<td class="gridblock nay"><span class="fa fa-phone-slash"></span> Wrong number</td>
+                    {% elseif ambassador.juniorCallDisposition == 'other' %}<td class="gridblock okay"><span class="fa fa-circle-question"></span> Other</td>
+                    {% else %}<td class="gridblock oyvey"><span class="fa fa-phone"></span> Not yet called</td>{% endif %}
+                    <td>{{ambassador.juniorCallNotes}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

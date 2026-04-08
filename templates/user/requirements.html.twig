@@ -1,95 +1,42 @@
 {% extends 'base.html.twig' %}
-
 {% block maintag %}<main class="wide">{% endblock %}
-
 {% block body %}
-    <h1>Staff Requirements Report</h1>
-    <h4 class="subtitle"><em>Last update detected: </em>{{ lastUpdated }}</h4>
-    <h5 class="subtitle"><em>Formstack submissions updated automatically hourly</em></h5>
-    <table class="standard-view table table-striped table-bordered" id="staff-req-table">
-        <thead>
-            <tr>
-                <th>View</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Position</th>
-                <th class="hidden">Email</th>
-                <th>Formstack Submitted</th>
-                <th>Background Check</th>
-                <th>Applied at HOBY.org</th>
-                <th>Hours Complete</th>
-                <th>Ambassador Registered</th>
-                {# <th>Committee Assignment Completed</th> #}
-                <th>Fundraising Requirement Met</th>
-                <th class="none">Notes</th>
-            </tr>
-        </thead>
+<div class="ht-page-header"><h1>Staff Requirements</h1></div>
+<div class="ht-page-subtitle">Last update: {{ lastUpdated }}</div>
+<div class="ht-dt-card">
+    <table class="table" id="staff-req-table">
+        <thead><tr>
+            <th>View</th><th>First Name</th><th>Last Name</th><th>Position</th>
+            <th class="hidden">Email</th>
+            <th>Paperwork</th><th>BG Check</th><th>HOBY App</th>
+            <th>Hours</th><th>Amb Registered</th><th>Fundraising</th><th class="none">Notes</th>
+        </tr></thead>
         <tbody>
             {% for user in users %}
                 <tr>
                     <td class="view-link"><a href="{{ path('app_user_edit_requirements', { 'id': user.id }) }}">{{ global_edit_link | raw }}</a></td>
-                    <td>{{ user.consolidatedFirstName }}</td>
-                    <td>{{ user.lastName }}</td>
-                    <td>{{ user.position }}</td>
-                    <td class="hidden">{{ user.email }}</td>
-                    {% if user.isPaperworkComplete %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% else %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% endif %}
-                    
-                    {% if user.isBgCheckComplete %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif user.isBgCheckSubmitted %}
-                        <td class="gridblock pray"><span class="fa fa-clock"><span class="hidden">PENDING</span></span></td>
-                    {% elseif user.controlledAge >= 18 %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}
-                        <td class="gridblock okay">&nbsp;</td>
-                    {% endif %}
-                    
-                    {% if user.isHobyAppComplete %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% else %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% endif %}
-                    
-                    {% if user.isHoursComplete %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif user.controlledAge < 21 %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}
-                        <td class="gridblock okay">&nbsp;</td>
-                    {% endif %}
-                    
-                    {% if user.isAmbRegistered %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif user.controlledAge < 21 %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}
-                        <td class="gridblock okay">&nbsp;</td>
-                    {% endif %}
-                    
-                    {# {% if user.getPlanningComplete == 1 %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif user.controlledAge < 21 %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}
-                        <td class="gridblock okay">&nbsp;</td>
-                    {% endif %} #}
-                    
-                    {% if user.isFundraisingComplete  %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% else %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% endif %}
-                    
+                    <td>{{ user.consolidatedFirstName }}</td><td>{{ user.lastName }}</td>
+                    <td>{{ user.position }}</td><td class="hidden">{{ user.email }}</td>
+                    {% if user.isPaperworkComplete %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                    {% if user.isBgCheckComplete %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% elseif user.isBgCheckSubmitted %}<td class="gridblock pray"><span class="fa fa-clock"><span class="hidden">PENDING</span></span></td>
+                    {% elseif user.controlledAge >= 18 %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% else %}<td class="gridblock okay">&nbsp;</td>{% endif %}
+                    {% if user.isHobyAppComplete %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                    {% if user.isHoursComplete %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% elseif user.controlledAge < 21 %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% else %}<td class="gridblock okay">&nbsp;</td>{% endif %}
+                    {% if user.isAmbRegistered %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% elseif user.controlledAge < 21 %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% else %}<td class="gridblock okay">&nbsp;</td>{% endif %}
+                    {% if user.isFundraisingComplete %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
                     <td>{{ user.requirementNotes }}</td>
-                    
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    
+</div>
 {% endblock %}

@@ -1,26 +1,39 @@
 {% extends 'base.html.twig' %}
-{% block maintag %}<main class="filter-left narrow">{% endblock %}
-{% block body %}
-    <h1>Checkout</h1>
-    <h3>{{ checkedout }} of {{ totalamb }} checked out. {{ totalamb - checkedout }} ambassadors to go!</h3>
-    <table class="standard-view table table-striped table-bordered" id="checkout-table">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Check Out</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ambassador in ambassadors %}
-                <tr>
-                    <td>{{ ambassador.consolidatedFirstName }}</td>
-                    <td>{{ ambassador.lastName }}</td>
-                    <td><a href="{{ path('app_ambassador_checkout_form', {'id': ambassador.id}) }}" class="btn btn-primary" role="button">Check Out</button></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
-    
+{% block body %}
+
+{%- set pct = totalamb > 0 ? ((checkedout / totalamb) * 100)|round : 0 -%}
+
+<div class="ht-page-header">
+    <h1>Check Out</h1>
+    <span class="ht-page-count">{{ checkedout }}/{{ totalamb }}</span>
+</div>
+
+<div class="ht-checkin-progress">
+    {{ checkedout }} checked out &middot; {{ totalamb - checkedout }} remaining
+    <div class="ht-progress-bar"><div class="ht-progress-fill" style="width:{{ pct }}%"></div></div>
+</div>
+
+<div class="ht-list-controls">
+    <input type="text" id="checkoutSearch" class="ht-search-input" placeholder="Search name…" autocomplete="off">
+</div>
+
+<div class="ht-card-list" id="checkoutList">
+    {% for ambassador in ambassadors %}
+        <div class="ht-card-row"
+             data-name="{{ (ambassador.consolidatedFirstName ~ ' ' ~ ambassador.lastName)|lower }}">
+            <div class="ht-card-info">
+                <div class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
+            </div>
+            <a href="{{ path('app_ambassador_checkout_form', {'id': ambassador.id}) }}"
+               class="ht-btn ht-btn-primary" style="white-space:nowrap; flex-shrink:0;">
+                Check Out
+            </a>
+        </div>
+    {% else %}
+        <div class="ht-no-results" style="display:block;">All ambassadors checked out!</div>
+    {% endfor %}
+    <div class="ht-no-results">No results.</div>
+</div>
+
 {% endblock %}

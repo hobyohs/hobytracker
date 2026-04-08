@@ -1,48 +1,25 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
-	<h1>No Shows</h1>
-
-	<table class="standard-view table table-striped table-bordered" id="noshow-table">
-		<thead>
-			<tr>
-				<th>View</th>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Group</th>
-				<th>School</th>
-				<th>Paperwork</th>
-				<th>Cell Phone</th>
-				<th>Home Phone</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for ambassador in ambassadors %}
-				<tr>
-					<td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
-					<td>{{ ambassador.consolidatedFirstName }}</td>
-					<td>{{ ambassador.lastName }}</td>
-					<td class="center">
-						{% if ambassador.letterGroup == "Staff" %}
-							Staff
-						{% elseif not ambassador.letterGroup is empty %}
-							<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
-						{% endif %}
-					</td>
-					<td>{{ ambassador.school }}</td>
-					{% if ambassador.isCheckinPaperwork %}
-						<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-					{% else %}
-						<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-					{% endif %}
-					
-					<td>{{ ambassador.cellPhone }}</td>
-					
-					<td>{{ ambassador.homePhone }}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	
+<div class="ht-page-header"><h1>No Shows</h1></div>
+<div class="ht-dt-card">
+    <table class="table" id="noshow-table">
+        <thead><tr>
+            <th>View</th><th>First Name</th><th>Last Name</th><th>Group</th>
+            <th>School</th><th>Paperwork</th><th>Cell Phone</th><th>Home Phone</th>
+        </tr></thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td><td>{{ ambassador.lastName }}</td>
+                    <td class="center">{% if not ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>{% endif %}</td>
+                    <td>{{ ambassador.school }}</td>
+                    {% if ambassador.isCheckinPaperwork %}<td class="gridblock yay"><span class="fa fa-check"></span></td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"></span></td>{% endif %}
+                    <td>{{ ambassador.cellPhone }}</td><td>{{ ambassador.homePhone }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

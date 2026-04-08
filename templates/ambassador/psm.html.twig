@@ -1,104 +1,50 @@
 {% extends 'base.html.twig' %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
-	<h1>Pre-Seminar Materials Report</h1>
-	<h3>{{ numreturn }} of {{ totalamb }} have returned their PSMs. {{ totalamb - numreturn }} ambassadors to go!</h3>
-	<h4 class="subtitle"><em>Last update detected: </em>{{ lastUpdated }}</h4>
-	<h5 class="subtitle"><em>Updated automatically hourly</em></h5>
-	<h4 class="subtitle">Hover over key deposit icon for details</h4>
-	<table class="standard-view table table-striped table-bordered" id="psm-table">
-		<thead>
-			<tr>
-				<th class="no-export">View</th>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Group</th>
-				<td>School</td>
-				<th>Forms Submitted</th>
-				<th>Key Deposit</th>
-				<th class="hidden">Key Deposit Method</th>
-				<th class="hidden">Key Deposit Details</th>
-				<th>Comings and Goings Form</th>
-				<th class="hidden">Ambassador Email</th>
-				<th class="hidden">Parent Email 1</th>
-				<th class="hidden">Parent Email 2</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for ambassador in ambassadors %}
-				<tr>
-					<td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
-					<td>{{ ambassador.consolidatedFirstName }}</td>
-					<td>{{ ambassador.lastName }}</td>
-					<td class="center">
-						{% if ambassador.letterGroup == "Staff" %}
-							Staff
-						{% elseif not ambassador.letterGroup is empty %}
-							<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
-						{% endif %}
-					</td>
-			
-					<td>{{ ambassador.school }}</td>
-					
-					{% if ambassador.isCheckinPaperwork %}
-						<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-					{% else %}
-						<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-					{% endif %}
-
-					{% if ambassador.isCheckinDeposit %}
-						<td class="gridblock yay">
-						
-							{% if ambassador.getCheckinDepositMethod == "PayPal" %}
-								<span class="fab fa-cc-paypal fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-							{% elseif ambassador.getCheckinDepositMethod == "QuickBooks" %}
-								<span class="fab fa-credit-card fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-							{% elseif ambassador.getCheckinDepositMethod == "Check" %}
-								<span class="fas fa-money-check fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-							{% elseif ambassador.getCheckinDepositMethod == "Cash" %}
-								<span class="fas fa-money-bill-alt fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-							{% elseif ambassador.getCheckinDepositMethod == "Waived" %}
-								<span class="fa-solid fa-slash" data-toggle="tooltip" title="Waived">
-							{% else %}
-								<span class="fas fa-check">
-							{% endif %}
-							
-								<span class="hidden">TRUE</span>
-							
-							</span>
-							
-						</td>
-					{% else %}
-						<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-					{% endif %}
-
-					
-					<td class="hidden">{{ambassador.getCheckinDepositMethod}}</td>
-					<td class="hidden">{{ambassador.getCheckinDepositNotes}}</td>
-					
-					{# {% if ambassador.isCheckinDoctorForm %}
-						<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-					{% elseif (ambassador.isCheckinMeds) and (not ambassador.isCheckinDoctorForm) %}
-						<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-					{% else %}
-						<td class="gridblock okay">&nbsp;</td>
-					{% endif %} #}
-					
-					{% if ambassador.isCgForm %}
-						<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-					{% elseif not ambassador.isCgForm and ambassador.comingsAndGoings|length > 0 %}
-						<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-					{% else %}
-						<td class="gridblock okay">&nbsp;</td>
-					{% endif %}
-					
-					<td class="hidden">{{ambassador.email}}</td>
-					<td class="hidden">{{ambassador.parent1email}}</td>
-					<td class="hidden">{{ambassador.parent2email}}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	
+<div class="ht-page-header"><h1>Pre-Seminar Materials</h1></div>
+<div class="ht-page-subtitle">
+    <strong>{{ numreturn }}</strong> of <strong>{{ totalamb }}</strong> returned &middot; {{ totalamb - numreturn }} to go &middot; Last update: {{ lastUpdated }}
+</div>
+<div class="ht-dt-card">
+    <table class="table" id="psm-table">
+        <thead><tr>
+            <th class="no-export">View</th><th>First Name</th><th>Last Name</th><th>Group</th><th>School</th>
+            <th>Forms</th><th>Key Deposit</th>
+            <th class="hidden">Deposit Method</th><th class="hidden">Deposit Details</th>
+            <th>C&amp;G Form</th>
+            <th class="hidden">Amb Email</th><th class="hidden">Parent 1 Email</th><th class="hidden">Parent 2 Email</th>
+        </tr></thead>
+        <tbody>
+            {% for ambassador in ambassadors %}
+                <tr>
+                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td><td>{{ ambassador.lastName }}</td>
+                    <td class="center">{% if not ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>{% endif %}</td>
+                    <td>{{ ambassador.school }}</td>
+                    {% if ambassador.isCheckinPaperwork %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                    {% if ambassador.isCheckinDeposit %}
+                        <td class="gridblock yay">
+                            {% if ambassador.getCheckinDepositMethod == "PayPal" %}<span class="fab fa-cc-paypal fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
+                            {% elseif ambassador.getCheckinDepositMethod == "QuickBooks" %}<span class="fab fa-credit-card fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
+                            {% elseif ambassador.getCheckinDepositMethod == "Check" %}<span class="fas fa-money-check fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
+                            {% elseif ambassador.getCheckinDepositMethod == "Cash" %}<span class="fas fa-money-bill-alt fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
+                            {% elseif ambassador.getCheckinDepositMethod == "Waived" %}<span class="fa-solid fa-slash" data-toggle="tooltip" title="Waived">
+                            {% else %}<span class="fas fa-check">{% endif %}
+                            <span class="hidden">TRUE</span></span>
+                        </td>
+                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                    <td class="hidden">{{ambassador.getCheckinDepositMethod}}</td>
+                    <td class="hidden">{{ambassador.getCheckinDepositNotes}}</td>
+                    {% if ambassador.isCgForm %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% elseif not ambassador.isCgForm and ambassador.comingsAndGoings|length > 0 %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% else %}<td class="gridblock okay">&nbsp;</td>{% endif %}
+                    <td class="hidden">{{ambassador.email}}</td>
+                    <td class="hidden">{{ambassador.parent1email}}</td>
+                    <td class="hidden">{{ambassador.parent2email}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

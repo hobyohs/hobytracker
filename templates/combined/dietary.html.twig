@@ -1,39 +1,23 @@
 {% extends 'base.html.twig' %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
-	<h1>Dietary Info List</h1>
-
-	<table class="standard-view table table-striped table-bordered" id="dietary-table">
-		<thead>
-			<tr>
-				<th class="no-export">View</th>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Group</th>
-				<th>Diet Restrictions</th>
-				<th>Diet Info</th>
-
-			</tr>
-		</thead>
-		<tbody>
-			{% for person in people %}
-				<tr>
-					<td class="view-link"><a href="{{ path(person.showpath, { 'id': person.id }) }}" class="view-link">{{ global_view_link | raw }}</a></td>
-					<td>{{ person.firstName }}</td>
-					<td>{{ person.lastName }}</td>
-					<td class="center">
-						{% if person.group == "Staff" %}
-							Staff
-						{% elseif not person.group is empty %}
-							<a href="{{ path('app_letter_group_show', { 'letter': person.group.letter }) }}" class="letter {{person.group.color}}">{{ person.group.letter }}</a>
-						{% endif %}
-					</td>
-					<td>{{ person.dietRestrictions }}</td>
-					<td>{{ person.dietInfo }}</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-
-	
+<div class="ht-page-header"><h1>Dietary Info</h1></div>
+<div class="ht-dt-card">
+    <table class="table" id="dietary-table">
+        <thead><tr>
+            <th class="no-export">View</th><th>First Name</th><th>Last Name</th><th>Group</th>
+            <th>Diet Restrictions</th><th>Diet Info</th>
+        </tr></thead>
+        <tbody>
+            {% for person in people %}
+                <tr>
+                    <td class="view-link"><a href="{{ path(person.showpath, { 'id': person.id }) }}">{{ global_view_link | raw }}</a></td>
+                    <td>{{ person.firstName }}</td><td>{{ person.lastName }}</td>
+                    <td class="center">{% if person.group == "Staff" %}Staff{% elseif not person.group is empty %}<a href="{{ path('app_letter_group_show', { 'letter': person.group.letter }) }}" class="letter {{person.group.color}}">{{ person.group.letter }}</a>{% endif %}</td>
+                    <td>{{ person.dietRestrictions }}</td><td>{{ person.dietInfo }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -1,94 +1,81 @@
 {% extends 'base.html.twig' %}
-
 {% block body %}
-    <h1>Application Summary</h1>
-    <div class="applicant-summary">
-        <div class="row applicant-counts">
-            <div class="col">
-                <h1 class="green-text summary-update" data-point="yeses">{{ summary.yeses }}</h1>
-                <label>accepted</label>
-            </div>
-            <div class="col">
-                <h1 class="yellow-text summary-update" data-point="maybes">{{ summary.maybes }}</h1>
-                <label>tentative</label>
-            </div>
-            <div class="col">
-                <h1 class="red-text summary-update" data-point="nos">{{ summary.nos }}</h1>
-                <label>no hire</label>
-            </div>
-            <div class="col">
-                <h1 class="gray-text summary-update" data-point="totalToGo">{{ summary.totalToGo }}</h1>
-                <label>to go</label>
-            </div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col">
-                <h3>Seniors</h3>
-                <table>
-                    <tr><td>To Go</td><td class="summary-update" data-point="seniorsToGo">{{ summary.seniorsToGo }}</td></tr>
-                    <tr><td><strong>Facilitators</strong></td><td class="summary-update" data-point="seniorFacilitators">{{ summary.seniorFacilitators }}</td></tr>
-                    <tr><td><strong>Team HQ</strong></td><td class="summary-update" data-point="teamHq">{{ summary.teamHq }}</td></tr>
-                    <tr><td><em>No Hire</em></td><td class="summary-update" data-point="seniorNoHires">{{ summary.seniorNoHires }}</td></tr>
-                    <tr><td><em>Total Applied</em></td><td class="summary-update" data-point="totalSeniors">{{ summary.totalSeniors }}</td></tr>
-                    <tr><td><strong>Total Accepted</strong></td><td class="summary-update" data-point="seniorsAccepted">{{ summary.seniorsAccepted }}</td></tr>
-                </table>
-            </div>
-            <div class="col">
-                <h3>Juniors</h3>
-                <table>
-                    <tr><td>To Go</td><td class="summary-update" data-point="juniorsToGo">{{ summary.juniorsToGo }}</td></tr>
-                    <tr><td><strong>Facilitators</strong></td><td class="summary-update" data-point="juniorFacilitators">{{ summary.juniorFacilitators }}</td></tr>
-                    <tr><td><strong>J-Crew</strong></td><td class="summary-update" data-point="jcrew">{{ summary.jcrew }}</td></tr>
-                    <tr><td><em>No Hire</em></td><td class="summary-update" data-point="juniorNoHires">{{ summary.juniorNoHires }}</td></tr>
-                    <tr><td><em>Total Applied</em></td><td class="summary-update" data-point="totalJuniors">{{ summary.totalJuniors }}</td></tr>
-                    <tr><td><strong>Total Accepted</strong></td><td class="summary-update" data-point="juniorsAccepted">{{ summary.juniorsAccepted }}</td></tr>
-                </table>
-            </div>
-        </div>
+
+<div class="ht-page-header"><h1>Staff Applications</h1></div>
+
+<div class="ht-summary-grid">
+    <div class="ht-summary-stat stat-green">
+        <div class="stat-num summary-update" data-point="yeses">{{ summary.yeses }}</div>
+        <div class="stat-label">Accepted</div>
     </div>
-    <br>
-    <h1>Candidates</h1>
-    <table class="standard-view table table-striped table-bordered" id="applicant-table">
-        <thead>
-            <tr>
-                <th class="no-export">Evaluate</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Position</th>
-                <th>Katie Feedback</th>
-                <th>Jacob Feedback</th>
-                <th>Decision</th>
-            </tr>
-        </thead>
+    <div class="ht-summary-stat stat-yellow">
+        <div class="stat-num summary-update" data-point="maybes">{{ summary.maybes }}</div>
+        <div class="stat-label">Tentative</div>
+    </div>
+    <div class="ht-summary-stat stat-red">
+        <div class="stat-num summary-update" data-point="nos">{{ summary.nos }}</div>
+        <div class="stat-label">No Hire</div>
+    </div>
+    <div class="ht-summary-stat stat-gray">
+        <div class="stat-num summary-update" data-point="totalToGo">{{ summary.totalToGo }}</div>
+        <div class="stat-label">To Go</div>
+    </div>
+</div>
+
+<div class="ht-summary-details">
+    <div class="ht-summary-details-card">
+        <h3>Seniors</h3>
+        <table>
+            <tr><td>To Go</td><td class="summary-update" data-point="seniorsToGo">{{ summary.seniorsToGo }}</td></tr>
+            <tr><td>Facilitators</td><td class="summary-update" data-point="seniorFacilitators">{{ summary.seniorFacilitators }}</td></tr>
+            <tr><td>Team HQ</td><td class="summary-update" data-point="teamHq">{{ summary.teamHq }}</td></tr>
+            <tr><td>No Hire</td><td class="summary-update" data-point="seniorNoHires">{{ summary.seniorNoHires }}</td></tr>
+            <tr><td>Total Applied</td><td class="summary-update" data-point="totalSeniors">{{ summary.totalSeniors }}</td></tr>
+            <tr><td><strong>Accepted</strong></td><td class="summary-update" data-point="seniorsAccepted">{{ summary.seniorsAccepted }}</td></tr>
+        </table>
+    </div>
+    <div class="ht-summary-details-card">
+        <h3>Juniors</h3>
+        <table>
+            <tr><td>To Go</td><td class="summary-update" data-point="juniorsToGo">{{ summary.juniorsToGo }}</td></tr>
+            <tr><td>Facilitators</td><td class="summary-update" data-point="juniorFacilitators">{{ summary.juniorFacilitators }}</td></tr>
+            <tr><td>J-Crew</td><td class="summary-update" data-point="jcrew">{{ summary.jcrew }}</td></tr>
+            <tr><td>No Hire</td><td class="summary-update" data-point="juniorNoHires">{{ summary.juniorNoHires }}</td></tr>
+            <tr><td>Total Applied</td><td class="summary-update" data-point="totalJuniors">{{ summary.totalJuniors }}</td></tr>
+            <tr><td><strong>Accepted</strong></td><td class="summary-update" data-point="juniorsAccepted">{{ summary.juniorsAccepted }}</td></tr>
+        </table>
+    </div>
+</div>
+
+<div class="ht-dt-card">
+    <table class="table" id="applicant-table">
+        <thead><tr>
+            <th class="no-export">Evaluate</th>
+            <th>First Name</th><th>Last Name</th><th>Position</th>
+            <th>Reviewer 1</th><th>Reviewer 2</th><th>Decision</th>
+        </tr></thead>
         <tbody>
             {% for applicant in applicants %}
                 <tr>
-                    <td class="edit-link view-link"><a href="{{ path('app_applicant_edit', { 'id': applicant.id }) }}"><span class="fa fa-gavel"></span></a></td>
+                    <td class="edit-link view-link">
+                        <a href="{{ path('app_applicant_edit', { 'id': applicant.id }) }}"><span class="fa fa-gavel"></span></a>
+                    </td>
                     <td>{{ applicant.firstAndPrefName }}</td>
                     <td>{{ applicant.lastName }}</td>
                     <td>{{ applicant.positionClass }}</td>
                     <td>
-                        {% if applicant.reviewer1Rating is not empty %}
-                            <strong>{{ applicant.reviewer1Rating|parse_hire_rating}}</strong>
-                        {% endif %}
+                        {% if applicant.reviewer1Rating is not empty %}<strong>{{ applicant.reviewer1Rating|parse_hire_rating }}</strong>{% endif %}
                         {% if applicant.reviewer1Rating is not empty and applicant.reviewer1Notes is not empty %}<br>{% endif %}
-                        {% if applicant.reviewer1Notes is not empty %}
-                            {{ applicant.reviewer1Notes }}
-                        {% endif %}
+                        {% if applicant.reviewer1Notes is not empty %}{{ applicant.reviewer1Notes }}{% endif %}
                     </td>
                     <td>
-                        {% if applicant.reviewer2Rating is not empty %}
-                            <strong>{{ applicant.reviewer2Rating|parse_hire_rating}}</strong>
-                        {% endif %}
+                        {% if applicant.reviewer2Rating is not empty %}<strong>{{ applicant.reviewer2Rating|parse_hire_rating }}</strong>{% endif %}
                         {% if applicant.reviewer2Rating is not empty and applicant.reviewer2Notes is not empty %}<br>{% endif %}
-                        {% if applicant.reviewer2Notes is not empty %}
-                            {{ applicant.reviewer2Notes }}
-                        {% endif %}
+                        {% if applicant.reviewer2Notes is not empty %}{{ applicant.reviewer2Notes }}{% endif %}
                     </td>
                     <td>
-                        <select data-applicant-id="{{ applicant.id }}" class="form-select app_applicant_decision">
-                            <option value=""{{ (applicant.decision is null) ? ' selected' : '' }}>Select...</option>
+                        <select data-applicant-id="{{ applicant.id }}" class="form-select app_applicant_decision" style="font-size:13px; padding: 6px 10px;">
+                            <option value=""{{ (applicant.decision is null) ? ' selected' : '' }}>Select…</option>
                             <option value="Facilitator"{{ (applicant.decision == "Facilitator") ? ' selected' : '' }}>Facilitator</option>
                             {% if applicant.positionClass == "Senior (21+)" %}
                                 <option value="Team HQ"{{ (applicant.decision == "Team HQ") ? ' selected' : '' }}>Team HQ</option>
@@ -103,48 +90,36 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
 
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        function updateApplicantSummary () {
+        function updateApplicantSummary() {
             $.ajax({
-                type: "POST",
-                url: "{{ path('applicant_summary') }}",
-                dataType: 'json',
-                success: function (result) {
+                type: "POST", url: "{{ path('applicant_summary') }}", dataType: 'json',
+                success: function(result) {
                     $('.summary-update').each(function() {
                         var point = $(this).data('point');
-                        if($(this).text() != result[point]) {
-                            $(this).fadeOut(300, function () {
-                                $(this).text(result[point]).fadeIn(300);
-                            });
+                        if ($(this).text() != result[point]) {
+                            $(this).fadeOut(300, function() { $(this).text(result[point]).fadeIn(300); });
                         }
                     });
-                 }
+                }
             });
         }
         $(document).ready(function() {
             setInterval(updateApplicantSummary, 10000);
             $('select.app_applicant_decision').change(function() {
                 $.ajax({
-                    type: "POST",
-                    url: "{{ path('applicant_update') }}",
-                    data: {
-                        applicant_id: $(this).data('applicant-id'),
-                        field_status: $(this).find(":selected").val()
-                    },
+                    type: "POST", url: "{{ path('applicant_update') }}",
+                    data: { applicant_id: $(this).data('applicant-id'), field_status: $(this).find(":selected").val() },
                     dataType: 'json',
-                    success: function() {
-                        setTimeout(function() {
-                          updateApplicantSummary();
-                        }, 100);
-                      }
+                    success: function() { setTimeout(updateApplicantSummary, 100); }
                 });
             });
         });
-    
     </script>
 {% endblock %}

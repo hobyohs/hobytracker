@@ -532,7 +532,7 @@ class Applicant
     
     public function setEvalEvaluator(?string $eval_evaluator): static
     {
-        $this->eval_evaluatorr = $eval_evaluator;
+        $this->eval_evaluator = $eval_evaluator;
     
         return $this;
     }

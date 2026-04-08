@@ -1,115 +1,77 @@
 {% extends 'base.html.twig' %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
-    <h1>Comings And Goings</h1>
-
-    <table class="standard-view table table-striped table-bordered" id="cg-table">
-        <thead>
-            <tr>
-                <th>View</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Group</th>
-                <th>Form</th>
-                <th>Departure</th>
-                <th>Return</th>
-                <th>Notes</th>
-            </tr>
-        </thead>
+<div class="ht-page-header"><h1>Comings &amp; Goings</h1></div>
+<div class="ht-dt-card">
+    <table class="table" id="cg-table">
+        <thead><tr>
+            <th>View</th><th>First Name</th><th>Last Name</th><th>Group</th>
+            <th>Form</th><th>Departure</th><th>Return</th><th>Notes</th>
+        </tr></thead>
         <tbody>
-            {% for comingsandgoing in comings_and_goings %}
+            {% for cg in comings_and_goings %}
                 <tr>
                     <td class="view-link">
-                        <a href="{{ path('app_ambassador_show', { 'id': comingsandgoing.ambassador.id }) }}">{{ global_view_link | raw }}</a>
-                        {% if is_granted('ROLE_BOARD') %}<a href="{{ path('app_comings_and_goings_edit', { 'id': comingsandgoing.id }) }}"><span class="fa fa-pencil"></span></a>{% endif %}
+                        <a href="{{ path('app_ambassador_show', { 'id': cg.ambassador.id }) }}">{{ global_view_link | raw }}</a>
+                        {% if is_granted('ROLE_BOARD') %}<a href="{{ path('app_comings_and_goings_edit', { 'id': cg.id }) }}"><span class="fa fa-pencil"></span></a>{% endif %}
                     </td>
-                    <td>{{ comingsandgoing.ambassador.consolidatedFirstName }}</td>
-                    <td>{{ comingsandgoing.ambassador.lastName }}</td>
-                    <td class="center">
-                        {% if comingsandgoing.ambassador.letterGroup == "Staff" %}
-                            Staff
-                        {% elseif not comingsandgoing.ambassador.letterGroup is empty %}
-                            <a href="{{ path('app_letter_group_show', { 'letter': comingsandgoing.ambassador.letterGroup.letter }) }}" class="letter {{comingsandgoing.ambassador.letterGroup.color}}">{{ comingsandgoing.ambassador.letterGroup.letter }}</a>
-                        {% endif %}
-                    </td>
-                    {% if comingsandgoing.ambassador.isCgForm %}
-                        <td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif comingsandgoing.ambassador.comingsAndGoings|length > 0 %}
-                        <td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}
-                        <td class="gridblock okay">&nbsp;</td>
-                    {% endif %}
+                    <td>{{ cg.ambassador.consolidatedFirstName }}</td>
+                    <td>{{ cg.ambassador.lastName }}</td>
+                    <td class="center">{% if not cg.ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': cg.ambassador.letterGroup.letter }) }}" class="letter {{cg.ambassador.letterGroup.color}}">{{ cg.ambassador.letterGroup.letter }}</a>{% endif %}</td>
+                    {% if cg.ambassador.isCgForm %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% elseif cg.ambassador.comingsAndGoings|length > 0 %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% else %}<td class="gridblock okay">&nbsp;</td>{% endif %}
                     <td>
-                        {% if comingsandgoing.departure is not null %}
-                            {{ comingsandgoing.departure|date('D M j \\a\\t g:iA') }}
-                            <br>
-                            <input type="checkbox" data-cg-id="{{comingsandgoing.id}}" data-field="checked_out" class="cg-checkbox"{% if comingsandgoing.isCheckedOut %} checked disabled{% endif %}>&nbsp;<span id="{{comingsandgoing.id}}-checked_out-by" class="byline">{% if comingsandgoing.isCheckedOut and comingsandgoing.departure is not null %}by {{comingsandgoing.checkedOutBy}}{% endif %}</span>
+                        {% if cg.departure is not null %}
+                            {{ cg.departure|date('D M j \\a\\t g:iA') }}<br>
+                            <input type="checkbox" data-cg-id="{{cg.id}}" data-field="checked_out" class="cg-checkbox"{% if cg.isCheckedOut %} checked disabled{% endif %}>&nbsp;<span id="{{cg.id}}-checked_out-by" class="byline">{% if cg.isCheckedOut and cg.departure is not null %}by {{cg.checkedOutBy}}{% endif %}</span>
                         {% else %}N/A{% endif %}
                     </td>
                     <td>
-                        {% if comingsandgoing.arrival is not null %}
-                            {{ comingsandgoing.arrival|date('D M j \\a\\t g:iA') }}
-                            <br>
-                            <input type="checkbox" data-cg-id="{{comingsandgoing.id}}" data-field="checked_in" class="cg-checkbox"{% if comingsandgoing.isCheckedIn %} checked disabled{% endif %}>&nbsp;<span id="{{comingsandgoing.id}}-checked_in-by" class="byline">{% if comingsandgoing.isCheckedIn and comingsandgoing.arrival is not null %}by {{comingsandgoing.checkedInBy}}{% endif %}</span>
+                        {% if cg.arrival is not null %}
+                            {{ cg.arrival|date('D M j \\a\\t g:iA') }}<br>
+                            <input type="checkbox" data-cg-id="{{cg.id}}" data-field="checked_in" class="cg-checkbox"{% if cg.isCheckedIn %} checked disabled{% endif %}>&nbsp;<span id="{{cg.id}}-checked_in-by" class="byline">{% if cg.isCheckedIn and cg.arrival is not null %}by {{cg.checkedInBy}}{% endif %}</span>
                         {% else %}N/A{% endif %}
-                                            </td>
-                    <td>{{comingsandgoing.notes}}</td>
+                    </td>
+                    <td>{{cg.notes}}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    
+</div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript">
-        $(document).ready(function() {     
+        $(document).ready(function() {
             $('input.cg-checkbox').change(function() {
-                console.log('checkbox initiated');
-                if($(this).is(":checked")) var field_status = 1;
-                else var field_status = 0;
-                
-                $.post("{{ path('cg_update') }}",
-                {
+                var field_status = $(this).is(":checked") ? 1 : 0;
+                $.post("{{ path('cg_update') }}", {
                     cg_id: $(this).data('cg-id'),
                     field: $(this).data('field'),
                     field_status: field_status
                 });
-                
                 $(this).attr("disabled", true);
-                
-                $("#"+$(this).data('cg-id')+"-"+$(this).data('field')+"-by").text("by {{app.user.firstName}} {{app.user.lastName}}")
-                
+                $("#"+$(this).data('cg-id')+"-"+$(this).data('field')+"-by").text("by {{app.user.firstName}} {{app.user.lastName}}");
             });
-            
+
             $('table#cg-table').DataTable({
-                "order": [
-                    [5, "asc"],
-                    [2, "asc"]
-                ],
+                "order": [[5, "asc"], [2, "asc"]],
                 "columnDefs": [
-                    { responsivePriority: 1, targets: 0},
-                    { responsivePriority: 2, targets: 2},
-                    { responsivePriority: 3, targets: 1},
-                    { responsivePriority: 4, targets: 5},
-                    { responsivePriority: 5, targets: 6},
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: 2 },
+                    { responsivePriority: 3, targets: 1 },
+                    { responsivePriority: 4, targets: 5 },
+                    { responsivePriority: 5, targets: 6 }
                 ],
                 buttons: [
                     {% if is_granted('ROLE_BOARD') %}
-                    {
-                        text: 'New',
-                        action: function ( e, dt, node, config ) {
-                            window.location.href = "{{ path('app_comings_and_goings_new') }}";
-                        }
-                    },
+                    { text: 'New', action: function(e, dt, node, config) { window.location.href = "{{ path('app_comings_and_goings_new') }}"; } },
                     {% endif %}
-                    'excelHtml5',
-                    'print'
+                    'excelHtml5', 'print'
                 ]
             });
-            
         });
     </script>
 {% endblock %}

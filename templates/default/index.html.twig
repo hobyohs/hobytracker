@@ -1,8 +1,15 @@
 {% extends 'base.html.twig' %}
-{% block maintag %}<main class="narrow">{% endblock %}
+{% block maintag %}<main>{% endblock %}
 {% block body %}
-   <div class="callout">
-      <h1>Welcome to HOBYTracker!</h1>
-      Use the links above to navigate. If you experience any problems or have any questions, please let the Director of Facilitators know.
-   </div>
+
+<div style="padding: 24px 16px 0;">
+    <div class="ht-section-card" style="padding: 24px; text-align: center;">
+        <img src="{{ asset('assets/images/logo.png') }}" alt="HOBYTracker" style="height: 48px; margin-bottom: 16px;">
+        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Welcome to HOBYtracker</h2>
+        <p style="font-size: 14px; color: var(--ht-sub); margin: 0;">
+            Use the menu to navigate. If you experience any problems, please let the Director of Facilitators know.
+        </p>
+    </div>
+</div>
+
 {% endblock %}
