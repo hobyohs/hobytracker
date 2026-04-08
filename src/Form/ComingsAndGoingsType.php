@@ -8,7 +8,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Doctrine\ORM\EntityRepository;
 
@@ -34,11 +33,7 @@ class ComingsAndGoingsType extends AbstractType
             'placeholder' => 'Select...',
             'choice_label' => 'getAlphaDisplayName'
         ))
-        ->add('notes')
-        ->add('save', SubmitType::class, array (
-            'label' => 'Submit',
-            'attr' => ['class' => 'btn-primary']
-        ));
+        ->add('notes');
     }
 
     public function configureOptions(OptionsResolver $resolver): void
