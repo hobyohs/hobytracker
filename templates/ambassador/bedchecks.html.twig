@@ -13,7 +13,6 @@
     <table class="table" id="bc-table">
         <thead>
             <tr>
-                <th>View</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Group</th>
@@ -40,10 +39,7 @@
             {% for ambassador in ambassadors %}
                 {% if ambassador.dormRoom is not null %}
                     <tr>
-                        <td class="view-link">
-                            <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a>
-                        </td>
-                        <td>{{ ambassador.consolidatedFirstName }}</td>
+                        <td><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-table-name-link">{{ ambassador.consolidatedFirstName }}</a></td>
                         <td>{{ ambassador.lastName }}</td>
                         <td class="center">
                             {% if not ambassador.letterGroup is empty %}

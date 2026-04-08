@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 
 {% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
 
@@ -33,7 +34,7 @@
     <div class="ht-section-card">
         {% for fac in group.facilitators %}
             <a href="{{ path('app_user_show', { 'id': fac.userId }) }}" class="ht-card-row" style="text-decoration:none; color:inherit; border-bottom: 1px solid var(--ht-border);">
-                <div class="ht-card-avatar">{{ fac.consolidatedFirstName[0:1]|upper }}{{ fac.lastName[0:1]|upper }}</div>
+                {{ avatar.render(fac) }}
                 <div class="ht-card-info">
                     <div class="ht-card-name">{{ fac.consolidatedFirstName }} {{ fac.lastName }}</div>
                     <div class="ht-card-sub">{{ fac.position }}</div>
@@ -56,22 +57,23 @@
         {% for ambassador in group.ambassadors %}
             <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}"
                class="ht-card-row" style="text-decoration:none; color:inherit;">
-                <div class="ht-card-avatar">
-                    {{ ambassador.consolidatedFirstName[0:1]|upper }}{{ ambassador.lastName[0:1]|upper }}
-                </div>
+                {{ avatar.render(ambassador) }}
                 <div class="ht-card-info">
                     <div class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
                     <div class="ht-card-sub">{{ ambassador.school }}</div>
                 </div>
                 {% if isMyGroup %}
-                    <span class="ht-status-dot {{ ambassador.isCheckinPaperwork ? 'ht-yes' : 'ht-no' }}"
-                          title="Forms {{ ambassador.isCheckinPaperwork ? 'submitted' : 'not submitted' }}">
-                        {{ ambassador.isCheckinPaperwork ? '✓' : '✗' }}
-                    </span>
-                    <span class="ht-status-dot {{ ambassador.isCheckinDeposit ? 'ht-yes' : 'ht-no' }}"
-                          title="Key deposit {{ ambassador.isCheckinDeposit ? 'received' : 'not received' }}"
-                          style="margin-left: 4px;">
-                        {{ ambassador.isCheckinDeposit ? '✓' : '✗' }}
+                    <span class="ht-status-pill-group">
+                        <span class="ht-status-pill {{ ambassador.isCheckinPaperwork ? 'ht-yes' : 'ht-no' }}"
+                              title="Pre-seminar forms {{ ambassador.isCheckinPaperwork ? 'submitted' : 'not yet submitted' }}">
+                            <i class="fa fa-file-lines"></i>
+                            <span class="ht-pill-label">Forms</span>
+                        </span>
+                        <span class="ht-status-pill {{ ambassador.isCheckinDeposit ? 'ht-yes' : 'ht-no' }}"
+                              title="Key deposit {{ ambassador.isCheckinDeposit ? 'received' : 'not yet received' }}">
+                            <i class="fa fa-key"></i>
+                            <span class="ht-pill-label">Key</span>
+                        </span>
                     </span>
                 {% endif %}
                 <span class="ht-chevron">›</span>

@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 
 {% block body %}
 
@@ -22,6 +23,7 @@
     {% for ambassador in ambassadors %}
         <div class="ht-card-row"
              data-name="{{ (ambassador.consolidatedFirstName ~ ' ' ~ ambassador.lastName)|lower }}">
+            {{ avatar.render(ambassador) }}
             <div class="ht-card-info">
                 <div class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
             </div>

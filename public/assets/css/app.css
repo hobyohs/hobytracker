@@ -196,10 +196,10 @@ body {
 
 /* ── Main Content Area ──────────────────────────────────── */
 main {
-  padding: 0;
+  padding: 14px 0 0;
 }
 @media (min-width: 768px) {
-  main         { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  main         { max-width: 960px; margin: 0 auto; padding: 22px 24px 0; }
   main.wide    { max-width: 1400px; }
   main.narrow  { max-width: 560px; }
   main.show    { max-width: 700px; }
@@ -327,6 +327,12 @@ main {
   color: var(--ht-navy);
   font-size: 13px;
   font-weight: 600;
+}
+.ht-card-avatar-img {
+  border-radius: 50%;
+  flex-shrink: 0;
+  object-fit: cover;
+  background: #eef1f4;
 }
 
 .ht-card-info { flex: 1; min-width: 0; }
@@ -960,4 +966,139 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
 @media (min-width: 992px) {
   .ht-dt-card tr.collapsed td:last-child::after,
   .ht-dt-card tr.parent td:last-child::after { display: none; }
+}
+
+/* Push the + more / − less pill to the right edge of the row
+   so it never overlaps the cell content. Flexbox makes the pseudo
+   ::after element a flex child that gets justified to the end. */
+@media (max-width: 991.98px) {
+  .ht-dt-card tr.collapsed td:last-child,
+  .ht-dt-card tr.parent td:last-child {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .ht-dt-card tr.collapsed td:last-child::after,
+  .ht-dt-card tr.parent td:last-child::after {
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Linked name in DataTables tables ───────────────────── */
+/* Replaces the old VIEW eyeball column. The first-name cell
+   becomes a navigation link to the show page. */
+.ht-dt-card .ht-table-name-link {
+  color: var(--ht-text);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: none;
+  display: inline-block;
+}
+.ht-dt-card .ht-table-name-link:hover {
+  color: var(--ht-navy);
+  text-decoration: underline;
+  text-shadow: none;
+}
+/* Edit pencil action column (used on C&G index) */
+.ht-dt-card .ht-table-edit-link {
+  color: var(--ht-sub);
+  border-bottom: none;
+  font-size: 14px;
+}
+.ht-dt-card .ht-table-edit-link:hover {
+  color: var(--ht-navy);
+  text-shadow: none;
+}
+
+/* ── Status Pills (group show: paperwork + key deposit) ── */
+.ht-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+}
+.ht-status-pill i { font-size: 10px; }
+.ht-status-pill.ht-yes { background: #eaf7ed; color: #27863a; }
+.ht-status-pill.ht-no  { background: #fef0f0; color: #c0392b; }
+.ht-status-pill-group {
+  display: inline-flex;
+  gap: 5px;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+@media (max-width: 480px) {
+  /* On narrow phones the chevron is enough — labels collapse to icons */
+  .ht-status-pill .ht-pill-label { display: none; }
+  .ht-status-pill { padding: 4px 7px; }
+}
+
+/* ── User Chip Dropdown (header) ────────────────────────── */
+.ht-user-chip {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background 0.15s;
+  position: relative;
+}
+.ht-user-chip:hover,
+.ht-user-chip.show {
+  background: rgba(255,255,255,0.25);
+}
+.ht-user-chip::after { display: none !important; } /* kill bootstrap's caret */
+.ht-user-menu {
+  min-width: 200px;
+  padding: 6px 0;
+  border-radius: 12px;
+  border: none;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.15), 0 0 0 0.5px rgba(0,0,0,0.08);
+  font-size: 14px;
+  margin-top: 8px !important;
+}
+.ht-user-menu .ht-user-menu-header {
+  padding: 10px 16px 8px;
+  border-bottom: 1px solid var(--ht-border);
+  margin-bottom: 4px;
+}
+.ht-user-menu .ht-user-menu-name {
+  font-weight: 600;
+  color: var(--ht-text);
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ht-user-menu .ht-user-menu-sub {
+  font-size: 12px;
+  color: var(--ht-sub);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ht-user-menu .dropdown-item {
+  padding: 9px 16px;
+  font-size: 14px;
+  color: var(--ht-text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ht-user-menu .dropdown-item i {
+  width: 16px;
+  text-align: center;
+  color: var(--ht-sub);
+  font-size: 13px;
+}
+.ht-user-menu .dropdown-item:hover,
+.ht-user-menu .dropdown-item:focus {
+  background: var(--ht-section-bg);
+  color: var(--ht-text);
 }

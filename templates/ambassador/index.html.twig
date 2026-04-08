@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 
 {% block body %}
 
@@ -29,7 +30,6 @@
 
 <div class="ht-card-list" id="ambList">
     {% for ambassador in ambassadors %}
-        {%- set initials = ambassador.consolidatedFirstName[0:1]|upper ~ ambassador.lastName[0:1]|upper -%}
         {%- set groupLetter = ambassador.letterGroup ? ambassador.letterGroup.letter : '' -%}
         {%- set groupColor  = ambassador.letterGroup ? ambassador.letterGroup.color  : '' -%}
         <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}"
@@ -37,7 +37,7 @@
            data-name="{{ (ambassador.consolidatedFirstName ~ ' ' ~ ambassador.lastName)|lower }}"
            data-school="{{ ambassador.school|lower }}"
            data-group="{{ groupLetter }}">
-            <div class="ht-card-avatar">{{ initials }}</div>
+            {{ avatar.render(ambassador) }}
             <div class="ht-card-info">
                 <div class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
                 <div class="ht-card-sub">{{ ambassador.school }}</div>

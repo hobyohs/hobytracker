@@ -4,12 +4,11 @@
 <div class="ht-dt-card">
     <table class="table" id="letter-interview-table">
         <thead><tr>
-            <th class="no-export">View</th><th>Group</th><th>Interview Assignment</th>
+            <th>Group</th><th>Interview Assignment</th>
         </tr></thead>
         <tbody>
             {% for group in groups %}
                 <tr>
-                    <td class="view-link"><a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}">{{ global_view_link | raw }}</a></td>
                     <td class="center"><a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}" class="letter {{group.color}}">{{ group.letter }}</a></td>
                     <td>{{ group.interviewAssignment }}</td>
                 </tr>

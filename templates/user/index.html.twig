@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 
 {% block body %}
 
@@ -28,7 +29,6 @@
 
 <div class="ht-card-list" id="staffList">
     {% for user in users %}
-        {%- set initials = user.consolidatedFirstName[0:1]|upper ~ user.lastName[0:1]|upper -%}
         {%- set groupLetter = user.letterGroup ? user.letterGroup.letter : '' -%}
         {%- set groupColor  = user.letterGroup ? user.letterGroup.color  : '' -%}
         <a href="{{ path('app_user_show', { 'id': user.userId }) }}"
@@ -36,14 +36,7 @@
            data-name="{{ (user.consolidatedFirstName ~ ' ' ~ user.lastName)|lower }}"
            data-sub="{{ user.position|lower }}"
            data-group="{{ groupLetter }}">
-            <div class="ht-card-avatar">
-                {% if user.photo %}
-                    <img src="{{ user.photo }}" alt="{{ user.fullName }}"
-                         style="width:42px;height:42px;border-radius:50%;object-fit:cover;">
-                {% else %}
-                    {{ initials }}
-                {% endif %}
-            </div>
+            {{ avatar.render(user) }}
             <div class="ht-card-info">
                 <div class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</div>
                 <div class="ht-card-sub">{{ user.position }}</div>

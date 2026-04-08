@@ -1,0 +1,25 @@
+{# ── Avatar Macro ──────────────────────────────────────────
+   Renders a person's photo as a circular avatar, or falls back
+   to initials in a styled circle if no photo is set.
+
+   Usage:
+       {% import 'partials/_avatar.html.twig' as avatar %}
+       {{ avatar.render(person) }}
+       {{ avatar.render(person, 88) }}        {# custom size #}
+
+   Parameters:
+       person  — entity with .photo, .consolidatedFirstName (or .firstName), .lastName
+       size    — diameter in px (default 42)
+#}
+{% macro render(person, size = 42) %}
+    {%- set first = person.consolidatedFirstName|default(person.firstName|default('')) -%}
+    {%- set last  = person.lastName|default('') -%}
+    {%- set initials = (first|slice(0, 1) ~ last|slice(0, 1))|upper -%}
+    {%- set dim = 'width:' ~ size ~ 'px;height:' ~ size ~ 'px;' -%}
+    {% if person.photo %}
+        <img src="{{ person.photo }}" alt="{{ first }} {{ last }}" class="ht-card-avatar-img" style="{{ dim }}" loading="lazy"
+             onerror="this.outerHTML='<div class=&quot;ht-card-avatar&quot; style=&quot;{{ dim }}&quot;>{{ initials }}</div>'">
+    {% else %}
+        <div class="ht-card-avatar" style="{{ dim }}">{{ initials }}</div>
+    {% endif %}
+{% endmacro %}

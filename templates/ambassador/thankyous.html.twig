@@ -4,14 +4,13 @@
 <div class="ht-dt-card">
     <table class="table" id="all-thankyous-table">
         <thead><tr>
-            <th>View</th><th>First Name</th><th>Last Name</th><th>Group</th>
+            <th>First Name</th><th>Last Name</th><th>Group</th>
             <th>Thank You Type</th><th>Assignment</th>
         </tr></thead>
         <tbody>
             {% for ambassador in ambassadors %}
                 <tr>
-                    <td class="view-link"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">{{ global_view_link | raw }}</a></td>
-                    <td>{{ambassador.consolidatedFirstName}}</td><td>{{ambassador.lastName}}</td>
+                    <td><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-table-name-link">{{ ambassador.consolidatedFirstName }}</a></td><td>{{ambassador.lastName}}</td>
                     <td class="center">{% if not ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>{% endif %}</td>
                     <td>{{ambassador.thankyouType}}</td><td>{{ambassador.thankyouName}}</td>
                 </tr>

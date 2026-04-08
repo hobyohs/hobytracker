@@ -62,12 +62,10 @@ function initCardFilter(searchId, listId, pillSelector) {
 
 // ── DataTable Global Defaults ─────────────────────────────
 $.extend(true, $.fn.dataTable.defaults, {
-  "order": [[1, "asc"]],
+  "order": [[0, "asc"]],
   "columnDefs": [
-    { responsivePriority: 1, targets: 1 },
-    { responsivePriority: 2, targets: 2 },
-    { responsivePriority: 3, targets: 0 },
-    { targets: 0, orderable: false }
+    { responsivePriority: 1, targets: 0 },
+    { responsivePriority: 2, targets: 1 }
   ],
   "autoWidth": true,
   responsive: {
@@ -139,42 +137,41 @@ $(document).ready(function() {
   $('[data-toggle="tooltip"]').tooltip({ container: 'body', html: true, placement: 'bottom' });
 
   // ── DataTables ────────────────────────────────────────────
-  // Priority: 1 = last to collapse, high = first to collapse
-  // Always put name cols (1,2) as 1,2. View/action col last.
+  // After cleanup pass: VIEW eyeball column removed from all
+  // navigation tables. Col 0 is now First Name (linkified).
+  // Priority 1 = last to collapse, high = first to collapse.
 
-  // dietary: View(0) First(1) Last(2) Group(3) Restrictions(4) Info(5)
-  $('table#dietary-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:0}
-  ]});
-
-  // ec: View(0) First(1) Last(2) Group(3) ECFirst(4) ECLast(5) Rel(6) Phone1(7) Phone2(8)
-  $('table#ec-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:7},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:5},{responsivePriority:6,targets:6},
-    {responsivePriority:7,targets:8},{responsivePriority:8,targets:3},
-    {responsivePriority:9,targets:0}
-  ]});
-
-  // medical: View(0) First(1) Last(2) Group(3) Rx(4) Conditions(5) Exercise(6) Allergies(7) MedAllergies(8)
-  $('table#med-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:7},{responsivePriority:6,targets:8},
-    {responsivePriority:7,targets:6},{responsivePriority:8,targets:3},
-    {responsivePriority:9,targets:0}
-  ]});
-
-  // ambassadors: View(0) First(1) Last(2) Group(3) School(4)
-  $('table#ambassadors-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
+  // dietary: First(0) Last(1) Group(2) Restrictions(3) Info(4)
+  $('table#dietary-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
     {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:0}
+    {responsivePriority:5,targets:2}
+  ]});
+
+  // ec: First(0) Last(1) Group(2) ECFirst(3) ECLast(4) Rel(5) Phone1(6) Phone2(7)
+  $('table#ec-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:6},{responsivePriority:4,targets:3},
+    {responsivePriority:5,targets:4},{responsivePriority:6,targets:5},
+    {responsivePriority:7,targets:7},{responsivePriority:8,targets:2}
+  ]});
+
+  // medical: First(0) Last(1) Group(2) Rx(3) Conditions(4) Exercise(5) Allergies(6) MedAllergies(7)
+  $('table#med-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
+    {responsivePriority:5,targets:6},{responsivePriority:6,targets:7},
+    {responsivePriority:7,targets:5},{responsivePriority:8,targets:2}
+  ]});
+
+  // ambassadors (legacy table — only present if a non-redesigned page still uses it)
+  $('table#ambassadors-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:2},{responsivePriority:4,targets:3}
   ]});
 
   // applicant: Evaluate(0) First(1) Last(2) Position(3) R1(4) R2(5) Decision(6)
+  // (NOT touched by cleanup pass — col 0 is an Evaluate action, not view)
   $('table#applicant-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
     {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
     {responsivePriority:3,targets:6},{responsivePriority:4,targets:4},
@@ -182,32 +179,31 @@ $(document).ready(function() {
     {responsivePriority:7,targets:0}
   ]});
 
-  // psm: View(0) First(1) Last(2) Group(3) School(4) Forms(5) Deposit(6) [Method](7) [Notes](8) CG(9) [emails 10-12]
-  $('table#psm-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:5},{responsivePriority:4,targets:6},
-    {responsivePriority:5,targets:9},{responsivePriority:6,targets:4},
-    {responsivePriority:7,targets:3},{responsivePriority:8,targets:0}
+  // psm: First(0) Last(1) Group(2) School(3) Forms(4) Deposit(5) [Method](6) [Notes](7) CG(8) [emails 9-11]
+  $('table#psm-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
+    {responsivePriority:5,targets:8},{responsivePriority:6,targets:3},
+    {responsivePriority:7,targets:2}
   ]});
 
-  // calls: View(0) First(1) Last(2) Cell(3) School(4) Junior(5) Forms(6) Disposition(7) Notes(8)
-  $('table#calls-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:7},{responsivePriority:4,targets:3},
-    {responsivePriority:5,targets:6},{responsivePriority:6,targets:8},
-    {responsivePriority:7,targets:5},{responsivePriority:8,targets:4},
-    {responsivePriority:9,targets:0}
+  // calls: First(0) Last(1) Cell(2) School(3) Junior(4) Forms(5) Disposition(6) Notes(7)
+  $('table#calls-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:6},{responsivePriority:4,targets:2},
+    {responsivePriority:5,targets:5},{responsivePriority:6,targets:7},
+    {responsivePriority:7,targets:4},{responsivePriority:8,targets:3}
   ]});
 
-  // bus: View(0) First(1) Last(2) Group(3) School(4) BusTo(5) BusFrom(6)
-  $('table#bus-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:5},{responsivePriority:4,targets:6},
-    {responsivePriority:5,targets:4},{responsivePriority:6,targets:3},
-    {responsivePriority:7,targets:0}
+  // bus: First(0) Last(1) Group(2) School(3) BusTo(4) BusFrom(5)
+  $('table#bus-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
+    {responsivePriority:5,targets:3},{responsivePriority:6,targets:2}
   ]});
 
-  // staff-req: View(0) First(1) Last(2) Position(3) [Email](4) Paperwork(5) BG(6) App(7) Hours(8) AmbReg(9) Fundraising(10) Notes(11)
+  // staff-req: First(0) Last(1) Position(2) [Email](3) Paperwork(4) BG(5) App(6) Hours(7) AmbReg(8) Fundraising(9) Notes(10)
+  // (NOT touched by cleanup pass — col 0 was an Edit Requirements action; user/requirements.html.twig still has the edit pencil column)
   $('table#staff-req-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
     {responsivePriority:1, targets:1},{responsivePriority:2, targets:2},
     {responsivePriority:3, targets:5},{responsivePriority:4, targets:6},
@@ -217,90 +213,86 @@ $(document).ready(function() {
     {responsivePriority:11,targets:0}
   ]});
 
-  // letter-interview: View(0) Letter(1) Assignment(2)
-  $('table#letter-interview-table').DataTable({ order: [[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},{responsivePriority:3,targets:0}
+  // letter-interview: Letter(0) Assignment(1)
+  $('table#letter-interview-table').DataTable({ order: [[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1}
   ]});
 
-  // letter-index (legacy, replaced by card grid but keep init)
-  $('table#letter-index-table').DataTable({ order: [[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:3},{responsivePriority:3,targets:2},{responsivePriority:4,targets:0}
-  ]});
-
-  // bc: View(0) First(1) Last(2) Group(3) [Floor](4) [Sort](5) Dorm(6) Room(7) Bed col(8)
-  $('table#bc-table').DataTable({ order: [[6,"asc"],[4,"asc"],[5,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:8},{responsivePriority:4,targets:6},
-    {responsivePriority:5,targets:7},{responsivePriority:6,targets:3},
-    {responsivePriority:7,targets:0}
+  // bc: First(0) Last(1) Group(2) [Floor](3) [Sort](4) Dorm(5) Room(6) Bed col(7)
+  $('table#bc-table').DataTable({ order: [[5,"asc"],[3,"asc"],[4,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:7},{responsivePriority:4,targets:5},
+    {responsivePriority:5,targets:6},{responsivePriority:6,targets:2}
   ], buttons: ['excelHtml5','pdfHtml5','print']});
 
-  // kd: View(0) First(1) Last(2) Group(3) Deposit(4) Details(5)
-  $('table#kd-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:0}
+  // kd: First(0) Last(1) Group(2) Deposit(3) Details(4)
+  $('table#kd-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
+    {responsivePriority:5,targets:2}
   ]});
 
-  // noshow: View(0) First(1) Last(2) Group(3) School(4) Paperwork(5) Cell(6) Home(7)
-  $('table#noshow-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
+  // noshow: First(0) Last(1) Group(2) School(3) Paperwork(4) Cell(5) Home(6)
+  $('table#noshow-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
+    {responsivePriority:5,targets:3},{responsivePriority:6,targets:6},
+    {responsivePriority:7,targets:2}
+  ]});
+
+  // checkin/checkout (legacy DataTable inits — these pages are now card lists, kept harmless)
+  $('table#checkin-table').DataTable({ order:[[0,"asc"]], buttons:[] });
+  $('table#checkout-table').DataTable({ order:[[0,"asc"]], buttons:[] });
+
+  // staff (user index — legacy, page is now a card list)
+  $('table#staff-table').DataTable({ order:[[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:2}
+  ]});
+
+  // dorm: First(0) Last(1) Group(2) [Floor](3) [Sort](4) Dorm(5) Room(6) Shirt(7)
+  $('table#dorm-table').DataTable({ order:[[5,"asc"],[3,"asc"],[4,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
     {responsivePriority:3,targets:5},{responsivePriority:4,targets:6},
-    {responsivePriority:5,targets:4},{responsivePriority:6,targets:7},
-    {responsivePriority:7,targets:3},{responsivePriority:8,targets:0}
+    {responsivePriority:5,targets:7},{responsivePriority:6,targets:2}
   ]});
 
-  // checkin/checkout
-  $('table#checkin-table').DataTable({ order:[[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:2},{responsivePriority:3,targets:1}
-  ], buttons:[] });
-  $('table#checkout-table').DataTable({ order:[[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:2},{responsivePriority:3,targets:1}
-  ], buttons:[] });
-
-  // staff: View(0) First(1) Last(2) Position(3)
-  $('table#staff-table').DataTable({ order:[[2,"asc"],[1,"asc"]], columnDefs: [
+  // letter-groups (all groups): Group(0) First(1) Last(2) Role(3) School(4) [Sort](5)
+  $('table#letter-groups-table').DataTable({ order:[[0,"asc"],[5,"asc"],[2,"asc"]], columnDefs: [
     {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:0}
+    {responsivePriority:3,targets:0},{responsivePriority:4,targets:3},
+    {responsivePriority:5,targets:4}
   ]});
 
-  // dorm: View(0) First(1) Last(2) Group(3) [Floor](4) [Sort](5) Dorm(6) Room(7) Shirt(8)
-  $('table#dorm-table').DataTable({ order:[[6,"asc"],[4,"asc"],[5,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:6},{responsivePriority:4,targets:7},
-    {responsivePriority:5,targets:8},{responsivePriority:6,targets:3},
-    {responsivePriority:7,targets:0}
+  // all-thankyous: First(0) Last(1) Group(2) Type(3) Assignment(4)
+  $('table#all-thankyous-table').DataTable({ order:[[2,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
+    {responsivePriority:5,targets:2}
   ]});
 
-  // letter-groups (all groups): Action(0) Group(1) First(2) Last(3) Role(4) School(5) [Sort](6)
-  $('table#letter-groups-table').DataTable({ order:[[1,"asc"],[6,"asc"],[3,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:2},{responsivePriority:2,targets:3},
-    {responsivePriority:3,targets:1},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:5},{responsivePriority:6,targets:0}
+  // staff duty assignments (cc/checkin/checkout assignments pages):
+  // First(0) Last(1) Position(2) Assignment(3) Notes(4)
+  $('table#staff-duty-assignments-table').DataTable({ order:[[1,"asc"],[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:3},{responsivePriority:4,targets:2},
+    {responsivePriority:5,targets:4}
   ]});
 
-  // all-thankyous: View(0) First(1) Last(2) Group(3) Type(4) Assignment(5)
-  $('table#all-thankyous-table').DataTable({ order:[[3,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:0}
+  // letter_group/calls per-group call list: First(0) Last(1) School(2) Status(3) [Call button](4)
+  $('table#my-group-calls-ambassadors-table').DataTable({ order:[[0,"asc"],[1,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:4},{responsivePriority:4,targets:3},
+    {responsivePriority:5,targets:2}
   ]});
 
-  $('table#staff-duty-assignments-table').DataTable({ order:[[2,"asc"],[1,"asc"]] });
-
-  // group sub-tables
-  $('table#group-facilitators-table').DataTable({ order:[[4,"asc"],[3,"asc"],[1,"asc"]], buttons:null, dom:'rtip', info:false });
-  $('table#group-ambassadors-table').DataTable({ order:[[1,"asc"]], buttons:null, dom:'rtip', info:false });
-  $('table#my-group-ambassadors-table').DataTable({ order:[[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:0}
-  ], dom:'Brtip', info:false });
-  $('table#my-group-calls-ambassadors-table').DataTable({ order:[[1,"asc"],[2,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:5},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:0}
+  // letter_group/thankyous per-group: First(0) Last(1) Type(2) Assignment(3)
+  $('table#group-thankyou-table').DataTable({ order:[[0,"asc"]], columnDefs: [
+    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
+    {responsivePriority:3,targets:3},{responsivePriority:4,targets:2}
   ]});
+
+  // evaluations (NOT touched — col 0 is an Edit pencil action)
   $('table#my-group-ae-table').DataTable({ order:[[1,"asc"]], columnDefs: [
     {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
     {responsivePriority:3,targets:7},{responsivePriority:4,targets:3},
@@ -309,11 +301,6 @@ $(document).ready(function() {
     {responsivePriority:9,targets:0}
   ]});
   $('table#my-group-se-table').DataTable({ order:[[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:3},
-    {responsivePriority:5,targets:0}
-  ]});
-  $('table#group-thankyou-table').DataTable({ order:[[1,"asc"]], columnDefs: [
     {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
     {responsivePriority:3,targets:4},{responsivePriority:4,targets:3},
     {responsivePriority:5,targets:0}

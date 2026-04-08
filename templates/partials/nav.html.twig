@@ -108,15 +108,6 @@
             </a>
         {% endif %}
 
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section-label">Account</div>
-        <a href="{{ path('app_forgot_password_request') }}" class="sidebar-nav-link">
-            <i class="fa fa-key"></i> Change Password
-        </a>
-        <a href="{{ path('app_logout') }}" class="sidebar-nav-link">
-            <i class="fa fa-arrow-right-from-bracket"></i> Log Out
-        </a>
-
         {% endif %}{# end is_granted #}
 
     </div>
@@ -134,8 +125,18 @@
     </button>
     <a href="{{ path('homepage') }}" class="ht-brand">HOBYtracker</a>
     {% if is_granted('ROLE_USER') %}
-        <div class="ht-user-chip" title="{{ app.user.fullName }}">
-            {{ app.user.consolidatedFirstName[0:1]|upper }}{{ app.user.lastName[0:1]|upper }}
+        <div class="dropdown">
+            <button type="button" class="ht-user-chip" id="userChipDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu" title="{{ app.user.fullName }}">
+                {{ app.user.consolidatedFirstName[0:1]|upper }}{{ app.user.lastName[0:1]|upper }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end ht-user-menu" aria-labelledby="userChipDropdown">
+                <li class="ht-user-menu-header">
+                    <div class="ht-user-menu-name">{{ app.user.consolidatedFirstName }} {{ app.user.lastName }}</div>
+                    {% if app.user.position %}<div class="ht-user-menu-sub">{{ app.user.position }}</div>{% endif %}
+                </li>
+                <li><a class="dropdown-item" href="{{ path('app_forgot_password_request') }}"><i class="fa fa-key"></i> Change Password</a></li>
+                <li><a class="dropdown-item" href="{{ path('app_logout') }}"><i class="fa fa-arrow-right-from-bracket"></i> Log Out</a></li>
+            </ul>
         </div>
     {% endif %}
 </header>

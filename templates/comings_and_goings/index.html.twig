@@ -5,17 +5,14 @@
 <div class="ht-dt-card">
     <table class="table" id="cg-table">
         <thead><tr>
-            <th>View</th><th>First Name</th><th>Last Name</th><th>Group</th>
+            <th>First Name</th><th>Last Name</th><th>Group</th>
             <th>Form</th><th>Departure</th><th>Return</th><th>Notes</th>
+            {% if is_granted('ROLE_BOARD') %}<th class="no-export"></th>{% endif %}
         </tr></thead>
         <tbody>
             {% for cg in comings_and_goings %}
                 <tr>
-                    <td class="view-link">
-                        <a href="{{ path('app_ambassador_show', { 'id': cg.ambassador.id }) }}">{{ global_view_link | raw }}</a>
-                        {% if is_granted('ROLE_BOARD') %}<a href="{{ path('app_comings_and_goings_edit', { 'id': cg.id }) }}"><span class="fa fa-pencil"></span></a>{% endif %}
-                    </td>
-                    <td>{{ cg.ambassador.consolidatedFirstName }}</td>
+                    <td><a href="{{ path('app_ambassador_show', { 'id': cg.ambassador.id }) }}" class="ht-table-name-link">{{ cg.ambassador.consolidatedFirstName }}</a></td>
                     <td>{{ cg.ambassador.lastName }}</td>
                     <td class="center">{% if not cg.ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': cg.ambassador.letterGroup.letter }) }}" class="letter {{cg.ambassador.letterGroup.color}}">{{ cg.ambassador.letterGroup.letter }}</a>{% endif %}</td>
                     {% if cg.ambassador.isCgForm %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
@@ -34,6 +31,9 @@
                         {% else %}N/A{% endif %}
                     </td>
                     <td>{{cg.notes}}</td>
+                    {% if is_granted('ROLE_BOARD') %}
+                        <td class="center"><a href="{{ path('app_comings_and_goings_edit', { 'id': cg.id }) }}" class="ht-table-edit-link" title="Edit"><span class="fa fa-pencil"></span></a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
@@ -57,13 +57,13 @@
             });
 
             $('table#cg-table').DataTable({
-                "order": [[5, "asc"], [2, "asc"]],
+                "order": [[4, "asc"], [1, "asc"]],
                 "columnDefs": [
                     { responsivePriority: 1, targets: 0 },
-                    { responsivePriority: 2, targets: 2 },
-                    { responsivePriority: 3, targets: 1 },
-                    { responsivePriority: 4, targets: 5 },
-                    { responsivePriority: 5, targets: 6 }
+                    { responsivePriority: 2, targets: 1 },
+                    { responsivePriority: 3, targets: 4 },
+                    { responsivePriority: 4, targets: 5 }
+                    {% if is_granted('ROLE_BOARD') %}, { targets: 7, orderable: false }{% endif %}
                 ],
                 buttons: [
                     {% if is_granted('ROLE_BOARD') %}
