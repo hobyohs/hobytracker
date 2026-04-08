@@ -154,8 +154,9 @@ $(document).ready(function() {
         // the wrapper so we never touch the underlying form value — if
         // the user blurs without picking a new option, the original
         // selection's display reappears unchanged.
-        onFocus: function() { this.wrapper.classList.add('ts-typing'); },
-        onBlur:  function() { this.wrapper.classList.remove('ts-typing'); }
+        onFocus:  function() { this.wrapper.classList.add('ts-typing'); },
+        onBlur:   function() { this.wrapper.classList.remove('ts-typing'); },
+        onChange: function() { this.wrapper.classList.remove('ts-typing'); }
       });
     });
   }
