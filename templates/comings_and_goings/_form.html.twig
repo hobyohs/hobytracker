@@ -1,4 +1,43 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{# Shared form body for new + edit comings/going. Expects: form, title, back_label #}
+<a href="{{ path('app_comings_and_goings_index') }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> {{ back_label|default('Comings & Goings') }}
+</a>
+
+<div class="ht-form-page">
+    <h1 class="ht-form-title">{{ title }}</h1>
+
+    {{ form_start(form, { 'attr': { 'class': 'ht-form', 'novalidate': 'novalidate' } }) }}
+
+        <div class="ht-form-row">
+            {{ form_label(form.ambassador, 'Ambassador', { 'label_attr': { 'class': 'ht-form-label' } }) }}
+            {{ form_widget(form.ambassador, { 'attr': { 'class': 'ht-form-input ht-tomselect' } }) }}
+            {{ form_errors(form.ambassador) }}
+        </div>
+
+        <div class="ht-form-row">
+            {{ form_label(form.departure, 'Departure', { 'label_attr': { 'class': 'ht-form-label' } }) }}
+            <div class="ht-form-help">When the ambassador is leaving the seminar. Leave blank if only an arrival.</div>
+            {{ form_widget(form.departure, { 'attr': { 'class': 'ht-form-input' } }) }}
+            {{ form_errors(form.departure) }}
+        </div>
+
+        <div class="ht-form-row">
+            {{ form_label(form.arrival, 'Arrival', { 'label_attr': { 'class': 'ht-form-label' } }) }}
+            <div class="ht-form-help">When the ambassador is arriving (or returning). Leave blank if only a departure.</div>
+            {{ form_widget(form.arrival, { 'attr': { 'class': 'ht-form-input' } }) }}
+            {{ form_errors(form.arrival) }}
+        </div>
+
+        <div class="ht-form-row">
+            {{ form_label(form.notes, 'Notes', { 'label_attr': { 'class': 'ht-form-label' } }) }}
+            {{ form_widget(form.notes, { 'attr': { 'class': 'ht-form-input', 'rows': 4, 'placeholder': 'Optional context (who is picking them up, why, etc.)' } }) }}
+            {{ form_errors(form.notes) }}
+        </div>
+
+        <div class="ht-form-actions">
+            <button type="submit" class="ht-btn ht-btn-primary">{{ button_label|default('Save') }}</button>
+            <a href="{{ path('app_comings_and_goings_index') }}" class="ht-btn ht-btn-secondary">Cancel</a>
+        </div>
+
+    {{ form_end(form, { 'render_rest': false }) }}
+</div>

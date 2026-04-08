@@ -1,35 +1,60 @@
 {% extends 'base.html.twig' %}
 
+{% block maintag %}<main class="wide">{% endblock %}
+
 {% block body %}
-	<h1>Our Staff</h1>
 
-	<div class="container faces">
-		<div class="row">
-			{% for user in users %}
-				
-					<div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-						
-						<div class="card border-0 shadow">
-							<img src="{{ user.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="card-img-top" alt="{{ user.fullName }}"">
-							<div class="card-body text-center">
-								<a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="stretched-link">
-									<h5 class="card-title mb-0">{{ user.fullName }}</h5>
-									<div class="card-text">
-										{{ user.position }}
-										{% if not user.letterGroup is empty %}
-											<br>
-											Group {{ user.letterGroup.letter }}
-										{% endif %}</span>
-									</div>
-									</a>
-							</div>
-						</div>
-					</div>
-				
-			{% endfor %}
-		</div>
-	
-	</div>
+{# Build sorted list of letter groups present in this year's staff #}
+{% set groups_map = {} %}
+{% for user in users %}
+    {% if user.letterGroup %}
+        {% set groups_map = groups_map|merge({ (user.letterGroup.letter): user.letterGroup }) %}
+    {% endif %}
+{% endfor %}
+{% set sorted_letters = groups_map|keys|sort %}
 
-	
+<div class="ht-page-header">
+    <h1>Staff Faces</h1>
+    <span class="ht-page-count">{{ users|length }}</span>
+</div>
+
+<div class="ht-list-controls">
+    <input type="text" id="facesStaffSearch" class="ht-search-input" placeholder="Search name or position…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="ht-filter-pills">
+        <span class="ht-pill faces-staff-pill active" data-filter="all">All</span>
+        {% for letter in sorted_letters %}
+            <span class="ht-pill faces-staff-pill" data-filter="{{ letter }}">{{ letter }}</span>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="ht-faces-grid" id="facesStaffGrid">
+    {% for user in users %}
+        {%- set initials = user.consolidatedFirstName[0:1]|upper ~ user.lastName[0:1]|upper -%}
+        {%- set groupLetter = user.letterGroup ? user.letterGroup.letter : '' -%}
+        {%- set groupColor  = user.letterGroup ? user.letterGroup.color  : '' -%}
+        <a href="{{ path('app_user_show', { 'id': user.userId }) }}"
+           class="ht-face-card"
+           data-name="{{ (user.consolidatedFirstName ~ ' ' ~ user.lastName)|lower }}"
+           data-sub="{{ user.position|lower }}"
+           data-group="{{ groupLetter }}">
+            {% if user.photo %}
+                <img src="{{ user.photo }}" alt="{{ user.consolidatedFirstName }} {{ user.lastName }}" class="ht-face-photo" loading="lazy">
+            {% else %}
+                <div class="ht-face-photo-placeholder">{{ initials }}</div>
+            {% endif %}
+            <div class="ht-face-body">
+                <div class="ht-face-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</div>
+                <div class="ht-face-meta">{{ user.position }}</div>
+                {% if user.letterGroup %}
+                    <span class="ht-face-group ht-group-{{ groupColor }}">Group {{ groupLetter }}</span>
+                {% endif %}
+            </div>
+        </a>
+    {% else %}
+        <div class="ht-no-results" style="display:block; grid-column:1/-1;">No staff found.</div>
+    {% endfor %}
+    <div class="ht-no-results" style="grid-column:1/-1;">No results match your search.</div>
+</div>
+
 {% endblock %}

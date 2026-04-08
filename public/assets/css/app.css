@@ -1102,3 +1102,236 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
   background: var(--ht-section-bg);
   color: var(--ht-text);
 }
+
+/* ── Form Pages (ht-form-page) ──────────────────────────── */
+/* Used by C&G new/edit and intended for any future redesigned forms.
+   Replaces the legacy `main .form-page` block. */
+.ht-form-page {
+  background: var(--ht-white);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  padding: 24px 20px;
+  margin: 14px 16px 28px;
+}
+@media (min-width: 768px) {
+  .ht-form-page { margin: 14px 0 28px; padding: 32px 36px; }
+}
+
+.ht-form-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 22px;
+  color: var(--ht-text);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--ht-border);
+}
+
+.ht-form-row {
+  margin-bottom: 20px;
+}
+.ht-form-row:last-of-type { margin-bottom: 24px; }
+
+.ht-form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ht-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}
+
+.ht-form-help {
+  font-size: 12px;
+  color: var(--ht-sub);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.ht-form-input,
+.ht-form-page input[type="text"],
+.ht-form-page input[type="email"],
+.ht-form-page input[type="datetime-local"],
+.ht-form-page input[type="date"],
+.ht-form-page input[type="time"],
+.ht-form-page input[type="number"],
+.ht-form-page input[type="tel"],
+.ht-form-page select,
+.ht-form-page textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ht-text);
+  background: var(--ht-white);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+.ht-form-input:focus,
+.ht-form-page input:focus,
+.ht-form-page select:focus,
+.ht-form-page textarea:focus {
+  border-color: var(--ht-navy);
+  box-shadow: 0 0 0 3px rgba(0,48,87,0.09);
+}
+.ht-form-page textarea { resize: vertical; min-height: 88px; }
+
+.ht-form-page .form-errors,
+.ht-form-page ul.list-unstyled li {
+  color: #c0392b;
+  font-size: 13px;
+  margin-top: 6px;
+  list-style: none;
+  padding-left: 0;
+}
+
+.ht-form-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid var(--ht-border);
+  margin-top: 4px;
+  padding-top: 20px;
+}
+.ht-form-actions .ht-btn { padding: 11px 22px; }
+
+/* ── Tom Select theme overrides ─────────────────────────── */
+/* Tom Select wraps the native <select> in its own DOM. We restyle the
+   wrapper to match .ht-form-input so it looks native to our form pages. */
+.ts-wrapper.ht-tomselect,
+.ts-wrapper { font-family: inherit; }
+
+.ts-wrapper .ts-control {
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  padding: 9px 12px !important;
+  min-height: 42px;
+  font-size: 15px;
+  background: var(--ht-white) !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ts-wrapper.focus .ts-control,
+.ts-wrapper.dropdown-active .ts-control {
+  border-color: var(--ht-navy) !important;
+  box-shadow: 0 0 0 3px rgba(0,48,87,0.09) !important;
+}
+.ts-wrapper .ts-control input { font-size: 15px !important; }
+.ts-wrapper .ts-control input::placeholder { color: #aaa; }
+.ts-dropdown {
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.06) !important;
+  margin-top: 6px !important;
+  font-family: inherit;
+  overflow: hidden;
+}
+.ts-dropdown .option {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--ht-text);
+}
+.ts-dropdown .option.active,
+.ts-dropdown .active {
+  background: var(--ht-section-bg) !important;
+  color: var(--ht-navy) !important;
+}
+.ts-dropdown .no-results {
+  padding: 14px;
+  color: var(--ht-sub);
+  font-size: 14px;
+}
+
+/* ── Faces Pages (ht-faces-grid) ────────────────────────── */
+.ht-faces-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 14px 16px 28px;
+}
+@media (min-width: 480px) { .ht-faces-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
+@media (min-width: 768px) { .ht-faces-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; margin: 14px 0 32px; } }
+@media (min-width: 1100px) { .ht-faces-grid { grid-template-columns: repeat(5, 1fr); } }
+@media (min-width: 1400px) { .ht-faces-grid { grid-template-columns: repeat(6, 1fr); } }
+
+.ht-face-card {
+  background: var(--ht-white);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  text-decoration: none !important;
+  border-bottom: none !important;
+  color: inherit !important;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.ht-face-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.06);
+  text-shadow: none !important;
+}
+.ht-face-card.ht-hidden { display: none; }
+
+.ht-face-photo {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: #eef1f4;
+  display: block;
+}
+.ht-face-photo-placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(135deg, #eef1f4 0%, #dde2e8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ht-navy);
+  font-size: 38px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.ht-face-body {
+  padding: 12px 12px 14px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ht-face-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ht-text);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ht-face-meta {
+  font-size: 12px;
+  color: var(--ht-sub);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ht-face-group {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  align-self: center;
+}
+@media (min-width: 768px) {
+  .ht-face-name { font-size: 16px; }
+}

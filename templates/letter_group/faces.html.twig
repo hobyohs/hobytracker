@@ -3,31 +3,67 @@
 {% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
 
 {% block body %}
-    {{ global_back_link | raw }}
-    <h1>{{ group.printLetterGroup | raw }}</h1>
-    <h4>{{ group.homeBuilding }} {{ group.homeRoom }}</h4>
-    
-    <div class="container faces">
-        <div class="row">
-            {% for ambassador in group.ambassadors %}
-                
-                    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-                        <div class="card border-0 shadow">
-                            <img src="{{ ambassador.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="card-img-top" alt="{{ ambassador.fullName }}">
-                            <div class="card-body text-center">
-                                <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="stretched-link">
-                                    <h5 class="card-title mb-0">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</h5>
-                                    <div class="card-text">
-                                        {{ ambassador.school }}
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                
-            {% endfor %}
-        </div>
-    
-    </div>
-       
+
+{%- set groupColor = group.color -%}
+
+<a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Group {{ group.letter }}
+</a>
+
+{# ── Header ─────────────────────────────────────────────── #}
+<div class="ht-group-show-header">
+    <div class="ht-group-letter-display ht-group-{{ groupColor }}">{{ group.letter }}</div>
+    <div class="ht-show-name">Group {{ group.letter }} Faces</div>
+    {% if group.homeBuilding %}
+        <div class="ht-show-subtitle">{{ group.homeBuilding }} {{ group.homeRoom }}</div>
+    {% endif %}
+</div>
+
+<div class="ht-list-controls" style="margin-top: 18px;">
+    <input type="text" id="facesGroupSearch" class="ht-search-input" placeholder="Search by name…" autocomplete="off" autocorrect="off" spellcheck="false">
+</div>
+
+<div class="ht-faces-grid" id="facesGroupGrid">
+
+    {# Facilitators first #}
+    {% for fac in group.facilitators %}
+        {%- set initials = fac.consolidatedFirstName[0:1]|upper ~ fac.lastName[0:1]|upper -%}
+        <a href="{{ path('app_user_show', { 'id': fac.userId }) }}"
+           class="ht-face-card"
+           data-name="{{ (fac.consolidatedFirstName ~ ' ' ~ fac.lastName)|lower }}"
+           data-sub="{{ fac.position|lower }}">
+            {% if fac.photo %}
+                <img src="{{ fac.photo }}" alt="{{ fac.consolidatedFirstName }} {{ fac.lastName }}" class="ht-face-photo" loading="lazy">
+            {% else %}
+                <div class="ht-face-photo-placeholder">{{ initials }}</div>
+            {% endif %}
+            <div class="ht-face-body">
+                <div class="ht-face-name">{{ fac.consolidatedFirstName }} {{ fac.lastName }}</div>
+                <div class="ht-face-meta">{{ fac.position }}</div>
+            </div>
+        </a>
+    {% endfor %}
+
+    {# Then ambassadors #}
+    {% for ambassador in group.ambassadors %}
+        {%- set initials = ambassador.consolidatedFirstName[0:1]|upper ~ ambassador.lastName[0:1]|upper -%}
+        <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}"
+           class="ht-face-card"
+           data-name="{{ (ambassador.consolidatedFirstName ~ ' ' ~ ambassador.lastName)|lower }}"
+           data-school="{{ ambassador.school|lower }}">
+            {% if ambassador.photo %}
+                <img src="{{ ambassador.photo }}" alt="{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}" class="ht-face-photo" loading="lazy">
+            {% else %}
+                <div class="ht-face-photo-placeholder">{{ initials }}</div>
+            {% endif %}
+            <div class="ht-face-body">
+                <div class="ht-face-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
+                <div class="ht-face-meta">{{ ambassador.school }}</div>
+            </div>
+        </a>
+    {% endfor %}
+
+    <div class="ht-no-results" style="grid-column:1/-1;">No results match your search.</div>
+</div>
+
 {% endblock %}

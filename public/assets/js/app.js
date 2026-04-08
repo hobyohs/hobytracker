@@ -24,12 +24,13 @@ function htResponsiveRenderer(api, rowIdx, columns) {
 }
 
 // ── Card List Filter ──────────────────────────────────────
-function initCardFilter(searchId, listId, pillSelector) {
+function initCardFilter(searchId, listId, pillSelector, cardSelector) {
   var searchEl = document.getElementById(searchId);
   var listEl   = document.getElementById(listId);
   if (!listEl) return;
 
-  var cards    = listEl.querySelectorAll('.ht-card-row');
+  cardSelector = cardSelector || '.ht-card-row';
+  var cards    = listEl.querySelectorAll(cardSelector);
   var noResults = listEl.querySelector('.ht-no-results');
   var activeFilter = 'all';
 
@@ -132,6 +133,23 @@ $(document).ready(function() {
   initCardFilter('staffSearch',    'staffList',    '.staff-pill');
   initCardFilter('checkinSearch',  'checkinList',  '.checkin-pill');
   initCardFilter('checkoutSearch', 'checkoutList', '.checkout-pill');
+
+  // Faces page filters (same shape as card lists, different card class)
+  initCardFilter('facesAmbSearch',   'facesAmbGrid',   '.faces-amb-pill',   '.ht-face-card');
+  initCardFilter('facesStaffSearch', 'facesStaffGrid', '.faces-staff-pill', '.ht-face-card');
+  initCardFilter('facesGroupSearch', 'facesGroupGrid', '.faces-group-pill', '.ht-face-card');
+
+  // Tom Select on any element with the .ht-tomselect class
+  // (added to the EntityType <select> in form templates)
+  if (typeof TomSelect !== 'undefined') {
+    document.querySelectorAll('.ht-tomselect').forEach(function(el) {
+      new TomSelect(el, {
+        allowEmptyOption: true,
+        maxOptions: 500,
+        placeholder: el.getAttribute('placeholder') || 'Type to search…'
+      });
+    });
+  }
 
   // Bootstrap tooltip
   $('[data-toggle="tooltip"]').tooltip({ container: 'body', html: true, placement: 'bottom' });

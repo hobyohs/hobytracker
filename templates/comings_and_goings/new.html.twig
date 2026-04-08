@@ -1,8 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Add New Coming/Going</h1>
-    <a href="{{ path('app_comings_and_goings_index') }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
-    {{ form(form) }}
-
+    {% include 'comings_and_goings/_form.html.twig' with {
+        title: 'New Coming/Going',
+        button_label: 'Create',
+        form: form
+    } %}
 {% endblock %}

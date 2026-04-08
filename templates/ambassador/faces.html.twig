@@ -1,36 +1,60 @@
 {% extends 'base.html.twig' %}
 
+{% block maintag %}<main class="wide">{% endblock %}
+
 {% block body %}
-	<h1>Our Ambassadors</h1>
 
-	<div class="container faces">
-		<div class="row">
-			{% for ambassador in ambassadors %}
-				
-					<div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-						
-						<div class="card border-0 shadow">
-							<img src="{{ ambassador.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="card-img-top" alt="{{ ambassador.fullName }}">
-							<div class="card-body text-center">
-								<a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="stretched-link">
-									<h5 class="card-title mb-0">{{ ambassador.fullName }}</h5>
-									<div class="card-text">
-										{{ ambassador.school }}
-										
-										{% if not ambassador.letterGroup is null %}
-											<br><span class="letter {{ambassador.letterGroup.color}}">Group {{ ambassador.letterGroup.letter }}</span>
-										{% endif %}
-										
-									</div>
-									</a>
-							</div>
-						</div>
-					</div>
-				
-			{% endfor %}
-		</div>
-	
-	</div>
+{# Build sorted list of letter groups present in this year's data #}
+{% set groups_map = {} %}
+{% for ambassador in ambassadors %}
+    {% if ambassador.letterGroup %}
+        {% set groups_map = groups_map|merge({ (ambassador.letterGroup.letter): ambassador.letterGroup }) %}
+    {% endif %}
+{% endfor %}
+{% set sorted_letters = groups_map|keys|sort %}
 
-	
+<div class="ht-page-header">
+    <h1>Ambassador Faces</h1>
+    <span class="ht-page-count">{{ ambassadors|length }}</span>
+</div>
+
+<div class="ht-list-controls">
+    <input type="text" id="facesAmbSearch" class="ht-search-input" placeholder="Search name or school…" autocomplete="off" autocorrect="off" spellcheck="false">
+    <div class="ht-filter-pills">
+        <span class="ht-pill faces-amb-pill active" data-filter="all">All</span>
+        {% for letter in sorted_letters %}
+            <span class="ht-pill faces-amb-pill" data-filter="{{ letter }}">{{ letter }}</span>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="ht-faces-grid" id="facesAmbGrid">
+    {% for ambassador in ambassadors %}
+        {%- set initials = ambassador.consolidatedFirstName[0:1]|upper ~ ambassador.lastName[0:1]|upper -%}
+        {%- set groupLetter = ambassador.letterGroup ? ambassador.letterGroup.letter : '' -%}
+        {%- set groupColor  = ambassador.letterGroup ? ambassador.letterGroup.color  : '' -%}
+        <a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}"
+           class="ht-face-card"
+           data-name="{{ (ambassador.consolidatedFirstName ~ ' ' ~ ambassador.lastName)|lower }}"
+           data-school="{{ ambassador.school|lower }}"
+           data-group="{{ groupLetter }}">
+            {% if ambassador.photo %}
+                <img src="{{ ambassador.photo }}" alt="{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}" class="ht-face-photo" loading="lazy">
+            {% else %}
+                <div class="ht-face-photo-placeholder">{{ initials }}</div>
+            {% endif %}
+            <div class="ht-face-body">
+                <div class="ht-face-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
+                <div class="ht-face-meta">{{ ambassador.school }}</div>
+                {% if ambassador.letterGroup %}
+                    <span class="ht-face-group ht-group-{{ groupColor }}">Group {{ groupLetter }}</span>
+                {% endif %}
+            </div>
+        </a>
+    {% else %}
+        <div class="ht-no-results" style="display:block; grid-column:1/-1;">No ambassadors found.</div>
+    {% endfor %}
+    <div class="ht-no-results" style="grid-column:1/-1;">No results match your search.</div>
+</div>
+
 {% endblock %}
