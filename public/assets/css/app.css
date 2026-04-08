@@ -372,12 +372,8 @@ main {
   flex-shrink: 0;
   letter-spacing: 0.2px;
 }
-.ht-group-red    { background: var(--badge-red-bg);    color: var(--badge-red-text); }
-.ht-group-blue   { background: var(--badge-blue-bg);   color: var(--badge-blue-text); }
-.ht-group-green  { background: var(--badge-green-bg);  color: var(--badge-green-text); }
-.ht-group-yellow { background: var(--badge-yellow-bg); color: var(--badge-yellow-text); }
-.ht-group-purple { background: var(--badge-purple-bg); color: var(--badge-purple-text); }
-.ht-group-teal   { background: var(--badge-teal-bg);   color: var(--badge-teal-text); }
+/* Note: the .ht-group-{color} rules live further down in the file with
+   !important to beat the legacy `main a:hover` color override. */
 
 /* ── Back Link ──────────────────────────────────────────── */
 .ht-back-link {
@@ -661,7 +657,15 @@ main a.letter:hover,
 main a.stretched-link:hover {
   text-shadow: none !important;
 }
-/* Group badges should darken slightly on hover, not change color */
+/* Group badges should keep their soft text color on hover, not change to navy.
+   The color !important here beats `main a:hover { color: var(--ht-navy) }`. */
+.ht-group-red    { background: var(--badge-red-bg);    color: var(--badge-red-text)    !important; }
+.ht-group-blue   { background: var(--badge-blue-bg);   color: var(--badge-blue-text)   !important; }
+.ht-group-green  { background: var(--badge-green-bg);  color: var(--badge-green-text)  !important; }
+.ht-group-yellow { background: var(--badge-yellow-bg); color: var(--badge-yellow-text) !important; }
+.ht-group-purple { background: var(--badge-purple-bg); color: var(--badge-purple-text) !important; }
+.ht-group-teal   { background: var(--badge-teal-bg);   color: var(--badge-teal-text)   !important; }
+/* Group badges darken slightly on hover, color stays the same */
 main a.ht-group-badge:hover,
 main a.ht-group-badge-lg:hover {
   filter: brightness(0.94);
@@ -1290,6 +1294,11 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
   border: none !important;
   padding: 0 !important;
 }
+/* When the user has focused the control to type a search, hide the
+   rendered selection so they see only their typed text + the dropdown.
+   The underlying value is unchanged — if the user blurs without picking,
+   the .ts-typing class is removed and the rendered item reappears. */
+.ts-wrapper.ts-typing .ts-control > .item { display: none !important; }
 /* Dropdown popover */
 .ts-dropdown {
   border: 1px solid #e0e0e0 !important;

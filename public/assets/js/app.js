@@ -148,7 +148,14 @@ $(document).ready(function() {
         maxOptions: 500,
         hideSelected: true,
         closeAfterSelect: true,
-        placeholder: el.getAttribute('placeholder') || 'Type to search…'
+        placeholder: el.getAttribute('placeholder') || 'Type to search…',
+        // When focused, hide the rendered selection visually so the user
+        // gets a clean text input. We do this via a CSS class toggle on
+        // the wrapper so we never touch the underlying form value — if
+        // the user blurs without picking a new option, the original
+        // selection's display reappears unchanged.
+        onFocus: function() { this.wrapper.classList.add('ts-typing'); },
+        onBlur:  function() { this.wrapper.classList.remove('ts-typing'); }
       });
     });
   }
