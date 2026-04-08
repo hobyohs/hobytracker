@@ -385,7 +385,7 @@ main {
   align-items: center;
   gap: 6px;
   padding: 8px 14px 8px 10px;
-  margin: 14px 16px 0;
+  margin: 14px 16px 18px;
   color: var(--ht-navy);
   font-size: 14px;
   font-weight: 500;
@@ -404,7 +404,7 @@ main {
 }
 .ht-back-link i { color: var(--ht-sub); transition: color 0.15s; }
 .ht-back-link:hover i { color: var(--ht-navy); }
-@media (min-width: 768px) { .ht-back-link { margin: 20px 0 0; } }
+@media (min-width: 768px) { .ht-back-link { margin: 20px 0 22px; } }
 
 /* ── Show / Detail Page ──────────────────────────────────── */
 .ht-show-header {
@@ -631,6 +631,41 @@ main a:hover {
 }
 main a.red { color: #bf3838 !important; }
 main a.back-link { color: #555; }
+
+/* Styled link elements should NOT inherit prose-link decoration.
+   These are classes that visually present as buttons, pills, or cards. */
+main a.ht-group-badge,
+main a.ht-group-badge-lg,
+main a.ht-room-badge,
+main a.ht-btn,
+main a.ht-back-link,
+main a.ht-card-row,
+main a.ht-face-card,
+main a.ht-group-card,
+main a.ht-table-name-link,
+main a.ht-table-edit-link,
+main a.letter,
+main a.stretched-link {
+  border-bottom: none !important;
+}
+main a.ht-group-badge:hover,
+main a.ht-group-badge-lg:hover,
+main a.ht-room-badge:hover,
+main a.ht-btn:hover,
+main a.ht-card-row:hover,
+main a.ht-face-card:hover,
+main a.ht-group-card:hover,
+main a.ht-table-name-link:hover,
+main a.ht-table-edit-link:hover,
+main a.letter:hover,
+main a.stretched-link:hover {
+  text-shadow: none !important;
+}
+/* Group badges should darken slightly on hover, not change color */
+main a.ht-group-badge:hover,
+main a.ht-group-badge-lg:hover {
+  filter: brightness(0.94);
+}
 
 .callout {
   border: 1px solid #e0e0e0;
@@ -1180,12 +1215,29 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
   transition: border-color 0.15s, box-shadow 0.15s;
   box-sizing: border-box;
 }
+/* Reset the form-page input rules where they leak into Tom Select internals.
+   Tom Select renders an <input> inside .ts-control which is inside .ht-form-page,
+   so the selector above otherwise applies to it and breaks Tom Select's layout. */
+.ht-form-page .ts-wrapper input,
+.ht-form-page .ts-wrapper input[type="text"],
+.ht-form-page .ts-wrapper select {
+  width: auto !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
 .ht-form-input:focus,
 .ht-form-page input:focus,
 .ht-form-page select:focus,
 .ht-form-page textarea:focus {
   border-color: var(--ht-navy);
   box-shadow: 0 0 0 3px rgba(0,48,87,0.09);
+}
+.ht-form-page .ts-wrapper input:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 .ht-form-page textarea { resize: vertical; min-height: 88px; }
 
@@ -1211,15 +1263,14 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
 
 /* ── Tom Select theme overrides ─────────────────────────── */
 /* Tom Select wraps the native <select> in its own DOM. We restyle the
-   wrapper to match .ht-form-input so it looks native to our form pages. */
-.ts-wrapper.ht-tomselect,
+   wrapper to match .ht-form-input. We deliberately do NOT touch the
+   internal flex/positioning rules — only colors, borders, and fonts. */
 .ts-wrapper { font-family: inherit; }
 
+.ts-wrapper.single .ts-control,
 .ts-wrapper .ts-control {
   border: 1px solid #e0e0e0 !important;
   border-radius: 8px !important;
-  padding: 9px 12px !important;
-  min-height: 42px;
   font-size: 15px;
   background: var(--ht-white) !important;
   box-shadow: none !important;
@@ -1230,8 +1281,16 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
   border-color: var(--ht-navy) !important;
   box-shadow: 0 0 0 3px rgba(0,48,87,0.09) !important;
 }
-.ts-wrapper .ts-control input { font-size: 15px !important; }
-.ts-wrapper .ts-control input::placeholder { color: #aaa; }
+.ts-wrapper .ts-control > input { font-size: 15px !important; }
+.ts-wrapper .ts-control > input::placeholder { color: #aaa; }
+/* The rendered selected item — color it like normal text */
+.ts-wrapper .ts-control > .item {
+  color: var(--ht-text);
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+/* Dropdown popover */
 .ts-dropdown {
   border: 1px solid #e0e0e0 !important;
   border-radius: 10px !important;
