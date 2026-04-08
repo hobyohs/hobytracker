@@ -144,8 +144,10 @@ $(document).ready(function() {
   if (typeof TomSelect !== 'undefined') {
     document.querySelectorAll('.ht-tomselect').forEach(function(el) {
       new TomSelect(el, {
-        allowEmptyOption: true,
+        maxItems: 1,
         maxOptions: 500,
+        hideSelected: true,
+        closeAfterSelect: true,
         placeholder: el.getAttribute('placeholder') || 'Type to search…'
       });
     });

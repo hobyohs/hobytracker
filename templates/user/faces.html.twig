@@ -4,14 +4,12 @@
 
 {% block body %}
 
-{# Build sorted list of letter groups present in this year's staff #}
-{% set groups_map = {} %}
-{% for user in users %}
-    {% if user.letterGroup %}
-        {% set groups_map = groups_map|merge({ (user.letterGroup.letter): user.letterGroup }) %}
-    {% endif %}
-{% endfor %}
-{% set sorted_letters = groups_map|keys|sort %}
+{% set role_categories = {
+    'senior':  'Seniors',
+    'junior':  'Juniors',
+    'jcrew':   'J-Crew',
+    'teamhq':  'Team HQ'
+} %}
 
 <div class="ht-page-header">
     <h1>Staff Faces</h1>
@@ -22,8 +20,8 @@
     <input type="text" id="facesStaffSearch" class="ht-search-input" placeholder="Search name or position…" autocomplete="off" autocorrect="off" spellcheck="false">
     <div class="ht-filter-pills">
         <span class="ht-pill faces-staff-pill active" data-filter="all">All</span>
-        {% for letter in sorted_letters %}
-            <span class="ht-pill faces-staff-pill" data-filter="{{ letter }}">{{ letter }}</span>
+        {% for key, label in role_categories %}
+            <span class="ht-pill faces-staff-pill" data-filter="{{ key }}">{{ label }}</span>
         {% endfor %}
     </div>
 </div>
@@ -33,11 +31,16 @@
         {%- set initials = user.consolidatedFirstName[0:1]|upper ~ user.lastName[0:1]|upper -%}
         {%- set groupLetter = user.letterGroup ? user.letterGroup.letter : '' -%}
         {%- set groupColor  = user.letterGroup ? user.letterGroup.color  : '' -%}
+        {%- if    user.position == 'Senior Facilitator' -%}{%- set roleCat = 'senior' -%}
+        {%- elseif user.position == 'Junior Facilitator' -%}{%- set roleCat = 'junior' -%}
+        {%- elseif user.position == 'J-Crew' -%}{%- set roleCat = 'jcrew' -%}
+        {%- else -%}{%- set roleCat = 'teamhq' -%}
+        {%- endif -%}
         <a href="{{ path('app_user_show', { 'id': user.userId }) }}"
            class="ht-face-card"
            data-name="{{ (user.consolidatedFirstName ~ ' ' ~ user.lastName)|lower }}"
            data-sub="{{ user.position|lower }}"
-           data-group="{{ groupLetter }}">
+           data-group="{{ roleCat }}">
             {% if user.photo %}
                 <img src="{{ user.photo }}" alt="{{ user.consolidatedFirstName }} {{ user.lastName }}" class="ht-face-photo" loading="lazy">
             {% else %}

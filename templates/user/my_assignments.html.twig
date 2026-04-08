@@ -7,10 +7,6 @@
 
 {%- set groupColor = user.letterGroup ? user.letterGroup.color : '' -%}
 
-<a href="javascript:history.back()" class="ht-back-link">
-    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Back
-</a>
-
 {# ── Header ─────────────────────────────────────────────── #}
 <div class="ht-show-header">
     {{ avatar.render(user, 88) }}

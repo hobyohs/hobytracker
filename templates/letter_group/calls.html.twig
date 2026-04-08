@@ -3,7 +3,9 @@
 {% block maintag %}<main class="show{% if app.user.letterGroup == group %} bigger{% endif %} user">{% endblock %}
 
 {% block body %}
-	{{ global_back_link | raw }}
+	<a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}" class="ht-back-link">
+	    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Group {{ group.letter }}
+	</a>
 	<h1>{{ group.printLetterGroup | raw }}</h1>
 
 		

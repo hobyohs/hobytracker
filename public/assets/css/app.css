@@ -383,18 +383,28 @@ main {
 .ht-back-link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 14px 16px 0;
-  color: var(--ht-sub);
+  gap: 6px;
+  padding: 8px 14px 8px 10px;
+  margin: 14px 16px 0;
+  color: var(--ht-navy);
   font-size: 14px;
+  font-weight: 500;
   text-decoration: none !important;
   border-bottom: none !important;
+  background: var(--ht-white);
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  transition: background 0.15s, transform 0.1s;
 }
 .ht-back-link:hover {
+  background: var(--ht-section-bg);
   color: var(--ht-navy) !important;
   text-shadow: none !important;
+  transform: translateX(-2px);
 }
-@media (min-width: 768px) { .ht-back-link { padding: 20px 0 0; } }
+.ht-back-link i { color: var(--ht-sub); transition: color 0.15s; }
+.ht-back-link:hover i { color: var(--ht-navy); }
+@media (min-width: 768px) { .ht-back-link { margin: 20px 0 0; } }
 
 /* ── Show / Detail Page ──────────────────────────────────── */
 .ht-show-header {

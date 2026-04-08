@@ -8,10 +8,6 @@
 {%- set isMyGroup = (app.user.letterGroup == group) -%}
 {%- set groupColor = group.color -%}
 
-<a href="javascript:history.back()" class="ht-back-link">
-    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Groups
-</a>
-
 {# ── Header ─────────────────────────────────────────────── #}
 <div class="ht-group-show-header">
     <div class="ht-group-letter-display ht-group-{{ groupColor }}">{{ group.letter }}</div>

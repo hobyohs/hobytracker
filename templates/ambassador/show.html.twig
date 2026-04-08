@@ -7,7 +7,7 @@
 {%- set initials = ambassador.consolidatedFirstName[0:1]|upper ~ ambassador.lastName[0:1]|upper -%}
 {%- set groupColor = ambassador.letterGroup ? ambassador.letterGroup.color : '' -%}
 
-<a href="javascript:history.back()" class="ht-back-link">
+<a href="{{ path('app_ambassador_index') }}" class="ht-back-link">
     <i class="fa fa-chevron-left" style="font-size:11px;"></i> Ambassadors
 </a>
 
