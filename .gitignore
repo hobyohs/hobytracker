@@ -20,6 +20,7 @@
 ###< symfony/phpunit-bridge ###
 
 /.nova
+/.vscode
 
 .DS_Store
 ._.DS_Store
