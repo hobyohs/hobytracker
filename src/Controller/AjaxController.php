@@ -12,6 +12,7 @@ use App\Repository\ApplicantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -97,5 +98,39 @@ class AjaxController extends AbstractController
 	{
 		return new JsonResponse($applicantRepository->pullSummary()); 
 	}
-	
+
+	/**
+	 * Toggle the C&G override flag for a given ambassador's check-in.
+	 * State is held in session, not the DB — the actual ComingsAndGoings
+	 * row is created on form submit if the override is on.
+	 */
+	#[Route('/checkin/{id}/toggle-cg-override', name: 'checkin_toggle_cg_override', methods: ['POST'])]
+	public function toggleCgOverride(int $id, RequestStack $requestStack)
+	{
+		$session = $requestStack->getSession();
+		$key = "checkin_override_{$id}_cg";
+		$current = $session->get($key, false);
+		$new = !$current;
+		$session->set($key, $new);
+
+		return new JsonResponse(['success' => true, 'state' => $new ? 'on' : 'off']);
+	}
+
+	/**
+	 * Toggle the meds override flag for a given ambassador's check-in.
+	 * State is held in session, not the DB — checkinMeds is set to 1
+	 * on form submit if the override is on.
+	 */
+	#[Route('/checkin/{id}/toggle-meds-override', name: 'checkin_toggle_meds_override', methods: ['POST'])]
+	public function toggleMedsOverride(int $id, RequestStack $requestStack)
+	{
+		$session = $requestStack->getSession();
+		$key = "checkin_override_{$id}_meds";
+		$current = $session->get($key, false);
+		$new = !$current;
+		$session->set($key, $new);
+
+		return new JsonResponse(['success' => true, 'state' => $new ? 'on' : 'off']);
+	}
+
 }

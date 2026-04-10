@@ -334,6 +334,35 @@ $(document).ready(function() {
     {responsivePriority:5,targets:0}
   ]});
 
+  // ── Script Pages: sticker override buttons ──────────────────
+  // Markup: <button class="ht-override-btn" data-override-action="toggle-cg|toggle-meds">
+  // Inside <div class="ht-override-pair" data-ambassador-id="...">
+  // POSTs to the appropriate AJAX endpoint, toggles .override-active
+  // on the parent pair on success.
+  document.querySelectorAll('.ht-override-btn[data-override-action]').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var pair = btn.closest('.ht-override-pair');
+      if (!pair) return;
+      var ambId = pair.dataset.ambassadorId;
+      var action = btn.dataset.overrideAction;
+      var url = action === 'toggle-cg'
+        ? '/ajax/checkin/' + ambId + '/toggle-cg-override'
+        : '/ajax/checkin/' + ambId + '/toggle-meds-override';
+
+      fetch(url, { method: 'POST', credentials: 'same-origin' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.success) {
+            pair.classList.toggle('override-active', data.state === 'on');
+          }
+        })
+        .catch(function(err) {
+          console.error('Override toggle failed', err);
+        });
+    });
+  });
+
   // ── Script Pages: segmented buttons (sync to hidden select) ─
   // Markup: <div class="ht-segmented" data-segmented-for="<select_id>">
   //           <label data-value="x">X</label> ...

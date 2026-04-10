@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Ambassador;
+use App\Entity\ComingsAndGoings;
 use App\Form\AmbassadorType;
 use App\Repository\AmbassadorRepository;
 use App\Entity\LetterGroup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
@@ -127,14 +129,33 @@ class AmbassadorController extends AbstractController
     }
     
     #[Route('/checkin/{id}', name: 'app_ambassador_checkin_form', methods: ['GET', 'POST'])]
-    public function checkinFormAction(Request $request, Ambassador $ambassador, EntityManagerInterface $entityManager): Response
+    public function checkinFormAction(Request $request, Ambassador $ambassador, EntityManagerInterface $entityManager, RequestStack $requestStack): Response
     {
+        $session = $requestStack->getSession();
+        $cgOverrideKey = "checkin_override_{$ambassador->getId()}_cg";
+        $medsOverrideKey = "checkin_override_{$ambassador->getId()}_meds";
+
         $editForm = $this->createForm('App\Form\CheckinType', $ambassador);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            // Apply session overrides before persisting
+            if ($session->get($cgOverrideKey, false)) {
+                $cg = new ComingsAndGoings();
+                $cg->setAmbassador($ambassador);
+                $entityManager->persist($cg);
+            }
+            if ($session->get($medsOverrideKey, false)) {
+                $ambassador->setCheckinMeds(true);
+            }
+
             $entityManager->persist($ambassador);
             $entityManager->flush();
+
+            // Clear session overrides for this ambassador now that they're persisted
+            $session->remove($cgOverrideKey);
+            $session->remove($medsOverrideKey);
+
             return $this->redirectToRoute('app_ambassador_checkin');
         }
         
@@ -176,6 +197,8 @@ class AmbassadorController extends AbstractController
             'psm_status' => $psm_status,
             'deposit_status' => $deposit_status,
             'meds_status' => $meds_status,
+            'cg_override' => $session->get($cgOverrideKey, false),
+            'meds_override' => $session->get($medsOverrideKey, false),
 //             'doc_status' => $doc_status,
           //  'store_status' => $store_status,
         ));
