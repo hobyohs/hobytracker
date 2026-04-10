@@ -334,12 +334,74 @@ $(document).ready(function() {
     {responsivePriority:5,targets:0}
   ]});
 
-  // Checkout deposit toggle
+  // ── Script Pages: segmented buttons (sync to hidden select) ─
+  // Markup: <div class="ht-segmented" data-segmented-for="<select_id>">
+  //           <label data-value="x">X</label> ...
+  //         </div>
+  // The hidden <select> next to it holds the actual form value.
+  document.querySelectorAll('.ht-segmented[data-segmented-for]').forEach(function(group) {
+    var selectId = group.dataset.segmentedFor;
+    var select = document.getElementById(selectId);
+    if (!select) return;
+
+    var labels = group.querySelectorAll('label');
+
+    function applyValue(val) {
+      labels.forEach(function(l) {
+        l.classList.toggle('is-selected', l.dataset.value === val);
+      });
+    }
+
+    // Initialize visual state from current select value
+    applyValue(select.value);
+
+    labels.forEach(function(label) {
+      label.addEventListener('click', function() {
+        var val = this.dataset.value;
+        select.value = val;
+        // Fire change event so any listeners (e.g. the checkout toggle) react
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        applyValue(val);
+      });
+    });
+  });
+
+  // ── Script Pages: radio cards (sync to hidden select) ───────
+  // Markup: <div class="ht-radio-cards" data-radio-cards-for="<select_id>">
+  //           <div class="ht-radio-card" data-value="x">...</div> ...
+  //         </div>
+  document.querySelectorAll('.ht-radio-cards[data-radio-cards-for]').forEach(function(group) {
+    var selectId = group.dataset.radioCardsFor;
+    var select = document.getElementById(selectId);
+    if (!select) return;
+
+    var cards = group.querySelectorAll('.ht-radio-card');
+
+    function applyValue(val) {
+      cards.forEach(function(c) {
+        c.classList.toggle('is-selected', c.dataset.value === val);
+      });
+    }
+
+    applyValue(select.value);
+
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        var val = this.dataset.value;
+        select.value = val;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        applyValue(val);
+      });
+    });
+  });
+
+  // Checkout deposit toggle — show the right script section based on choice
   $('#checkout_checkout_deposit_decision').change(function() {
     var val = $(this).val();
     if (val === "return") { $('#checkout-deposit-return').show(); $('#checkout-deposit-keep').hide(); }
-    else { $('#checkout-deposit-keep').show(); $('#checkout-deposit-return').hide(); }
-  });
+    else if (val === "movie" || val === "lost") { $('#checkout-deposit-keep').show(); $('#checkout-deposit-return').hide(); }
+    else { $('#checkout-deposit-return').hide(); $('#checkout-deposit-keep').hide(); }
+  }).trigger('change');
 
   // Eval bars
   $('.show-bars').barrating('show', { theme: 'bars-movie' });

@@ -5,7 +5,6 @@ namespace App\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -33,10 +32,6 @@ class CallType extends AbstractType
 			->add('juniorCallNotes', TextareaType::class, [
 				'label' => "Let us know how the call went or any questions we need to follow up on."
 			])
-			->add('save', SubmitType::class, array (
-				'label' => 'Call Complete',
-				'attr' => ['class' => 'checkin-button btn-primary']
-			))
 		;
 	}
 

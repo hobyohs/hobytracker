@@ -1,83 +1,118 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+
+{% block maintag %}<main class="show ambassador">{% endblock %}
 
 {% block body %}
-    <h1>Checking Out {{ambassador.consolidatedFirstName}} {{ambassador.lastName}}</h1>
-    <a href="{{ path('app_ambassador_checkout') }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
-    <div class="checkin-form-group">
-        {{ form_start(edit_form) }}
-            
 
-            <div class="card">
-                <div class="card-heading card-info">Collect {{ambassador.consolidatedFirstName}}'s key and keycard</div>
-                <div class="card-body">
-                    {{ambassador.dorm}} {{ambassador.room}}
+<a href="{{ path('app_ambassador_checkout') }}" class="ht-script-cancel">
+    <i class="fa fa-times" style="font-size:11px;"></i> Cancel
+</a>
+
+{# ── Header ─────────────────────────────────────────────── #}
+<div class="ht-show-header">
+    {{ avatar.render(ambassador, 88) }}
+    <div class="ht-show-name">Checking Out {{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
+    <div class="ht-show-subtitle">{{ ambassador.school }}</div>
+</div>
+
+<div class="ht-script-body">
+
+    {{ form_start(edit_form) }}
+
+    {# ── 1. Collect key/keycard ───────────────────────────────── #}
+    <div class="ht-script-info">
+        <h3>Collect {{ ambassador.consolidatedFirstName }}'s key and keycard</h3>
+        {% if ambassador.dormRoom %}
+            <div class="ht-info-data">{{ ambassador.dorm }} {{ ambassador.room }}</div>
+        {% endif %}
+    </div>
+
+    {# ── 2. Deposit decision ──────────────────────────────────── #}
+    {% if ambassador.isCheckinDeposit and (ambassador.getCheckinDepositMethod != "Waived") %}
+
+        <div class="ht-script-section has-sticker sticker-blue">
+            <div class="ht-script-sticker sticker-blue"><i class="fa fa-comment-dollar"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Ask the Ambassador</div>
+                <h3>What would {{ ambassador.consolidatedFirstName }} like to do with their deposit?</h3>
+                {# The hidden Symfony select drives the underlying form value.
+                   Visible segmented buttons toggle .is-selected via JS and
+                   sync to the hidden select. #}
+                <div class="hidden">{{ form_widget(edit_form.checkout_deposit_decision) }}</div>
+                <div class="ht-segmented" data-segmented-for="{{ edit_form.checkout_deposit_decision.vars.id }}">
+                    <label data-value="movie">Movie</label>
+                    <label data-value="return">Return</label>
+                    <label data-value="lost">Lost Keys</label>
                 </div>
             </div>
-            
-            {% if ambassador.isCheckinDeposit and (ambassador.getCheckinDepositMethod != "Waived") %}
-                <div class="card">
-                    <div class="card-heading card-info">What would {{ambassador.consolidatedFirstName}} like to do with their deposit?</div>
-                    <div class="card-body">
-                        {{form_widget(edit_form.checkout_deposit_decision)}}
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-heading card-info">{{ambassador.consolidatedFirstName}} paid their key deposit by {{ ambassador.getCheckinDepositMethod }}</div>
-                    <div class="card-body hidden-ui" id="checkout-deposit-return">
-                    
-                        {% if ambassador.getCheckinDepositMethod == "PayPal" or ambassador.getCheckinDepositMethod == "QuickBooks" %}
-                            Inform {{ambassador.consolidatedFirstName}} that their deposit will be refunded to the credit or debit card it was paid with.
-                        {% elseif ambassador.getCheckinDepositMethod == "Check" %}
-                            Return {{ambassador.consolidatedFirstName}}'s check to them.
-                        {% elseif ambassador.getCheckinDepositMethod == "Cash" %}
-                            Return {{ambassador.consolidatedFirstName}} $30.00 in cash.
-                        {% endif %}
-                        
-                        {% if ambassador.getCheckinDepositNotes|length %}
-                            <br><br>
-                            <strong><u>Notes:</u></strong> {{ambassador.getCheckinDepositNotes}}
-                        {% endif %}
-                        
-                    </div>
-                    <div class="card-body hidden-ui" id="checkout-deposit-keep">
-                    
-                        We will keep {{ambassador.consolidatedFirstName}}'s deposit.
-                        
-                        {% if ambassador.getCheckinDepositNotes|length %}
-                            <br><br>
-                            <strong><u>Notes:</u></strong> {{ambassador.getCheckinDepositNotes}}
-                        {% endif %}
-                        
-                    </div>
-                </div>
-            {% else %}
-                
-                <div class="card">
-                    <div class="card-heading card-danger">{{ambassador.consolidatedFirstName}} never paid a key deposit.</div>
-                    <div class="card-body">
-                        If they would still like the movie, they can pay $30.00 to HOBY Ohio South in cash or check given to you, or by credit card at the HOBY Store.
-                        {% if ambassador.getCheckinDepositNotes|length %}
-                            <br><br>
-                            <strong><u>Notes:</u></strong> {{ambassador.getCheckinDepositNotes}}
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="hidden">{{form_widget(edit_form.checkout_deposit_decision, { 'disabled': 'disabled' })}}</div>
-            {% endif %}
-            
-            {% if ambassador.isCheckinMeds %}
-                <div class="card card-danger">
-                    <div class="card-heading">{{ambassador.consolidatedFirstName}} brought prescription meds.</div>
-                    <div class="card-body">
-                       Please remind them to stop by the meds table to pick them up.
-                    </div>
-                </div>
-                
-            {% endif %}
-            
-            
-        {{ form_end(edit_form) }}
-    </div>
+        </div>
+
+        <div class="ht-script-section has-sticker sticker-green" id="checkout-deposit-return" style="display:none;">
+            <div class="ht-script-sticker sticker-green"><i class="fa fa-money-bill-wave"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Return the Deposit</div>
+                <h3>{{ ambassador.consolidatedFirstName }} paid their key deposit by {{ ambassador.getCheckinDepositMethod }}</h3>
+                <p>
+                {% if ambassador.getCheckinDepositMethod == "PayPal" or ambassador.getCheckinDepositMethod == "QuickBooks" %}
+                    Inform {{ ambassador.consolidatedFirstName }} that their deposit will be refunded to the credit or debit card it was paid with.
+                {% elseif ambassador.getCheckinDepositMethod == "Check" %}
+                    Return {{ ambassador.consolidatedFirstName }}'s check to them.
+                {% elseif ambassador.getCheckinDepositMethod == "Cash" %}
+                    Return {{ ambassador.consolidatedFirstName }} $30.00 in cash.
+                {% endif %}
+                </p>
+                {% if ambassador.getCheckinDepositNotes|length %}
+                    <p><strong>Notes:</strong> {{ ambassador.getCheckinDepositNotes }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="ht-script-section has-sticker sticker-blue" id="checkout-deposit-keep" style="display:none;">
+            <div class="ht-script-sticker sticker-blue"><i class="fa fa-vault"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Keep the Deposit</div>
+                <h3>We will keep {{ ambassador.consolidatedFirstName }}'s deposit.</h3>
+                {% if ambassador.getCheckinDepositNotes|length %}
+                    <p><strong>Notes:</strong> {{ ambassador.getCheckinDepositNotes }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+    {% else %}
+
+        <div class="ht-script-section has-sticker sticker-red">
+            <div class="ht-script-sticker sticker-red"><i class="fa fa-circle-exclamation"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">No Deposit on File</div>
+                <h3>{{ ambassador.consolidatedFirstName }} never paid a key deposit.</h3>
+                <p>If they would still like the movie, they can pay $30.00 to HOBY Ohio South in cash or check given to you, or by credit card at the HOBY Store.</p>
+                {% if ambassador.getCheckinDepositNotes|length %}
+                    <p><strong>Notes:</strong> {{ ambassador.getCheckinDepositNotes }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="hidden">{{ form_widget(edit_form.checkout_deposit_decision, { 'disabled': 'disabled' }) }}</div>
+
+    {% endif %}
+
+    {# ── 3. Prescription medications reminder ─────────────────── #}
+    {% if meds_status %}
+        <div class="ht-script-section has-sticker sticker-red">
+            <div class="ht-script-sticker sticker-red"><i class="fa fa-prescription-bottle-medical"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Reminder</div>
+                <h3>{{ ambassador.consolidatedFirstName }} brought prescription meds.</h3>
+                <p>Please remind them to stop by the meds table to pick them up.</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <button type="submit" class="ht-script-submit">Check Out</button>
+
+    {{ form_end(edit_form) }}
+
+</div>
+
 {% endblock %}

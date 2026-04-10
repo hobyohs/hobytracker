@@ -1413,3 +1413,358 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
 @media (min-width: 768px) {
   .ht-face-name { font-size: 16px; }
 }
+
+/* ── Script Pages (check-in / check-out / pre-seminar call) ─ */
+/* The header is reused from .ht-show-header. The script body
+   contains a sequence of "moments" — sticker action cards,
+   confirmation rows, and info cards. */
+
+.ht-script-body {
+  padding: 0 16px 32px;
+}
+@media (min-width: 768px) { .ht-script-body { padding: 0 0 40px; max-width: 700px; margin: 0 auto; } }
+
+/* Cancel link at the very top of the page */
+.ht-script-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px 8px 10px;
+  margin: 14px 16px 14px;
+  color: #c0392b;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none !important;
+  border-bottom: none !important;
+  background: var(--ht-white);
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  transition: background 0.15s;
+}
+.ht-script-cancel:hover {
+  background: #fef0f0;
+  color: #c0392b !important;
+  text-shadow: none !important;
+}
+@media (min-width: 768px) { .ht-script-cancel { margin: 20px 0 14px; } }
+
+/* Sticker action card — the dominant pattern.
+   Used for the "apply a sticker, do the thing" script moments. */
+.ht-script-section {
+  background: var(--ht-white);
+  border-radius: 14px;
+  padding: 18px 18px 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.ht-script-section.has-sticker {
+  border-left: 4px solid var(--ht-border);
+}
+.ht-script-section.sticker-red    { border-left-color: #c0392b; background: linear-gradient(to right, #fef6f6 0%, var(--ht-white) 64px); }
+.ht-script-section.sticker-yellow { border-left-color: #c9a52a; background: linear-gradient(to right, #fdf9ec 0%, var(--ht-white) 64px); }
+.ht-script-section.sticker-green  { border-left-color: #27863a; background: linear-gradient(to right, #effaf1 0%, var(--ht-white) 64px); }
+.ht-script-section.sticker-blue   { border-left-color: #1a5fa0; background: linear-gradient(to right, #eef5fc 0%, var(--ht-white) 64px); }
+
+.ht-script-sticker {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ht-white);
+  font-size: 22px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.18), inset 0 -3px 6px rgba(0,0,0,0.12);
+  border: 2px solid rgba(255,255,255,0.6);
+}
+.ht-script-sticker.sticker-red    { background: #c0392b; }
+.ht-script-sticker.sticker-yellow { background: #e8c537; color: #5c4910; }
+.ht-script-sticker.sticker-green  { background: #27863a; }
+.ht-script-sticker.sticker-blue   { background: #1a5fa0; }
+
+.ht-script-content {
+  flex: 1;
+  min-width: 0;
+}
+.ht-script-content .ht-script-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ht-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin-bottom: 4px;
+}
+.ht-script-content h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  line-height: 1.3;
+  color: var(--ht-text);
+}
+.ht-script-content p,
+.ht-script-content ul {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ht-text);
+  margin: 0 0 8px;
+}
+.ht-script-content p:last-child,
+.ht-script-content ul:last-child { margin-bottom: 0; }
+.ht-script-content ul {
+  padding-left: 20px;
+}
+.ht-script-content li { margin-bottom: 6px; }
+.ht-script-content li:last-child { margin-bottom: 0; }
+.ht-script-content strong { font-weight: 600; }
+
+/* "Confirmation moment" — compact green-check row. Used when nothing
+   needs to happen and the volunteer just visually acknowledges. */
+.ht-confirm-row {
+  background: var(--ht-white);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ht-confirm-row .ht-confirm-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #eaf7ed;
+  color: #27863a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.ht-confirm-row .ht-confirm-text {
+  flex: 1;
+  min-width: 0;
+}
+.ht-confirm-row .ht-confirm-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ht-text);
+}
+.ht-confirm-row .ht-confirm-sub {
+  font-size: 13px;
+  color: var(--ht-sub);
+  margin-top: 1px;
+}
+
+/* "Just an instruction" — info card with no sticker, blue accent.
+   Used for things like "Collect their key from Smith Hall 215". */
+.ht-script-info {
+  background: var(--ht-white);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  border-left: 4px solid #1a5fa0;
+}
+.ht-script-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--ht-text);
+}
+.ht-script-info .ht-info-data {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ht-navy);
+  margin: 6px 0 10px;
+  line-height: 1.2;
+}
+.ht-script-info p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ht-text);
+  margin: 0;
+}
+
+/* Form fields specific to script pages — segmented buttons + radio cards */
+
+/* Segmented button group (used for check-out deposit decision) */
+.ht-segmented {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+@media (min-width: 480px) {
+  .ht-segmented { grid-template-columns: repeat(3, 1fr); }
+}
+.ht-segmented label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 12px;
+  background: var(--ht-white);
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ht-text);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.ht-segmented label:hover {
+  border-color: #b0b8c1;
+}
+.ht-segmented input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.ht-segmented input[type="radio"]:checked + span,
+.ht-segmented label.is-selected {
+  border-color: var(--ht-navy);
+  background: var(--ht-navy);
+  color: var(--ht-white);
+}
+
+/* Radio cards (used for call disposition) — vertical stack of tappable options */
+.ht-radio-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.ht-radio-card {
+  background: var(--ht-white);
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: var(--ht-text);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ht-radio-card:hover { border-color: #b0b8c1; }
+.ht-radio-card .ht-radio-bullet {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #c0c8d2;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ht-radio-card .ht-radio-bullet::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ht-white);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.ht-radio-card.is-selected {
+  border-color: var(--ht-navy);
+  background: rgba(0,48,87,0.04);
+}
+.ht-radio-card.is-selected .ht-radio-bullet {
+  border-color: var(--ht-navy);
+  background: var(--ht-navy);
+}
+.ht-radio-card.is-selected .ht-radio-bullet::after { opacity: 1; }
+.ht-radio-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.ht-radio-card-label {
+  flex: 1;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+/* Big primary submit button at the bottom of script pages */
+.ht-script-submit {
+  display: block;
+  width: 100%;
+  padding: 18px 24px;
+  background: var(--ht-navy);
+  color: var(--ht-white) !important;
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  margin-top: 22px;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.15s;
+  box-shadow: 0 2px 6px rgba(0,48,87,0.18);
+}
+.ht-script-submit:hover {
+  background: #00243f !important;
+}
+.ht-script-submit:active {
+  transform: translateY(1px);
+}
+
+/* Notes textarea inside the call script */
+.ht-script-notes-row {
+  margin-top: 18px;
+}
+.ht-script-notes-row label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ht-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}
+.ht-script-notes-row textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ht-text);
+  background: var(--ht-white);
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ht-script-notes-row textarea:focus {
+  border-color: var(--ht-navy);
+  box-shadow: 0 0 0 3px rgba(0,48,87,0.09);
+}
+
+/* Coming/going inline schedule list inside a script section */
+.ht-cg-schedule {
+  background: rgba(0,0,0,0.03);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+.ht-cg-schedule div {
+  padding: 4px 0;
+}
+.ht-cg-schedule strong {
+  color: var(--ht-navy);
+}

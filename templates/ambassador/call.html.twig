@@ -1,66 +1,149 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+
+{% block maintag %}<main class="show ambassador">{% endblock %}
 
 {% block body %}
-	<div id="checkin-header"><img src="{{ ambassador.photo ?? asset('assets/images/headshot-placeholder.png') }}" class="img-thumbnail">&nbsp;<h1><strong>{{ambassador.consolidatedFirstName}} {{ambassador.lastName}}</strong><br>{{ambassador.school}}<br><a href="tel:{{ambassador.cellPhone}}">{{ambassador.cellPhone}}</a></h1></div>
-	<a href="{{ path('app_letter_group_calls', {'letter': app.user.letterGroup.letter}) }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
-	<div class="checkin-form-group">
-		{{ form_start(edit_form) }}
-		
-			<div class="card">
-				<div class="card-heading card-info">Intro</div>
-				<div class="card-body">
-					<ul>
-						<li>Introduce yourself! Tell {{ambassador.consolidatedFirstName}} that you will be their junior facilitator at HOBY, and that you were an ambassador yourself.</li>
-						<li>Tell them you are calling to touch base and say hi, and to answer any questions they have.</li>
-						<li>Tell them how excited you are to have them at HOBY, and share a little bit about why you love it. But don't give away too much!</li>
-					</ul>
-				</div>
-			</div>
-			
-			<div class="card">
-				<div class="card-heading {{ cg_status ? 'card-danger' : 'card-success' }}">{{ambassador.consolidatedFirstName}} {{ cg_status ? '<strong>IS NOT</strong> scheduled to attend the entire seminar. Please confirm the details below.' : '<strong>IS</strong> scheduled to attend the entire seminar, from check-in Thursday to closing ceremonies Sunday. Please confirm this.' }}</div>
-				<div class="card-body">
-					{% if cg_status %}
-						<ul>
-							{% for cg in ambassador.comingsAndGoings %}
-								{% if cg.departure is not null %}<li>Leaving {{cg.departure|date('D M j \\a\\t g:iA')}}</li>{% endif %}
-								{% if cg.arrival is not null %}<li>Returning {{cg.arrival|date('D M j \\a\\t g:iA')}}</li>{% endif %}
-								
-							{% endfor %}
-						</ul>
-					{% else %}
-						<ul>
-							<li>Let {{ambassador.consolidatedFirstName}} know that check-in is from 12:30pm to 1:30pm on Thursday, June 12, and that it's really important that they're on time! We'll start promptly at 1:30pm.</li>
-							<li>If they say they need to miss part of the seminar or aren't able to come at all anymore, please put that in the notes below.</li>
-						</ul>
-					{% endif %}
-				</div>
-			</div>
 
-			<div class="card">
-				<div class="card-heading {{ psm_status ? 'card-success' : 'card-danger' }}">{{ambassador.consolidatedFirstName}} {{ (psm_status ? '<strong>DID</strong> fill out all pre-seminar forms, so no need to remind them' : '<strong>DID NOT</strong> fill out their pre-seminar forms' ) }}.</div>
-				{% if not psm_status %}
-					<div class="card-body">
-						Please ask {{ambassador.consolidatedFirstName}} to do their pre-seminar forms ASAP! They can find the link in the yellow box at www.HOBYOhioSouth.org.
-					</div>
-				{% endif %}
-			</div>
-			
-			<div class="card">
-				<div class="card-heading card-info">Other Info</div>
-				<div class="card-body">
-					<ul>
-						<li>Let {{ambassador.consolidatedFirstName}}  know that a packing list, FAQs, directions, etc. will all be emailed to ambassadors and families, and are also available at www.HOBYOhioSouth.org in the yellow box.</li>
-						<li>Ask {{ambassador.consolidatedFirstName}} if they have any questions and answer the best you can - if you aren't sure of an answer, don't guess! Just put the question in the notes below and let them know we'll get back to them.</li>
-					</ul>
-				</div>
-			</div>
-			
-			<div class="card">
-				<div class="card-heading card-info">How'd it go?</div>
-				<div class="card-body">
-					{{ form_end(edit_form) }}
-				</div>
-			</div>
-	</div>
+<a href="{{ path('app_letter_group_calls', {'letter': app.user.letterGroup.letter}) }}" class="ht-script-cancel">
+    <i class="fa fa-times" style="font-size:11px;"></i> Cancel
+</a>
+
+{# ── Header ─────────────────────────────────────────────── #}
+<div class="ht-show-header">
+    {{ avatar.render(ambassador, 120) }}
+    <div class="ht-show-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
+    <div class="ht-show-subtitle">{{ ambassador.school }}</div>
+    <div style="margin-top: 10px;">
+        <a href="tel:{{ ambassador.cellPhone }}" class="ht-room-badge" style="font-size:15px; color: var(--ht-navy); text-decoration: none;">
+            <i class="fa fa-phone"></i> {{ ambassador.cellPhone }}
+        </a>
+    </div>
+</div>
+
+<div class="ht-script-body">
+
+    {{ form_start(edit_form) }}
+
+    {# ── 1. Intro ──────────────────────────────────────────────── #}
+    <div class="ht-script-section has-sticker sticker-blue">
+        <div class="ht-script-sticker sticker-blue"><i class="fa fa-hand-peace"></i></div>
+        <div class="ht-script-content">
+            <div class="ht-script-eyebrow">Intro</div>
+            <h3>Get the conversation started</h3>
+            <ul>
+                <li>Introduce yourself! Tell {{ ambassador.consolidatedFirstName }} that you will be their junior facilitator at HOBY, and that you were an ambassador yourself.</li>
+                <li>Tell them you are calling to touch base and say hi, and to answer any questions they have.</li>
+                <li>Tell them how excited you are to have them at HOBY, and share a little bit about why you love it. But don't give away too much!</li>
+            </ul>
+        </div>
+    </div>
+
+    {# ── 2. Coming/going schedule confirmation ───────────────── #}
+    {% if cg_status %}
+        <div class="ht-script-section has-sticker sticker-yellow">
+            <div class="ht-script-sticker sticker-yellow"><i class="fa fa-calendar"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Confirm Schedule</div>
+                <h3>{{ ambassador.consolidatedFirstName }} <strong>IS NOT</strong> scheduled to attend the entire seminar. Please confirm the details below.</h3>
+                <div class="ht-cg-schedule">
+                    {% for cg in ambassador.comingsAndGoings %}
+                        {% if cg.departure is not null %}<div>Leaving <strong>{{ cg.departure|date('D M j \\a\\t g:iA') }}</strong></div>{% endif %}
+                        {% if cg.arrival is not null %}<div>Returning <strong>{{ cg.arrival|date('D M j \\a\\t g:iA') }}</strong></div>{% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="ht-script-section has-sticker sticker-yellow">
+            <div class="ht-script-sticker sticker-yellow"><i class="fa fa-calendar"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Confirm Schedule</div>
+                <h3>{{ ambassador.consolidatedFirstName }} <strong>IS</strong> scheduled to attend the entire seminar, from check-in Thursday to closing ceremonies Sunday. Please confirm this.</h3>
+                <ul>
+                    <li>Let {{ ambassador.consolidatedFirstName }} know that check-in is from 12:30pm to 1:30pm on Thursday, June 12, and that it's really important that they're on time! We'll start promptly at 1:30pm.</li>
+                    <li>If they say they need to miss part of the seminar or aren't able to come at all anymore, please put that in the notes below.</li>
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+
+    {# ── 3. Pre-seminar paperwork ─────────────────────────────── #}
+    {% if psm_status %}
+        <div class="ht-confirm-row">
+            <div class="ht-confirm-icon"><i class="fa fa-check"></i></div>
+            <div class="ht-confirm-text">
+                <div class="ht-confirm-title">Pre-seminar forms</div>
+                <div class="ht-confirm-sub">{{ ambassador.consolidatedFirstName }} <strong>DID</strong> fill out all pre-seminar forms, so no need to remind them.</div>
+            </div>
+        </div>
+    {% else %}
+        <div class="ht-script-section has-sticker sticker-green">
+            <div class="ht-script-sticker sticker-green"><i class="fa fa-file-lines"></i></div>
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Reminder</div>
+                <h3>{{ ambassador.consolidatedFirstName }} <strong>DID NOT</strong> fill out their pre-seminar forms.</h3>
+                <p>Please ask {{ ambassador.consolidatedFirstName }} to do their pre-seminar forms ASAP! They can find the link in the yellow box at www.HOBYOhioSouth.org.</p>
+            </div>
+        </div>
+    {% endif %}
+
+    {# ── 4. Other info ────────────────────────────────────────── #}
+    <div class="ht-script-section has-sticker sticker-blue">
+        <div class="ht-script-sticker sticker-blue"><i class="fa fa-circle-info"></i></div>
+        <div class="ht-script-content">
+            <div class="ht-script-eyebrow">Other Info</div>
+            <h3>Wrap up the call</h3>
+            <ul>
+                <li>Let {{ ambassador.consolidatedFirstName }} know that a packing list, FAQs, directions, etc. will all be emailed to ambassadors and families, and are also available at www.HOBYOhioSouth.org in the yellow box.</li>
+                <li>Ask {{ ambassador.consolidatedFirstName }} if they have any questions and answer the best you can - if you aren't sure of an answer, don't guess! Just put the question in the notes below and let them know we'll get back to them.</li>
+            </ul>
+        </div>
+    </div>
+
+    {# ── 5. Disposition (recorded field) ──────────────────────── #}
+    <div class="ht-script-section has-sticker sticker-green">
+        <div class="ht-script-sticker sticker-green"><i class="fa fa-clipboard-question"></i></div>
+        <div class="ht-script-content">
+            <div class="ht-script-eyebrow">How'd it go?</div>
+            <h3>What was the outcome of the call?</h3>
+            {# Hidden Symfony select drives the underlying form value.
+               Visible radio cards toggle .is-selected via JS and sync. #}
+            <div class="hidden">{{ form_widget(edit_form.juniorCallDisposition) }}</div>
+            <div class="ht-radio-cards" data-radio-cards-for="{{ edit_form.juniorCallDisposition.vars.id }}">
+                <div class="ht-radio-card" data-value="spoke_with_ambassador">
+                    <div class="ht-radio-bullet"></div>
+                    <div class="ht-radio-card-label">Spoke with ambassador</div>
+                </div>
+                <div class="ht-radio-card" data-value="spoke_with_family">
+                    <div class="ht-radio-bullet"></div>
+                    <div class="ht-radio-card-label">Spoke with ambassador's family, will call back</div>
+                </div>
+                <div class="ht-radio-card" data-value="left_message">
+                    <div class="ht-radio-bullet"></div>
+                    <div class="ht-radio-card-label">Left a message, will call back</div>
+                </div>
+                <div class="ht-radio-card" data-value="wrong_number">
+                    <div class="ht-radio-bullet"></div>
+                    <div class="ht-radio-card-label">Wrong number</div>
+                </div>
+                <div class="ht-radio-card" data-value="other">
+                    <div class="ht-radio-bullet"></div>
+                    <div class="ht-radio-card-label">Other (please explain in notes)</div>
+                </div>
+            </div>
+
+            <div class="ht-script-notes-row">
+                <label for="{{ edit_form.juniorCallNotes.vars.id }}">Notes</label>
+                {{ form_widget(edit_form.juniorCallNotes, { 'attr': { 'placeholder': 'Let us know how the call went or any questions we need to follow up on.', 'rows': 4 } }) }}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="ht-script-submit">Call Complete</button>
+
+    {{ form_end(edit_form) }}
+
+</div>
+
 {% endblock %}
