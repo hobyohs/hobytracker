@@ -1794,54 +1794,45 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
 }
 .ht-script-section-confirm .ht-script-content { flex: none; }
 
-/* The override pair container needs to be positioning context for
-   the absolutely-positioned override button in the top-right corner. */
+/* The override pair container — no longer needs to be a positioning
+   context now that the button sits inline below the content. */
 .ht-override-pair { position: relative; }
-.ht-script-section.ht-override-default,
-.ht-script-section.ht-override-on,
-.ht-script-section-confirm.ht-override-default,
-.ht-script-section-confirm.ht-override-on {
-  position: relative;
-  padding-top: 44px; /* room for the corner button */
-}
 
-/* Override button — top-right corner of the section card.
-   Small, pill-shaped, soft navy outline. Tap target is comfortable
-   on phones (≥36px tall). */
+/* Override button — lives at the bottom of its section card, inline
+   with the content. Light, unobtrusive — these are rare-case actions
+   that should be available but not visually competing with the script
+   text the volunteer is actually reading. */
 .ht-override-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--ht-white);
-  border: 1px solid #c7d0db;
-  color: var(--ht-navy);
+  display: inline-block;
+  margin-top: 14px;
+  background: #f3f5f8;
+  border: 1px solid #dde2ea;
+  color: var(--ht-sub);
   font-family: inherit;
   font-size: 12px;
-  font-weight: 600;
-  padding: 7px 12px;
-  border-radius: 16px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 14px;
   cursor: pointer;
-  z-index: 2;
-  max-width: calc(100% - 20px);
+  line-height: 1.3;
+  max-width: 100%;
   white-space: normal;
-  text-align: right;
-  line-height: 1.25;
+  text-align: left;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 .ht-override-btn:hover {
-  background: var(--ht-navy);
-  color: var(--ht-white);
-  border-color: var(--ht-navy);
+  background: #e4e9f1;
+  border-color: #c2cad8;
+  color: var(--ht-navy);
 }
 .ht-override-btn:active { transform: translateY(1px); }
-/* Revert button has a slightly muted look so it reads as "undo" */
 .ht-override-btn-revert {
-  border-color: #d8d8d8;
+  background: #f3f5f8;
+  border-color: #dde2ea;
   color: var(--ht-sub);
 }
 .ht-override-btn-revert:hover {
-  background: #555;
-  color: var(--ht-white);
-  border-color: #555;
+  background: #e4e9f1;
+  border-color: #c2cad8;
+  color: var(--ht-navy);
 }

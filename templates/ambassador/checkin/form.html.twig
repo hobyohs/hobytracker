@@ -39,21 +39,21 @@
         <div class="ht-override-pair {{ cg_override ? 'override-active' : '' }}" data-override-section="cg" data-ambassador-id="{{ ambassador.id }}">
 
             <div class="ht-override-default ht-script-section ht-script-section-confirm">
-                <button type="button" class="ht-override-btn" data-override-action="toggle-cg">Actually, schedule has changed</button>
                 <div class="ht-script-content">
                     <div class="ht-script-eyebrow">Confirm Schedule</div>
                     <h3>{{ ambassador.consolidatedFirstName }} <strong>IS</strong> scheduled to attend the entire seminar.</h3>
-                    <p>Please confirm this with {{ ambassador.consolidatedFirstName }} or their family. If their schedule has changed, tap the button above.</p>
+                    <p>Please confirm this with {{ ambassador.consolidatedFirstName }} or their family.</p>
+                    <button type="button" class="ht-override-btn" data-override-action="toggle-cg">Actually, schedule has changed</button>
                 </div>
             </div>
 
             <div class="ht-override-on ht-script-section has-sticker sticker-yellow">
-                <button type="button" class="ht-override-btn ht-override-btn-revert" data-override-action="toggle-cg">Never mind, they'll be here the whole time</button>
                 <div class="ht-script-sticker sticker-yellow"><i class="fa fa-calendar"></i></div>
                 <div class="ht-script-content">
                     <div class="ht-script-eyebrow">Apply Yellow Sticker</div>
                     <h3>{{ ambassador.consolidatedFirstName }}'s schedule has changed.</h3>
                     <p>Apply a yellow sticker to their nametag and instruct them to visit the Missing Paperwork table to fill in the details.</p>
+                    <button type="button" class="ht-override-btn ht-override-btn-revert" data-override-action="toggle-cg">Never mind, they'll be here the whole time</button>
                 </div>
             </div>
 
@@ -114,21 +114,21 @@
         <div class="ht-override-pair {{ meds_override ? 'override-active' : '' }}" data-override-section="meds" data-ambassador-id="{{ ambassador.id }}">
 
             <div class="ht-override-default ht-script-section ht-script-section-confirm">
-                <button type="button" class="ht-override-btn" data-override-action="toggle-meds">Actually, they do have prescription drugs</button>
                 <div class="ht-script-content">
                     <div class="ht-script-eyebrow">Confirm with Family</div>
                     <h3>{{ ambassador.consolidatedFirstName }} <strong>DOES NOT</strong> have prescription drugs to turn in.</h3>
-                    <p>Confirm that this is correct. If {{ ambassador.consolidatedFirstName }} or their family says otherwise, tap the button above.</p>
+                    <p>Confirm that this is correct.</p>
+                    <button type="button" class="ht-override-btn" data-override-action="toggle-meds">Actually, they do have prescription drugs</button>
                 </div>
             </div>
 
             <div class="ht-override-on ht-script-section has-sticker sticker-red">
-                <button type="button" class="ht-override-btn ht-override-btn-revert" data-override-action="toggle-meds">Never mind, they don't have any prescription drugs</button>
                 <div class="ht-script-sticker sticker-red"><i class="fa fa-prescription-bottle-medical"></i></div>
                 <div class="ht-script-content">
                     <div class="ht-script-eyebrow">Apply Red Sticker</div>
                     <h3>{{ ambassador.consolidatedFirstName }} <strong>DOES</strong> have prescription drugs to turn in.</h3>
                     <p>Apply a red sticker to their nametag and send {{ ambassador.consolidatedFirstName }} to the med table.</p>
+                    <button type="button" class="ht-override-btn ht-override-btn-revert" data-override-action="toggle-meds">Never mind, they don't have any prescription drugs</button>
                 </div>
             </div>
 
