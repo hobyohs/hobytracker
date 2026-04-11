@@ -10,7 +10,8 @@
 
 		
 	<h2>Pre-Seminar Calls</h2>
-		<table class="table table-striped table-bordered" id="my-group-calls-ambassadors-table">
+	<div class="ht-dt-card">
+		<table class="table" id="my-group-calls-ambassadors-table">
 		<thead>
 			<tr>
 				<th>First Name</th>
@@ -37,11 +38,12 @@
 						<td class="gridblock oyvey"><span class="fa fa-phone"></span> Not yet called</td>
 					{% endif %}
 					
-					<td class="center"><a href="{{ path('app_ambassador_call_form', {'id': ambassador.id}) }}" class="btn btn-primary" role="button">Call</button></td>
+					<td class="center"><a href="{{ path('app_ambassador_call_form', {'id': ambassador.id}) }}" class="btn btn-primary" role="button">Call</a></td>
 				</tr>
 			{% endfor %}
 		   
 		</tbody>
 	</table>
+	</div>
 	   
 {% endblock %}

@@ -216,11 +216,13 @@ $(document).ready(function() {
   ]});
 
   // calls: First(0) Last(1) Cell(2) School(3) Junior(4) Forms(5) Disposition(6) Notes(7)
+  // preseminarcalls: First(0) Last(1) Group(2) Cell(3) School(4) Junior(5) Forms(6) Disposition(7) Notes(8)
   $('table#calls-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
     {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:6},{responsivePriority:4,targets:2},
-    {responsivePriority:5,targets:5},{responsivePriority:6,targets:7},
-    {responsivePriority:7,targets:4},{responsivePriority:8,targets:3}
+    {responsivePriority:3,targets:7},{responsivePriority:4,targets:3},
+    {responsivePriority:5,targets:6},{responsivePriority:6,targets:8},
+    {responsivePriority:7,targets:2},{responsivePriority:8,targets:5},
+    {responsivePriority:9,targets:4}
   ]});
 
   // bus: First(0) Last(1) Group(2) School(3) BusTo(4) BusFrom(5)

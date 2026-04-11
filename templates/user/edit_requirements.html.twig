@@ -21,11 +21,9 @@
         {% if user.controlledAge <= 21 %}
             {{ form_row(form.hoursComplete) }}
             {{ form_row(form.ambRegistered) }}
-            {# {{ form_row(form.planningComplete) }} #}
         {% else %}
             {% do form.hoursComplete.setRendered() %}
             {% do form.ambRegistered.setRendered() %}
-            {# {% do form.planningComplete.setRendered() %} #}
         {% endif %}
         
         {{ form_row(form.requirementNotes) }}

@@ -187,9 +187,6 @@ class AmbassadorController extends AbstractController
         
         if ($ambassador->isCheckinMeds()) $meds_status = TRUE;
         else $meds_status = FALSE;
-        
-        // if ($ambassador->isStoreItems()) $store_status = TRUE;
-        // else $store_status = FALSE;
 
         return $this->render('ambassador/checkin/form.html.twig', array(
             'ambassador' => $ambassador,
@@ -200,8 +197,6 @@ class AmbassadorController extends AbstractController
             'meds_status' => $meds_status,
             'cg_override' => $session->get($cgOverrideKey, false),
             'meds_override' => $session->get($medsOverrideKey, false),
-//             'doc_status' => $doc_status,
-          //  'store_status' => $store_status,
         ));
     }
     
