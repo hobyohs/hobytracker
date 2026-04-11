@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block body %}
+<a href="{{ path('app_letter_group_index') }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Groups
+</a>
 <div class="ht-page-header"><h1>Interview Assignments</h1></div>
 <div class="ht-dt-card">
     <table class="table" id="letter-interview-table">

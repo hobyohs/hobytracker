@@ -5,6 +5,10 @@
 
 {% block body %}
 
+<a href="{{ path('app_user_show', {'id': app.user.id}) }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> My Profile
+</a>
+
 {%- set groupColor = user.letterGroup ? user.letterGroup.color : '' -%}
 
 {# ── Header ─────────────────────────────────────────────── #}

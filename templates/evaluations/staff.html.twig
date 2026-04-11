@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
+<a href="{{ path('app_letter_group_show', {'letter': group.letter}) }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Group {{ group.letter }}
+</a>
 <div class="ht-page-header"><h1>{{ group.printLetterGroup | raw }} &mdash; Co-Facilitator Evaluations</h1></div>
 <div class="ht-dt-card">
     <table class="table" id="my-group-se-table">

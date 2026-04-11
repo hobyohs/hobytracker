@@ -1,9 +1,11 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+<a href="{{ path('app_applicant_index') }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Applications
+</a>
 	<div class="form-page threequarter">
 		<h1>{{applicant.firstAndPrefName}} {{applicant.lastName}}</h1>
-		<a href="{{ path('app_applicant_index') }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
 		{{ form_start(edit_form, {'attr': {'class': 'applicant-form'}}) }}
 			<div class="row">
 				<div class="col">
