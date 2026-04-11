@@ -1,46 +1,59 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
 <div class="ht-page-header"><h1>Pre-Seminar Materials</h1></div>
 <div class="ht-page-subtitle">
     <strong>{{ numreturn }}</strong> of <strong>{{ totalamb }}</strong> returned &middot; {{ totalamb - numreturn }} to go &middot; Last update: {{ lastUpdated }}
 </div>
-<div class="ht-dt-card">
+<div class="ht-dt-card ht-responsive-table">
     <table class="table" id="psm-table">
         <thead><tr>
-            <th>First Name</th><th>Last Name</th><th>Group</th><th>School</th>
+            <th class="ht-avatar-col no-export"></th>
+            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Group</th><th class="ht-mobile-hide">School</th>
             <th>Forms</th><th>Key Deposit</th>
             <th class="hidden">Deposit Method</th><th class="hidden">Deposit Details</th>
             <th>C&amp;G Form</th>
             <th class="hidden">Amb Email</th><th class="hidden">Parent 1 Email</th><th class="hidden">Parent 2 Email</th>
+            <th class="no-export ht-chevron-col"></th>
         </tr></thead>
         <tbody>
             {% for ambassador in ambassadors %}
-                <tr>
-                    <td><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-table-name-link">{{ ambassador.consolidatedFirstName }}</a></td><td>{{ ambassador.lastName }}</td>
-                    <td class="center">{% if not ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>{% endif %}</td>
-                    <td>{{ ambassador.school }}</td>
-                    {% if ambassador.isCheckinPaperwork %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                <tr data-href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">
+                    <td class="ht-avatar-col no-export">{{ avatar.render(ambassador, 32) }}</td>
+                    <td data-label="First" class="ht-name-td">
+                        <span class="ht-name-desktop">{{ ambassador.consolidatedFirstName }}</span>
+                        <span class="ht-name-mobile-header">
+                            {{ avatar.render(ambassador, 36) }}
+                            <span class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</span>
+                            {% if ambassador.letterGroup %}<span class="ht-group-badge ht-group-{{ ambassador.letterGroup.color }} ht-card-name-badge">{{ ambassador.letterGroup.letter }}</span>{% endif %}
+                        </span>
+                    </td>
+                    <td data-label="Last" class="ht-mobile-hide">{{ ambassador.lastName }}</td>
+                    <td data-label="Group" class="center ht-mobile-hide">{% if ambassador.letterGroup %}<span class="ht-group-badge ht-group-{{ ambassador.letterGroup.color }}">{{ ambassador.letterGroup.letter }}</span>{% endif %}</td>
+                    <td data-label="School" class="ht-mobile-hide">{{ ambassador.school }}</td>
+                    {% if ambassador.isCheckinPaperwork %}<td data-label="Forms" class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% else %}<td data-label="Forms" class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
                     {% if ambassador.isCheckinDeposit %}
-                        <td class="gridblock yay">
-                            {% if ambassador.getCheckinDepositMethod == "PayPal" %}<span class="fab fa-cc-paypal fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-                            {% elseif ambassador.getCheckinDepositMethod == "QuickBooks" %}<span class="fab fa-credit-card fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-                            {% elseif ambassador.getCheckinDepositMethod == "Check" %}<span class="fas fa-money-check fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
-                            {% elseif ambassador.getCheckinDepositMethod == "Cash" %}<span class="fas fa-money-bill-alt fa-2x" data-toggle="tooltip" title="{{ambassador.getCheckinDepositNotes}}">
+                        <td data-label="Deposit" class="gridblock yay">
+                            {% if ambassador.getCheckinDepositMethod == "PayPal" %}<span class="fab fa-cc-paypal fa-2x" data-toggle="tooltip" title="{{ ambassador.getCheckinDepositNotes }}">
+                            {% elseif ambassador.getCheckinDepositMethod == "QuickBooks" %}<span class="fas fa-credit-card fa-2x" data-toggle="tooltip" title="{{ ambassador.getCheckinDepositNotes }}">
+                            {% elseif ambassador.getCheckinDepositMethod == "Check" %}<span class="fas fa-money-check fa-2x" data-toggle="tooltip" title="{{ ambassador.getCheckinDepositNotes }}">
+                            {% elseif ambassador.getCheckinDepositMethod == "Cash" %}<span class="fas fa-money-bill-alt fa-2x" data-toggle="tooltip" title="{{ ambassador.getCheckinDepositNotes }}">
                             {% elseif ambassador.getCheckinDepositMethod == "Waived" %}<span class="fa-solid fa-slash" data-toggle="tooltip" title="Waived">
                             {% else %}<span class="fas fa-check">{% endif %}
                             <span class="hidden">TRUE</span></span>
                         </td>
-                    {% else %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
-                    <td class="hidden">{{ambassador.getCheckinDepositMethod}}</td>
-                    <td class="hidden">{{ambassador.getCheckinDepositNotes}}</td>
-                    {% if ambassador.isCgForm %}<td class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif not ambassador.isCgForm and ambassador.comingsAndGoings|length > 0 %}<td class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}<td class="gridblock okay">&nbsp;</td>{% endif %}
-                    <td class="hidden">{{ambassador.email}}</td>
-                    <td class="hidden">{{ambassador.parent1email}}</td>
-                    <td class="hidden">{{ambassador.parent2email}}</td>
+                    {% else %}<td data-label="Deposit" class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
+                    <td class="hidden">{{ ambassador.getCheckinDepositMethod }}</td>
+                    <td class="hidden">{{ ambassador.getCheckinDepositNotes }}</td>
+                    {% if ambassador.isCgForm %}<td data-label="C&G Form" class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
+                    {% elseif not ambassador.isCgForm and ambassador.comingsAndGoings|length > 0 %}<td data-label="C&G Form" class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
+                    {% else %}<td data-label="C&G Form" class="gridblock okay">&nbsp;</td>{% endif %}
+                    <td class="hidden">{{ ambassador.email }}</td>
+                    <td class="hidden">{{ ambassador.parent1email }}</td>
+                    <td class="hidden">{{ ambassador.parent2email }}</td>
+                    <td class="no-export ht-chevron-col"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

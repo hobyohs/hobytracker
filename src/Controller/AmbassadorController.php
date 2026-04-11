@@ -159,6 +159,8 @@ class AmbassadorController extends AbstractController
             $session->remove($cgOverrideKey);
             $session->remove($medsOverrideKey);
 
+            $session->set('checkin_success_name', $ambassador->getConsolidatedFirstName() . ' ' . $ambassador->getLastName());
+
             return $this->redirectToRoute('app_ambassador_checkin');
         }
         

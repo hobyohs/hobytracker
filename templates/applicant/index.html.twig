@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 {% block body %}
 
 <div class="ht-page-header"><h1>Staff Applications</h1></div>
@@ -47,33 +48,39 @@
     </div>
 </div>
 
-<div class="ht-dt-card">
+<div class="ht-dt-card ht-responsive-table">
     <table class="table" id="applicant-table">
         <thead><tr>
-            <th class="no-export">Evaluate</th>
-            <th>First Name</th><th>Last Name</th><th>Position</th>
+            <th class="ht-avatar-col no-export"></th>
+            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
             <th>Reviewer 1</th><th>Reviewer 2</th><th>Decision</th>
+            <th class="no-export ht-chevron-col"></th>
         </tr></thead>
         <tbody>
             {% for applicant in applicants %}
                 <tr>
-                    <td class="edit-link view-link">
-                        <a href="{{ path('app_applicant_edit', { 'id': applicant.id }) }}"><span class="fa fa-gavel"></span></a>
+                    <td class="ht-avatar-col no-export">{{ avatar.render(applicant, 32) }}</td>
+                    <td data-label="First" class="ht-name-td">
+                        <span class="ht-name-desktop">{{ applicant.firstAndPrefName }}</span>
+                        <span class="ht-name-mobile-header">
+                            {{ avatar.render(applicant, 36) }}
+                            <span class="ht-card-name">{{ applicant.firstAndPrefName }} {{ applicant.lastName }}</span>
+                            <span class="ht-group-badge ht-card-name-badge" style="background:#eef1f4;color:#555;font-size:10px;">{{ applicant.positionClass }}</span>
+                        </span>
                     </td>
-                    <td>{{ applicant.firstAndPrefName }}</td>
-                    <td>{{ applicant.lastName }}</td>
-                    <td>{{ applicant.positionClass }}</td>
-                    <td>
+                    <td data-label="Last" class="ht-mobile-hide">{{ applicant.lastName }}</td>
+                    <td data-label="Position" class="ht-mobile-hide">{{ applicant.positionClass }}</td>
+                    <td data-label="Reviewer 1">
                         {% if applicant.reviewer1Rating is not empty %}<strong>{{ applicant.reviewer1Rating|parse_hire_rating }}</strong>{% endif %}
                         {% if applicant.reviewer1Rating is not empty and applicant.reviewer1Notes is not empty %}<br>{% endif %}
                         {% if applicant.reviewer1Notes is not empty %}{{ applicant.reviewer1Notes }}{% endif %}
                     </td>
-                    <td>
+                    <td data-label="Reviewer 2">
                         {% if applicant.reviewer2Rating is not empty %}<strong>{{ applicant.reviewer2Rating|parse_hire_rating }}</strong>{% endif %}
                         {% if applicant.reviewer2Rating is not empty and applicant.reviewer2Notes is not empty %}<br>{% endif %}
                         {% if applicant.reviewer2Notes is not empty %}{{ applicant.reviewer2Notes }}{% endif %}
                     </td>
-                    <td>
+                    <td data-label="Decision">
                         <select data-applicant-id="{{ applicant.id }}" class="form-select app_applicant_decision" style="font-size:13px; padding: 6px 10px;">
                             <option value=""{{ (applicant.decision is null) ? ' selected' : '' }}>Select…</option>
                             <option value="Facilitator"{{ (applicant.decision == "Facilitator") ? ' selected' : '' }}>Facilitator</option>
@@ -86,6 +93,7 @@
                             <option value="No Hire"{{ (applicant.decision == "No Hire") ? ' selected' : '' }}>No Hire</option>
                         </select>
                     </td>
+                    <td class="no-export ht-chevron-col"><a href="{{ path('app_applicant_edit', { 'id': applicant.id }) }}" class="ht-row-chevron" title="Evaluate"><i class="fa fa-gavel"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

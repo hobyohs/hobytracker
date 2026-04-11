@@ -16,8 +16,9 @@
     {%- set last  = person.lastName|default('') -%}
     {%- set initials = (first|slice(0, 1) ~ last|slice(0, 1))|upper -%}
     {%- set dim = 'width:' ~ size ~ 'px;height:' ~ size ~ 'px;' -%}
-    {% if person.photo %}
-        <img src="{{ person.photo }}" alt="{{ first }} {{ last }}" class="ht-card-avatar-img" style="{{ dim }}" loading="lazy"
+    {%- set photo = person is iterable ? (person.photo is defined ? person.photo : null) : person.photo|default(null) -%}
+    {% if photo %}
+        <img src="{{ photo }}" alt="{{ first }} {{ last }}" class="ht-card-avatar-img" style="{{ dim }}" loading="lazy"
              onerror="this.outerHTML='<div class=&quot;ht-card-avatar&quot; style=&quot;{{ dim }}&quot;>{{ initials }}</div>'">
     {% else %}
         <div class="ht-card-avatar" style="{{ dim }}">{{ initials }}</div>

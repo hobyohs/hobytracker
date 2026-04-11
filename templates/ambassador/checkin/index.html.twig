@@ -22,10 +22,10 @@
 <div class="ht-card-list" id="checkinList">
     {% for ambassador in ambassadors %}
         <div class="ht-card-row"
-             data-name="{{ (ambassador.consolidatedFirstName ~ ' ' ~ ambassador.lastName)|lower }}">
+             data-name="{{ (ambassador.lastName ~ ' ' ~ ambassador.consolidatedFirstName)|lower }}">
             {{ avatar.render(ambassador) }}
             <div class="ht-card-info">
-                <div class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</div>
+                <div class="ht-card-name">{{ ambassador.lastName }}, {{ ambassador.consolidatedFirstName }}</div>
             </div>
             <a href="{{ path('app_ambassador_checkin_form', {'id': ambassador.id}) }}"
                class="ht-btn ht-btn-primary" style="white-space:nowrap; flex-shrink:0;">
@@ -37,5 +37,36 @@
     {% endfor %}
     <div class="ht-no-results">No results.</div>
 </div>
+
+{# ── Check-in success overlay ────────────────────────────── #}
+{% set checkin_name = app.session.get('checkin_success_name') %}
+{% if checkin_name %}
+    {{ app.session.remove('checkin_success_name') }}
+    <div class="ht-checkin-overlay" id="checkinOverlay">
+        <div class="ht-checkin-overlay-card">
+            <div class="ht-checkin-checkmark">
+                <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+                    <circle class="ht-checkin-circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="ht-checkin-tick" fill="none" d="M14 27 l8 8 l16-16"/>
+                </svg>
+            </div>
+            <div class="ht-checkin-overlay-name">{{ checkin_name }}</div>
+            <div class="ht-checkin-overlay-msg">has been checked in!</div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            var overlay = document.getElementById('checkinOverlay');
+            if (!overlay) return;
+            // Auto-dismiss after 2.5s, or tap to dismiss immediately
+            var timer = setTimeout(dismiss, 2500);
+            overlay.addEventListener('click', function() { clearTimeout(timer); dismiss(); });
+            function dismiss() {
+                overlay.classList.add('ht-checkin-overlay-out');
+                overlay.addEventListener('transitionend', function() { overlay.remove(); }, { once: true });
+            }
+        })();
+    </script>
+{% endif %}
 
 {% endblock %}

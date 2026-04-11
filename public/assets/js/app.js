@@ -165,85 +165,57 @@ $(document).ready(function() {
   $('[data-toggle="tooltip"]').tooltip({ container: 'body', html: true, placement: 'bottom' });
 
   // ── DataTables ────────────────────────────────────────────
-  // After cleanup pass: VIEW eyeball column removed from all
-  // navigation tables. Col 0 is now First Name (linkified).
-  // Priority 1 = last to collapse, high = first to collapse.
+  // ── DataTables: ht-responsive-table pattern ──────────────────
+  // All tables use responsive:false. Layout is handled by CSS card
+  // pattern on mobile. Avatar(0) is always non-orderable/non-searchable.
+  // Chevron is always the last column, non-orderable.
 
-  // dietary: First(0) Last(1) Group(2) Restrictions(3) Info(4)
-  $('table#dietary-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:2}
-  ]});
+  // dietary: Av(0) First(1) Last(2) Group(3) Restrictions(4) Info(5) Chev(6)
+  $('table#dietary-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // ec: First(0) Last(1) Group(2) ECFirst(3) ECLast(4) Rel(5) Phone1(6) Phone2(7)
-  $('table#ec-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:6},{responsivePriority:4,targets:3},
-    {responsivePriority:5,targets:4},{responsivePriority:6,targets:5},
-    {responsivePriority:7,targets:7},{responsivePriority:8,targets:2}
-  ]});
+  // ec: Av(0) First(1) Last(2) Group(3) ECFirst(4) ECLast(5) Rel(6) Phone1(7) Phone2(8) Chev(9)
+  $('table#ec-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,9], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // medical: First(0) Last(1) Group(2) Rx(3) Conditions(4) Exercise(5) Allergies(6) MedAllergies(7)
-  $('table#med-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:6},{responsivePriority:6,targets:7},
-    {responsivePriority:7,targets:5},{responsivePriority:8,targets:2}
-  ]});
+  // medical: Av(0) First(1) Last(2) Group(3) Rx(4) Conditions(5) Exercise(6) Allergies(7) MedAllergies(8) Chev(9)
+  $('table#med-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,9], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // ambassadors (legacy table — only present if a non-redesigned page still uses it)
-  $('table#ambassadors-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:2},{responsivePriority:4,targets:3}
-  ]});
+  // applicant: Av(0) First(1) Last(2) Position(3) R1(4) R2(5) Decision(6) Chev(7)
+  $('table#applicant-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6,7], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // applicant: Evaluate(0) First(1) Last(2) Position(3) R1(4) R2(5) Decision(6)
-  // (NOT touched by cleanup pass — col 0 is an Evaluate action, not view)
-  $('table#applicant-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:6},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:5},{responsivePriority:6,targets:3},
-    {responsivePriority:7,targets:0}
-  ]});
+  // psm: Av(0) First(1) Last(2) Group(3) School(4) Forms(5) Deposit(6) [Method](7) [Notes](8) CG(9) [emails 10-12] Chev(13)
+  $('table#psm-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,13], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // psm: First(0) Last(1) Group(2) School(3) Forms(4) Deposit(5) [Method](6) [Notes](7) CG(8) [emails 9-11]
-  $('table#psm-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:8},{responsivePriority:6,targets:3},
-    {responsivePriority:7,targets:2}
-  ]});
-
-  // calls: First(0) Last(1) Cell(2) School(3) Junior(4) Forms(5) Disposition(6) Notes(7)
-  // preseminarcalls: First(0) Last(1) Group(2) Cell(3) School(4) Junior(5) Forms(6) Disposition(7) Notes(8)
-  $('table#calls-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:7},{responsivePriority:4,targets:3},
-    {responsivePriority:5,targets:6},{responsivePriority:6,targets:8},
-    {responsivePriority:7,targets:2},{responsivePriority:8,targets:5},
-    {responsivePriority:9,targets:4}
-  ]});
+  // preseminarcalls: Av(0) First(1) Last(2) Group(3) Cell(4) School(5) Junior(6) Forms(7) Disposition(8) Notes(9) Chev(10)
+  $('table#calls-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,10], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
   // bus: First(0) Last(1) Group(2) School(3) BusTo(4) BusFrom(5)
-  $('table#bus-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:2}
-  ]});
+  // bus: Avatar(0) First(1) Last(2) Group(3) School(4) BusTo(5) BusFrom(6) Chevron(7)
+  $('table#bus-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0, 7], orderable: false },
+    { targets: 0, searchable: false }
+  ], initComplete: function() {
+    $('#bus-report-wrap .dataTables_filter input').attr('placeholder', 'Search\u2026');
+    initSearchClear(document.getElementById('bus-report-wrap'));
+  }});
 
-  // staff-req: First(0) Last(1) Position(2) [Email](3) Paperwork(4) BG(5) App(6) Hours(7) AmbReg(8) Fundraising(9) Notes(10)
-  // (NOT touched by cleanup pass — col 0 was an Edit Requirements action; user/requirements.html.twig still has the edit pencil column)
-  $('table#staff-req-table').DataTable({ order: [[2,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1, targets:1},{responsivePriority:2, targets:2},
-    {responsivePriority:3, targets:5},{responsivePriority:4, targets:6},
-    {responsivePriority:5, targets:7},{responsivePriority:6, targets:8},
-    {responsivePriority:7, targets:9},{responsivePriority:8, targets:10},
-    {responsivePriority:9, targets:3},{responsivePriority:10,targets:11},
-    {responsivePriority:11,targets:0}
-  ]});
+  // staff-req: Av(0) First(1) Last(2) Position(3) [Email](4) Paperwork(5) BG(6) App(7) Hours(8) AmbReg(9) Fundraising(10) Notes(11) Chev(12)
+  $('table#staff-req-table').DataTable({ order: [[3,"asc"],[2,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,12], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // letter-interview: Letter(0) Assignment(1)
+  // letter-interview: Letter(0) Assignment(1) — no avatar/chevron, leave as-is
   $('table#letter-interview-table').DataTable({ order: [[0,"asc"]], columnDefs: [
     {responsivePriority:1,targets:0},{responsivePriority:2,targets:1}
   ]});
@@ -255,72 +227,55 @@ $(document).ready(function() {
     {responsivePriority:5,targets:6},{responsivePriority:6,targets:2}
   ], buttons: ['excelHtml5','pdfHtml5','print']});
 
-  // kd: First(0) Last(1) Group(2) Deposit(3) Details(4)
-  $('table#kd-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:2}
-  ]});
+  // kd: Av(0) First(1) Last(2) Group(3) Deposit(4) Details(5) Chev(6)
+  $('table#kd-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // noshow: First(0) Last(1) Group(2) School(3) Paperwork(4) Cell(5) Home(6)
-  $('table#noshow-table').DataTable({ order: [[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:5},
-    {responsivePriority:5,targets:3},{responsivePriority:6,targets:6},
-    {responsivePriority:7,targets:2}
-  ]});
+  // noshow: Av(0) First(1) Last(2) Group(3) School(4) Paperwork(5) Cell(6) Home(7) Chev(8)
+  $('table#noshow-table').DataTable({ order: [[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,8], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
   // checkin/checkout (legacy DataTable inits — these pages are now card lists, kept harmless)
   $('table#checkin-table').DataTable({ order:[[0,"asc"]], buttons:[] });
   $('table#checkout-table').DataTable({ order:[[0,"asc"]], buttons:[] });
 
-  // staff (user index — legacy, page is now a card list)
+  // staff (user index — page is now a card list)
   $('table#staff-table').DataTable({ order:[[1,"asc"],[0,"asc"]], columnDefs: [
     {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
     {responsivePriority:3,targets:2}
   ]});
 
-  // dorm: First(0) Last(1) Group(2) [Floor](3) [Sort](4) Dorm(5) Room(6) Shirt(7)
-  $('table#dorm-table').DataTable({ order:[[5,"asc"],[3,"asc"],[4,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:5},{responsivePriority:4,targets:6},
-    {responsivePriority:5,targets:7},{responsivePriority:6,targets:2}
-  ]});
+  // dorm: Av(0) First(1) Last(2) Group(3) [Floor](4) [Sort](5) Dorm(6) Room(7) Shirt(8) Chev(9)
+  $('table#dorm-table').DataTable({ order:[[6,"asc"],[4,"asc"],[5,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,9], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // letter-groups (all groups): Group(0) First(1) Last(2) Role(3) School(4) [Sort](5)
-  $('table#letter-groups-table').DataTable({ order:[[0,"asc"],[5,"asc"],[2,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:1},{responsivePriority:2,targets:2},
-    {responsivePriority:3,targets:0},{responsivePriority:4,targets:3},
-    {responsivePriority:5,targets:4}
-  ]});
+  // letter-groups (all groups): Av(0) Group(1) First(2) Last(3) Role(4) School(5) [Sort](6) Chev(7)
+  $('table#letter-groups-table').DataTable({ order:[[1,"asc"],[6,"asc"],[3,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,7], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // all-thankyous: First(0) Last(1) Group(2) Type(3) Assignment(4)
-  $('table#all-thankyous-table').DataTable({ order:[[2,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:4},
-    {responsivePriority:5,targets:2}
-  ]});
+  // all-thankyous: Av(0) First(1) Last(2) Group(3) Type(4) Assignment(5) Chev(6)
+  $('table#all-thankyous-table').DataTable({ order:[[3,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // staff duty assignments (cc/checkin/checkout assignments pages):
-  // First(0) Last(1) Position(2) Assignment(3) Notes(4)
-  $('table#staff-duty-assignments-table').DataTable({ order:[[1,"asc"],[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:2},
-    {responsivePriority:5,targets:4}
-  ]});
+  // staff duty assignments: Av(0) First(1) Last(2) Position(3) Assignment(4) Notes(5) Chev(6)
+  $('table#staff-duty-assignments-table').DataTable({ order:[[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // letter_group/calls per-group call list: First(0) Last(1) School(2) Status(3) [Call button](4)
-  $('table#my-group-calls-ambassadors-table').DataTable({ order:[[0,"asc"],[1,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:4},{responsivePriority:4,targets:3},
-    {responsivePriority:5,targets:2}
-  ]});
+  // group calls: Av(0) First(1) Last(2) School(3) Status(4) Chev(5)
+  $('table#my-group-calls-ambassadors-table').DataTable({ order:[[1,"asc"],[2,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,5], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
-  // letter_group/thankyous per-group: First(0) Last(1) Type(2) Assignment(3)
-  $('table#group-thankyou-table').DataTable({ order:[[0,"asc"]], columnDefs: [
-    {responsivePriority:1,targets:0},{responsivePriority:2,targets:1},
-    {responsivePriority:3,targets:3},{responsivePriority:4,targets:2}
-  ]});
+  // group thankyous: Av(0) First(1) Last(2) Type(3) Assignment(4) Chev(5)
+  $('table#group-thankyou-table').DataTable({ order:[[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,5], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
   // evaluations (NOT touched — col 0 is an Edit pencil action)
   $('table#my-group-ae-table').DataTable({ order:[[1,"asc"]], columnDefs: [
@@ -335,6 +290,72 @@ $(document).ready(function() {
     {responsivePriority:3,targets:4},{responsivePriority:4,targets:3},
     {responsivePriority:5,targets:0}
   ]});
+
+  // ── Responsive table: search clear button ─────────────────────
+  // Works for both DataTables filter inputs (.dataTables_filter input)
+  // and custom card-filter inputs (.ht-search-input).
+  function addClearBtn(input, clearFn) {
+    if (!input || input.dataset.clearInit) return;
+    input.dataset.clearInit = '1';
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'ht-search-clear';
+    btn.setAttribute('aria-label', 'Clear search');
+    btn.innerHTML = '<i class="fa fa-times"></i>';
+    btn.style.display = 'none';
+
+    var container = document.createElement('div');
+    container.className = 'ht-search-wrap';
+    input.parentNode.insertBefore(container, input);
+    container.appendChild(input);
+    container.appendChild(btn);
+
+    function updateBtn() {
+      btn.style.display = input.value.length > 0 ? 'flex' : 'none';
+    }
+
+    input.addEventListener('input', updateBtn);
+    input.addEventListener('keyup', updateBtn);
+
+    btn.addEventListener('click', function() {
+      input.value = '';
+      clearFn();
+      btn.style.display = 'none';
+      input.focus();
+    });
+  }
+
+  function initSearchClear(wrapper) {
+    var input = wrapper ? wrapper.querySelector('.dataTables_filter input') : null;
+    if (!input) return;
+    addClearBtn(input, function() {
+      $(input).closest('.dataTables_wrapper').find('table').DataTable().search('').draw();
+    });
+  }
+
+  // DataTables tables — also called from each table's initComplete
+  document.querySelectorAll('.ht-responsive-table .dataTables_wrapper').forEach(initSearchClear);
+
+  // Custom card-filter inputs (checkin, checkout index pages)
+  ['checkinSearch', 'checkoutSearch'].forEach(function(id) {
+    var input = document.getElementById(id);
+    if (!input) return;
+    addClearBtn(input, function() {
+      // Trigger the existing card filter by dispatching an input event
+      input.dispatchEvent(new Event('input'));
+    });
+  });
+
+  // ── Responsive table: whole-row click navigation ─────────────
+  // Rows with data-href navigate on click. Clicks on <a> or <button>
+  // inside the row are ignored so those elements keep their own behaviour.
+  document.querySelectorAll('.ht-responsive-table tbody tr[data-href]').forEach(function(row) {
+    row.addEventListener('click', function(e) {
+      if (e.target.closest('a, button')) return;
+      window.location.href = row.dataset.href;
+    });
+  });
 
   // ── Script Pages: sticker override buttons ──────────────────
   // Markup: <button class="ht-override-btn" data-override-action="toggle-cg|toggle-meds">

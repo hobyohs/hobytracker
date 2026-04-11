@@ -112,6 +112,8 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->select('a')
             ->from('App\Entity\Ambassador', 'a')
             ->where('a.checkedIn = 0')
+            ->orderBy('a.lastName', 'ASC')
+            ->addOrderBy('a.firstName', 'ASC')
             ->getQuery()
             ->getResult();
     }

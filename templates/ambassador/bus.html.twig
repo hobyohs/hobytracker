@@ -1,21 +1,49 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
 <div class="ht-page-header"><h1>Bus Report</h1></div>
-<div class="ht-dt-card">
+<div class="ht-dt-card ht-responsive-table" id="bus-report-wrap">
     <table class="table" id="bus-table">
         <thead><tr>
-            <th>First Name</th><th>Last Name</th><th>Group</th>
-            <th>School</th><th>Bus To: Contact</th><th>Bus From: Contact</th>
+            <th class="ht-avatar-col no-export"></th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Group</th>
+            <th>School</th>
+            <th>Bus To</th>
+            <th>Bus From</th>
+            <th class="no-export ht-chevron-col"></th>
         </tr></thead>
         <tbody>
             {% for ambassador in ambassadors %}
-                <tr>
-                    <td><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-table-name-link">{{ ambassador.consolidatedFirstName }}</a></td><td>{{ ambassador.lastName }}</td>
-                    <td class="center">{% if not ambassador.letterGroup is empty %}<a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>{% endif %}</td>
-                    <td>{{ ambassador.school }}</td>
-                    <td>{% if not ambassador.busToContact is empty %}{{ ambassador.busToContact }}, {{ ambassador.busToPhone }}{% endif %}</td>
-                    <td>{% if not ambassador.busFromContact is empty %}{{ ambassador.busFromContact }}, {{ ambassador.busFromPhone }}{% endif %}</td>
+                <tr data-href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">
+                    {# Col 0: avatar — desktop only #}
+                    <td class="ht-avatar-col no-export">{{ avatar.render(ambassador, 32) }}</td>
+                    {# Col 1: first name — dual content: desktop shows first name, mobile shows full card header #}
+                    <td data-label="First" class="ht-name-td">
+                        <span class="ht-name-desktop">{{ ambassador.consolidatedFirstName }}</span>
+                        <span class="ht-name-mobile-header">
+                            {{ avatar.render(ambassador, 36) }}
+                            <span class="ht-card-name">{{ ambassador.consolidatedFirstName }} {{ ambassador.lastName }}</span>
+                            {% if ambassador.letterGroup %}
+                                <span class="ht-group-badge ht-group-{{ ambassador.letterGroup.color }} ht-card-name-badge">{{ ambassador.letterGroup.letter }}</span>
+                            {% endif %}
+                        </span>
+                    </td>
+                    {# Col 2-3: last name + group — hidden on mobile (already in card header) #}
+                    <td data-label="Last" class="ht-mobile-hide">{{ ambassador.lastName }}</td>
+                    <td data-label="Group" class="center ht-mobile-hide">
+                        {% if ambassador.letterGroup %}
+                            <span class="ht-group-badge ht-group-{{ ambassador.letterGroup.color }}">{{ ambassador.letterGroup.letter }}</span>
+                        {% endif %}
+                    </td>
+                    {# Col 4-6: shared data #}
+                    <td data-label="School">{{ ambassador.school }}</td>
+                    <td data-label="Bus To">{% if ambassador.busToContact is not empty %}{{ ambassador.busToContact }}, {{ ambassador.busToPhone }}{% endif %}</td>
+                    <td data-label="Bus From">{% if ambassador.busFromContact is not empty %}{{ ambassador.busFromContact }}, {{ ambassador.busFromPhone }}{% endif %}</td>
+                    {# Col 7: chevron #}
+                    <td class="no-export ht-chevron-col"><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>
