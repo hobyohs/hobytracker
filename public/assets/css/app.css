@@ -657,6 +657,9 @@ main a.letter:hover,
 main a.stretched-link:hover {
   text-shadow: none !important;
 }
+main a.ht-btn-primary:hover { color: var(--ht-white) !important; }
+main a.ht-btn-secondary:hover { color: var(--ht-text) !important; }
+main a.ht-btn-danger:hover { color: #c0392b !important; }
 /* Group badges should keep their soft text color on hover, not change to navy.
    The color !important here beats `main a:hover { color: var(--ht-navy) }`. */
 .ht-group-red    { background: var(--badge-red-bg);    color: var(--badge-red-text)    !important; }
@@ -1768,6 +1771,22 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
 .ht-cg-schedule strong {
   color: var(--ht-navy);
 }
+.ht-cg-remove-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 7px 14px;
+  background: #fef0f0;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ht-cg-remove-btn:hover { background: #fde0e0; }
 
 /* ── Script Page: sticker overrides ───────────────────────── */
 /* The override pair holds two pre-rendered variants of a section.

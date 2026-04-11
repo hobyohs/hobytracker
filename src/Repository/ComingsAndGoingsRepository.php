@@ -39,6 +39,16 @@ class ComingsAndGoingsRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllActive(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.active = :active')
+            ->setParameter('active', true)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return ComingsAndGoings[] Returns an array of ComingsAndGoings objects
 //     */

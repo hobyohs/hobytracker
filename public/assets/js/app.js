@@ -339,6 +339,38 @@ $(document).ready(function() {
   // Inside <div class="ht-override-pair" data-toggle-url="...">
   // The toggle URL is generated server-side via Twig's path() helper so
   // it works regardless of where the app is mounted (subdirectory, etc).
+
+  // ── Script Pages: C&G remove (deactivate) button ─────────────
+  // Markup: <button class="ht-cg-remove-btn" data-deactivate-url="...">
+  // POSTs to the deactivate endpoint, then reloads so cg_status is
+  // re-evaluated server-side and the correct section is shown.
+  document.querySelectorAll('.ht-cg-remove-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      var url = btn.dataset.deactivateUrl;
+      if (!url) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Removing\u2026';
+
+      fetch(url, { method: 'POST', credentials: 'same-origin' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data && data.success) {
+            window.location.reload();
+          } else {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa fa-times"></i> Remove from schedule';
+          }
+        })
+        .catch(function(err) {
+          console.error('C&G deactivate failed', err);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-times"></i> Remove from schedule';
+        });
+    });
+  });
+
   document.querySelectorAll('.ht-override-btn[data-override-action]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.preventDefault();

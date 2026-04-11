@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AmbassadorRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -713,6 +714,16 @@ class Ambassador
     public function getComingsAndGoings(): Collection
     {
         return $this->comingsAndGoings;
+    }
+
+    /**
+     * @return Collection<int, ComingsAndGoings>
+     */
+    public function getActiveComingsAndGoings(): Collection
+    {
+        return $this->comingsAndGoings->filter(
+            fn(ComingsAndGoings $cg) => $cg->isActive()
+        );
     }
 
     public function addComingsAndGoing(ComingsAndGoings $comingsAndGoing): self

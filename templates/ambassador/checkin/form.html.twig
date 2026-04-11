@@ -28,20 +28,42 @@
         <div class="ht-script-info">
             <h3>Schedule on File</h3>
             {% set has_any_details = false %}
-            {% for cg in ambassador.comingsAndGoings %}
+            {% for cg in ambassador.activeComingsAndGoings %}
                 {% if cg.departure is not null or cg.arrival is not null %}
                     {% set has_any_details = true %}
                 {% endif %}
             {% endfor %}
             {% if has_any_details %}
                 <div class="ht-cg-schedule">
-                    {% for cg in ambassador.comingsAndGoings %}
-                        {% if cg.departure is not null %}<div>Leaving <strong>{{ cg.departure|date('D M j \\a\\t g:iA') }}</strong></div>{% endif %}
-                        {% if cg.arrival is not null %}<div>Returning <strong>{{ cg.arrival|date('D M j \\a\\t g:iA') }}</strong></div>{% endif %}
+                    {% for cg in ambassador.activeComingsAndGoings %}
+                        {% if cg.departure is not null %}
+                            <div>Leaving <strong>{{ cg.departure|date('D M j \\a\\t g:iA') }}</strong></div>
+                        {% endif %}
+                        {% if cg.arrival is not null %}
+                            <div>{{ cg.departure is not null ? 'Returning' : 'Arriving' }} <strong>{{ cg.arrival|date('D M j \\a\\t g:iA') }}</strong></div>
+                        {% endif %}
+                        {% if is_granted('ROLE_BOARD') %}
+                            <button type="button"
+                                    class="ht-cg-remove-btn"
+                                    data-cg-id="{{ cg.id }}"
+                                    data-deactivate-url="{{ path('app_comings_and_goings_deactivate', {'id': cg.id}) }}">
+                                <i class="fa fa-times"></i> Remove from schedule
+                            </button>
+                        {% endif %}
                     {% endfor %}
                 </div>
             {% else %}
                 <p>{{ ambassador.consolidatedFirstName }} has a schedule change on file. Details will be entered at the yellow sticker table.</p>
+                {% if is_granted('ROLE_BOARD') %}
+                    {% for cg in ambassador.activeComingsAndGoings %}
+                        <button type="button"
+                                class="ht-cg-remove-btn"
+                                data-cg-id="{{ cg.id }}"
+                                data-deactivate-url="{{ path('app_comings_and_goings_deactivate', {'id': cg.id}) }}">
+                            <i class="fa fa-times"></i> Remove from schedule
+                        </button>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
         </div>
     {% else %}
@@ -114,13 +136,30 @@
 
     {# ── 4. Prescription medications ──────────────────────────── #}
     {% if meds_status %}
-        <div class="ht-script-section has-sticker sticker-red">
-            <div class="ht-script-sticker sticker-red"><i class="fa fa-prescription-bottle-medical"></i></div>
-            <div class="ht-script-content">
-                <div class="ht-script-eyebrow">Apply Red Sticker</div>
-                <h3>{{ ambassador.consolidatedFirstName }} <strong>DOES</strong> have prescription drugs to turn in.</h3>
-                <p>Apply a red sticker to their nametag.</p>
+        <div class="ht-override-pair {{ meds_override ? 'override-active' : '' }}"
+             data-override-section="meds"
+             data-ambassador-id="{{ ambassador.id }}"
+             data-toggle-url="{{ path('checkin_toggle_meds_override', {'id': ambassador.id}) }}">
+
+            <div class="ht-override-default ht-script-section has-sticker sticker-red">
+                <div class="ht-script-sticker sticker-red"><i class="fa fa-prescription-bottle-medical"></i></div>
+                <div class="ht-script-content">
+                    <div class="ht-script-eyebrow">Apply Red Sticker</div>
+                    <h3>{{ ambassador.consolidatedFirstName }} <strong>DOES</strong> have prescription drugs to turn in.</h3>
+                    <p>Apply a red sticker to their nametag.</p>
+                    <button type="button" class="ht-override-btn" data-override-action="toggle-meds">Never mind, they didn't bring any prescription drugs</button>
+                </div>
             </div>
+
+            <div class="ht-override-on ht-script-section ht-script-section-confirm">
+                <div class="ht-script-content">
+                    <div class="ht-script-eyebrow">Confirm with Family</div>
+                    <h3>{{ ambassador.consolidatedFirstName }} <strong>DOES NOT</strong> have prescription drugs to turn in.</h3>
+                    <p>Confirm this is correct. Their record indicated they would have prescription drugs.</p>
+                    <button type="button" class="ht-override-btn ht-override-btn-revert" data-override-action="toggle-meds">Actually, they do have prescription drugs</button>
+                </div>
+            </div>
+
         </div>
     {% else %}
         <div class="ht-override-pair {{ meds_override ? 'override-active' : '' }}"

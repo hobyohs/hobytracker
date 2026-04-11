@@ -87,7 +87,7 @@ class AmbassadorController extends AbstractController
             return $this->redirectToRoute('app_letter_group_calls', array('letter' => $this->getUser()->getLetterGroup()->getLetter()));
         }
         
-        if (count($ambassador->getComingsAndGoings()) > 0) {
+        if (count($ambassador->getActiveComingsAndGoings()) > 0) {
             $cg_status = TRUE;
         } else {
             $cg_status = FALSE;
@@ -147,7 +147,7 @@ class AmbassadorController extends AbstractController
                 $entityManager->persist($cg);
             }
             if ($session->get($medsOverrideKey, false)) {
-                $ambassador->setCheckinMeds(true);
+                $ambassador->setCheckinMeds(!$ambassador->isCheckinMeds());
             }
 
             $entityManager->persist($ambassador);
@@ -160,7 +160,7 @@ class AmbassadorController extends AbstractController
             return $this->redirectToRoute('app_ambassador_checkin');
         }
         
-        if (count($ambassador->getComingsAndGoings()) > 0) {
+        if (count($ambassador->getActiveComingsAndGoings()) > 0) {
             $cg_status = TRUE;
             if ($ambassador->isCgForm()) {
                 $cgform_status = TRUE;  
@@ -185,7 +185,7 @@ class AmbassadorController extends AbstractController
         if ($ambassador->isCheckinDeposit()) $deposit_status = TRUE;
         else $deposit_status = FALSE;
         
-        if ($ambassador->getCurrentRx() != '') $meds_status = TRUE;
+        if ($ambassador->isCheckinMeds()) $meds_status = TRUE;
         else $meds_status = FALSE;
         
         // if ($ambassador->isStoreItems()) $store_status = TRUE;

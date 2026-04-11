@@ -6,10 +6,12 @@ use App\Entity\ComingsAndGoings;
 use App\Form\ComingsAndGoingsType;
 use App\Repository\ComingsAndGoingsRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 #[Route('/comingsandgoings')]
 class ComingsAndGoingsController extends AbstractController
@@ -18,7 +20,7 @@ class ComingsAndGoingsController extends AbstractController
     public function index(ComingsAndGoingsRepository $comingsAndGoingsRepository): Response
     {
         return $this->render('comings_and_goings/index.html.twig', [
-            'comings_and_goings' => $comingsAndGoingsRepository->findAll(),
+            'comings_and_goings' => $comingsAndGoingsRepository->findAllActive(),
         ]);
     }
     
@@ -71,5 +73,14 @@ class ComingsAndGoingsController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/deactivate', name: 'app_comings_and_goings_deactivate', methods: ['POST'])]
+    #[IsGranted('ROLE_BOARD')]
+    public function deactivate(ComingsAndGoings $comingsAndGoing, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $comingsAndGoing->setActive(false);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
 
 }

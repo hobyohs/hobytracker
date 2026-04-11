@@ -55,6 +55,9 @@ class ComingsAndGoings
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $seminarYear = null;
 
+    #[ORM\Column]
+    private bool $active = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -164,6 +167,18 @@ class ComingsAndGoings
     public function setSeminarYear(int $seminarYear): self
     {
         $this->seminarYear = $seminarYear;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active;
+    }
+
+    public function setActive(bool $active): self
+    {
+        $this->active = $active;
 
         return $this;
     }

@@ -45,6 +45,7 @@ class ComingsAndGoingsCrudController extends AbstractCrudController
         yield BooleanField::new('checked_in');
         yield AssociationField::new('checkedInBy')->setRequired(false);
         yield TextareaField::new('notes')->hideOnIndex();
+        yield BooleanField::new('active');
         
     }
     
