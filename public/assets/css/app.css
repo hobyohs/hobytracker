@@ -2632,3 +2632,65 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   white-space: nowrap;
 }
 .ht-cg-undo-btn:hover { background: #e2e6ea !important; color: var(--ht-navy) !important; }
+
+/* ── Homepage weather widget (inside ht-homepage-group-card) ── */
+.ht-weather-loading { font-size: 13px; color: #bbb; }
+
+/* Current conditions */
+.ht-weather-current {
+  margin-bottom: 14px;
+}
+.ht-weather-now {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.ht-weather-icon { font-size: 22px; color: var(--ht-navy); opacity: 0.8; }
+.ht-weather-temp { font-size: 28px; font-weight: 700; color: var(--ht-navy); line-height: 1; }
+.ht-weather-label { font-size: 15px; color: var(--ht-sub); }
+.ht-weather-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--ht-sub);
+  padding-left: 2px;
+}
+.ht-weather-meta-item { }
+.ht-weather-meta-sep  { color: #ddd; }
+
+/* Hourly strip */
+.ht-weather-hourly {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.ht-weather-slot {
+  background: var(--ht-section-bg);
+  border-radius: 10px;
+  padding: 10px 6px;
+  text-align: center;
+}
+.ht-weather-slot-time  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--ht-sub); margin-bottom: 6px; }
+.ht-weather-slot-icon  { font-size: 16px; color: var(--ht-navy); opacity: 0.7; margin-bottom: 6px; }
+.ht-weather-slot-temp  { font-size: 15px; font-weight: 600; color: var(--ht-text); margin-bottom: 3px; }
+.ht-weather-slot-label { font-size: 11px; color: var(--ht-sub); line-height: 1.3; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ht-weather-slot-precip { font-size: 11px; color: #5b9bd5; font-weight: 600; }
+.ht-weather-slot-precip-empty { min-height: 14px; }
+
+/* Alert banners */
+.ht-weather-alerts { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.ht-weather-alert {
+  background: #fffbec;
+  border: 1px solid #f0d97a;
+  border-left: 3px solid #e0b800;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b4c00;
+  line-height: 1.4;
+}

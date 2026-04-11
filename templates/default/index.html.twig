@@ -6,9 +6,19 @@
 <div class="ht-homepage">
 
     {# ── Greeting ────────────────────────────────────────────── #}
-    <div class="ht-homepage-greeting">
+    <div class="ht-homepage-greeting" id="ht-greeting">
         Good to see you, {{ app.user.consolidatedFirstName }}.
     </div>
+
+    {# ── Weather card ─────────────────────────────────────────── #}
+    <div class="ht-homepage-section-label">Weather in Marietta, OH</div>
+    <div class="ht-homepage-group-card" id="ht-weather">
+        <span class="ht-weather-loading">Loading weather…</span>
+    </div>
+
+    {# ── Program elements ────────────────────────────────────── #}
+    {# PROGRAM_PLACEHOLDER: Once the Program/calendar feature is rebuilt,
+       insert "current program element" and "next program element" cards here. #}
 
     {# ── My Group card (users with a group assigned) ──────────── #}
     {% if app.user.letterGroup %}
@@ -113,4 +123,148 @@
 
 </div>
 
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function() {
+    var NAME = '{{ app.user.consolidatedFirstName|e('js') }}';
+
+    // ── Time-based greeting ──────────────────────────────────
+    var hour = new Date().getHours();
+    var greeting;
+    if      (hour >= 5  && hour < 12) greeting = 'Good morning, '   + NAME + '!';
+    else if (hour >= 12 && hour < 17) greeting = 'Good afternoon, ' + NAME + '!';
+    else if (hour >= 17 && hour < 24) greeting = 'Good evening, '   + NAME + '!';
+    else                              greeting = 'Up late, '         + NAME + '?';
+    document.getElementById('ht-greeting').textContent = greeting;
+
+    // ── WMO code helpers ────────────────────────────────────
+    function wmoInfo(code) {
+        if (code === 0)                 return { label: 'Clear',          icon: 'fa-sun' };
+        if (code === 1)                 return { label: 'Mostly clear',   icon: 'fa-sun' };
+        if (code === 2)                 return { label: 'Partly cloudy',  icon: 'fa-cloud-sun' };
+        if (code === 3)                 return { label: 'Overcast',       icon: 'fa-cloud' };
+        if (code === 45 || code === 48) return { label: 'Foggy',          icon: 'fa-smog' };
+        if (code >= 51 && code <= 55)   return { label: 'Drizzle',        icon: 'fa-cloud-drizzle' };
+        if (code >= 61 && code <= 65)   return { label: 'Rain',           icon: 'fa-cloud-rain' };
+        if (code >= 71 && code <= 77)   return { label: 'Snow',           icon: 'fa-snowflake' };
+        if (code >= 80 && code <= 82)   return { label: 'Showers',        icon: 'fa-cloud-showers-heavy' };
+        if (code === 85 || code === 86) return { label: 'Snow showers',   icon: 'fa-snowflake' };
+        if (code >= 95)                 return { label: 'Thunderstorm',   icon: 'fa-bolt' };
+        return { label: 'Weather', icon: 'fa-cloud' };
+    }
+    function isStorm(code)    { return code >= 95; }
+    function isSnow(code)     { return (code >= 71 && code <= 77) || code === 85 || code === 86; }
+    function isHeavyRain(code){ return code === 65 || code === 82; }
+    function isFog(code)      { return code === 45 || code === 48; }
+
+    function fmtHour(isoStr) {
+        var h = parseInt(isoStr.slice(11, 13), 10);
+        return h === 0 ? '12am' : h < 12 ? h + 'am' : h === 12 ? '12pm' : (h - 12) + 'pm';
+    }
+
+    // ── Fetch: Marietta College, OH ──────────────────────────
+    fetch('https://api.open-meteo.com/v1/forecast' +
+          '?latitude=39.4162&longitude=-81.4549' +
+          '&current=temperature_2m,weather_code,apparent_temperature,wind_speed_10m,wind_gusts_10m' +
+          '&daily=temperature_2m_max,temperature_2m_min' +
+          '&hourly=temperature_2m,weather_code,precipitation_probability,wind_speed_10m' +
+          '&temperature_unit=fahrenheit&wind_speed_unit=mph' +
+          '&timezone=America%2FNew_York&forecast_days=2')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var cur   = data.current;
+            var day   = data.daily;
+            var hrly  = data.hourly;
+            var info  = wmoInfo(cur.weather_code);
+            var temp  = Math.round(cur.temperature_2m);
+            var feels = Math.round(cur.apparent_temperature);
+            var wind  = Math.round(cur.wind_speed_10m);
+            var gust  = Math.round(cur.wind_gusts_10m);
+            var hi    = Math.round(day.temperature_2m_max[0]);
+            var lo    = Math.round(day.temperature_2m_min[0]);
+
+            // Current hour index in hourly array
+            var nowIdx = new Date().getHours(); // API starts at 0:00 today
+
+            // Next 3/6/9/12 hour slots
+            var slots = [3, 6, 9, 12].map(function(offset) {
+                var idx = nowIdx + offset;
+                return {
+                    label: fmtHour(hrly.time[idx]),
+                    temp:  Math.round(hrly.temperature_2m[idx]),
+                    code:  hrly.weather_code[idx],
+                    precip: hrly.precipitation_probability[idx]
+                };
+            });
+
+            // ── Alert logic: scan next 12 hours ─────────────
+            var alerts = [];
+            var maxPrecip = 0, maxWind = 0;
+            for (var i = nowIdx; i <= nowIdx + 12 && i < hrly.time.length; i++) {
+                maxPrecip = Math.max(maxPrecip, hrly.precipitation_probability[i] || 0);
+                maxWind   = Math.max(maxWind,   hrly.wind_speed_10m[i] || 0);
+                if (isStorm(hrly.weather_code[i]))     alerts.push('⚡ Thunderstorms possible in the next 12 hours.');
+                if (isSnow(hrly.weather_code[i]))      alerts.push('❄️ Snow possible in the next 12 hours — check outdoor event plans.');
+                if (isHeavyRain(hrly.weather_code[i])) alerts.push('🌧️ Heavy rain possible in the next 12 hours.');
+                if (isFog(hrly.weather_code[i]) && i === nowIdx) alerts.push('🌫️ Foggy conditions right now.');
+            }
+            if (maxPrecip >= 50 && alerts.length === 0) alerts.push('🌂 ' + maxPrecip + '% chance of precipitation in the next 12 hours.');
+            if (gust >= 30) alerts.push('💨 Wind gusts up to ' + gust + ' mph — secure any outdoor materials.');
+            else if (wind >= 20) alerts.push('💨 Sustained winds around ' + wind + ' mph.');
+
+            // Deduplicate alerts
+            alerts = alerts.filter(function(v, i, a) { return a.indexOf(v) === i; });
+
+            // ── Build HTML ───────────────────────────────────
+            // Current conditions
+            var html = '<div class="ht-weather-current">' +
+                '<div class="ht-weather-now">' +
+                  '<span class="ht-weather-icon"><i class="fa-solid ' + info.icon + '"></i></span>' +
+                  '<span class="ht-weather-temp">' + temp + '°F</span>' +
+                  '<span class="ht-weather-label">' + info.label + '</span>' +
+                '</div>' +
+                '<div class="ht-weather-meta">' +
+                  '<span class="ht-weather-meta-item">Hi ' + hi + '° / Lo ' + lo + '°</span>' +
+                  '<span class="ht-weather-meta-sep">·</span>' +
+                  '<span class="ht-weather-meta-item">Feels like ' + feels + '°</span>' +
+                  '<span class="ht-weather-meta-sep">·</span>' +
+                  '<span class="ht-weather-meta-item">Wind ' + wind + ' mph</span>' +
+                '</div>' +
+                '</div>';
+
+            // Hourly strip
+            html += '<div class="ht-weather-hourly">';
+            slots.forEach(function(s) {
+                var si = wmoInfo(s.code);
+                html += '<div class="ht-weather-slot">' +
+                    '<div class="ht-weather-slot-time">' + s.label + '</div>' +
+                    '<div class="ht-weather-slot-icon"><i class="fa-solid ' + si.icon + '"></i></div>' +
+                    '<div class="ht-weather-slot-temp">' + s.temp + '°</div>' +
+                    '<div class="ht-weather-slot-label">' + si.label + '</div>' +
+                    (s.precip > 0
+                        ? '<div class="ht-weather-slot-precip"><i class="fa fa-droplet"></i> ' + s.precip + '%</div>'
+                        : '<div class="ht-weather-slot-precip ht-weather-slot-precip-empty"></div>') +
+                    '</div>';
+            });
+            html += '</div>';
+
+            // Alerts
+            if (alerts.length > 0) {
+                html += '<div class="ht-weather-alerts">';
+                alerts.forEach(function(a) {
+                    html += '<div class="ht-weather-alert">' + a + '</div>';
+                });
+                html += '</div>';
+            }
+
+            document.getElementById('ht-weather').innerHTML = html;
+        })
+        .catch(function() {
+            document.getElementById('ht-weather').innerHTML = '';
+        });
+})();
+</script>
 {% endblock %}
