@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Repository\AmbassadorRepository;
 use App\Repository\StaffAssignmentRepository;
 use App\Service\SeminarYearService;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/lists')]
 class CombinedController extends AbstractController
