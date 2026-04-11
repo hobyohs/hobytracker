@@ -21,17 +21,18 @@
 
 <div class="ht-card-list" id="checkinList">
     {% for ambassador in ambassadors %}
-        <div class="ht-card-row"
-             data-name="{{ (ambassador.lastName ~ ' ' ~ ambassador.consolidatedFirstName)|lower }}">
+        <a class="ht-card-row"
+           href="{{ path('app_ambassador_checkin_form', {'id': ambassador.id}) }}"
+           data-name="{{ (ambassador.lastName ~ ' ' ~ ambassador.consolidatedFirstName)|lower }}">
             {{ avatar.render(ambassador) }}
             <div class="ht-card-info">
                 <div class="ht-card-name">{{ ambassador.lastName }}, {{ ambassador.consolidatedFirstName }}</div>
+                {% if ambassador.school %}
+                    <div class="ht-card-sub">{{ ambassador.school }}</div>
+                {% endif %}
             </div>
-            <a href="{{ path('app_ambassador_checkin_form', {'id': ambassador.id}) }}"
-               class="ht-btn ht-btn-primary" style="white-space:nowrap; flex-shrink:0;">
-                Check In
-            </a>
-        </div>
+            <i class="fa fa-chevron-right ht-chevron"></i>
+        </a>
     {% else %}
         <div class="ht-no-results" style="display:block;">All ambassadors checked in!</div>
     {% endfor %}
@@ -58,12 +59,14 @@
         (function() {
             var overlay = document.getElementById('checkinOverlay');
             if (!overlay) return;
-            // Auto-dismiss after 2.5s, or tap to dismiss immediately
             var timer = setTimeout(dismiss, 2500);
             overlay.addEventListener('click', function() { clearTimeout(timer); dismiss(); });
             function dismiss() {
                 overlay.classList.add('ht-checkin-overlay-out');
-                overlay.addEventListener('transitionend', function() { overlay.remove(); }, { once: true });
+                // Use animationend — the out effect is a CSS animation, not a transition
+                overlay.addEventListener('animationend', function() { overlay.remove(); }, { once: true });
+                // Safety fallback in case animationend doesn't fire
+                setTimeout(function() { if (overlay.parentNode) overlay.remove(); }, 500);
             }
         })();
     </script>
