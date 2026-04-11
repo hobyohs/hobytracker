@@ -245,7 +245,7 @@ main {
   padding: 11px 14px;
   border-radius: 10px;
   border: 1px solid #e0e0e0;
-  font-size: 15px;
+  font-size: 16px;
   font-family: inherit;
   background: var(--ht-white);
   color: var(--ht-text);
@@ -308,7 +308,19 @@ main {
   transition: background 0.1s;
 }
 .ht-card-row:last-child { border-bottom: none !important; }
-.ht-card-list .ht-card-row { border-bottom: 1px solid #e8e8e8 !important; }
+.ht-card-list .ht-card-row {
+  border-bottom: none !important;
+  position: relative;
+}
+.ht-card-list .ht-card-row:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: #e4e4e4;
+}
 .ht-card-row:hover {
   background: #fafafa;
   text-decoration: none !important;
@@ -1250,7 +1262,7 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
     border: 1px solid var(--ht-border);
     border-radius: 8px;
     padding: 10px 14px;
-    font-size: 14px;
+    font-size: 16px;
     outline: none;
     background: var(--ht-section-bg);
   }
