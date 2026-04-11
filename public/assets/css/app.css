@@ -2403,12 +2403,14 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 /* ── Search clear button ─────────────────────────────────── */
 .ht-search-wrap {
   position: relative;
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
 }
 .ht-search-wrap input {
   width: 100% !important;
   padding-right: 36px !important;
+  flex: 1;
 }
 .ht-search-clear {
   position: absolute;
@@ -2417,17 +2419,17 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  background: #c0c0c0;
+  border-radius: 50% !important;
+  background: #b0b0b0 !important;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  color: #fff;
+  color: #fff !important;
   font-size: 10px;
   line-height: 1;
   transition: background 0.15s;
 }
-.ht-search-clear:hover { background: #999; }
+.ht-search-clear:hover { background: #888 !important; }
