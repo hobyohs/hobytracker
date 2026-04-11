@@ -1420,9 +1420,9 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
    confirmation rows, and info cards. */
 
 .ht-script-body {
-  padding: 0 16px 32px;
+  padding: 18px 16px 32px;
 }
-@media (min-width: 768px) { .ht-script-body { padding: 0 0 40px; max-width: 700px; margin: 0 auto; } }
+@media (min-width: 768px) { .ht-script-body { padding: 24px 0 40px; max-width: 700px; margin: 0 auto; } }
 
 /* Cancel link at the very top of the page */
 .ht-script-cancel {
@@ -1774,9 +1774,15 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
    Default state shows .ht-override-default. Adding .override-active
    to the pair switches to .ht-override-on. JS toggles the class. */
 
+/* The override pair holds two pre-rendered variants of a section.
+   Default state shows .ht-override-default. Adding .override-active
+   to the pair switches to .ht-override-on. JS toggles the class.
+   Note: both current .ht-override-on variants are .ht-script-section
+   (flex layout). If a future variant needs block layout, override
+   display on that specific section. */
 .ht-override-pair .ht-override-on { display: none; }
 .ht-override-pair.override-active .ht-override-default { display: none; }
-.ht-override-pair.override-active .ht-override-on { display: block; }
+.ht-override-pair.override-active .ht-override-on { display: flex; }
 
 /* "Confirm" mode for sections without a sticker — used for the
    default state of meds and C&G when no action is currently needed.
@@ -1801,18 +1807,20 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
 /* Override button — lives at the bottom of its section card, inline
    with the content. Light, unobtrusive — these are rare-case actions
    that should be available but not visually competing with the script
-   text the volunteer is actually reading. */
+   text the volunteer is actually reading.
+   !important throughout because the legacy `main button` rule near
+   the top of this file forces all buttons inside main to navy. */
 .ht-override-btn {
-  display: inline-block;
+  display: inline-block !important;
   margin-top: 14px;
-  background: #f3f5f8;
-  border: 1px solid #dde2ea;
-  color: var(--ht-sub);
+  background: #f3f5f8 !important;
+  border: 1px solid #dde2ea !important;
+  color: var(--ht-sub) !important;
   font-family: inherit;
   font-size: 12px;
   font-weight: 500;
   padding: 7px 14px;
-  border-radius: 14px;
+  border-radius: 14px !important;
   cursor: pointer;
   line-height: 1.3;
   max-width: 100%;
@@ -1821,18 +1829,18 @@ main #quote p em { margin-top: 10px; text-align: right; display: block; }
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .ht-override-btn:hover {
-  background: #e4e9f1;
-  border-color: #c2cad8;
-  color: var(--ht-navy);
+  background: #e4e9f1 !important;
+  border-color: #c2cad8 !important;
+  color: var(--ht-navy) !important;
 }
 .ht-override-btn:active { transform: translateY(1px); }
 .ht-override-btn-revert {
-  background: #f3f5f8;
-  border-color: #dde2ea;
-  color: var(--ht-sub);
+  background: #f3f5f8 !important;
+  border-color: #dde2ea !important;
+  color: var(--ht-sub) !important;
 }
 .ht-override-btn-revert:hover {
-  background: #e4e9f1;
-  border-color: #c2cad8;
-  color: var(--ht-navy);
+  background: #e4e9f1 !important;
+  border-color: #c2cad8 !important;
+  color: var(--ht-navy) !important;
 }

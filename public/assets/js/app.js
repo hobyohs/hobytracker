@@ -336,19 +336,16 @@ $(document).ready(function() {
 
   // ── Script Pages: sticker override buttons ──────────────────
   // Markup: <button class="ht-override-btn" data-override-action="toggle-cg|toggle-meds">
-  // Inside <div class="ht-override-pair" data-ambassador-id="...">
-  // POSTs to the appropriate AJAX endpoint, toggles .override-active
-  // on the parent pair on success.
+  // Inside <div class="ht-override-pair" data-toggle-url="...">
+  // The toggle URL is generated server-side via Twig's path() helper so
+  // it works regardless of where the app is mounted (subdirectory, etc).
   document.querySelectorAll('.ht-override-btn[data-override-action]').forEach(function(btn) {
     btn.addEventListener('click', function(e) {
       e.preventDefault();
       var pair = btn.closest('.ht-override-pair');
       if (!pair) return;
-      var ambId = pair.dataset.ambassadorId;
-      var action = btn.dataset.overrideAction;
-      var url = action === 'toggle-cg'
-        ? '/ajax/checkin/' + ambId + '/toggle-cg-override'
-        : '/ajax/checkin/' + ambId + '/toggle-meds-override';
+      var url = pair.dataset.toggleUrl;
+      if (!url) return;
 
       fetch(url, { method: 'POST', credentials: 'same-origin' })
         .then(function(r) { return r.json(); })

@@ -22,21 +22,33 @@
 
     {# ── 1. Coming/Going schedule ─────────────────────────────── #}
     {% if cg_status %}
-        <div class="ht-script-section has-sticker sticker-yellow">
-            <div class="ht-script-sticker sticker-yellow"><i class="fa fa-calendar"></i></div>
-            <div class="ht-script-content">
-                <div class="ht-script-eyebrow">Apply Yellow Sticker</div>
-                <h3>{{ ambassador.consolidatedFirstName }} <strong>IS NOT</strong> scheduled to attend the entire seminar. Please confirm this.</h3>
+        {# Ambassador already has a C&G on file. Show the schedule as
+           informational context — no sticker, no action, no override.
+           The sticker (if any) was applied at a previous step. #}
+        <div class="ht-script-info">
+            <h3>Schedule on File</h3>
+            {% set has_any_details = false %}
+            {% for cg in ambassador.comingsAndGoings %}
+                {% if cg.departure is not null or cg.arrival is not null %}
+                    {% set has_any_details = true %}
+                {% endif %}
+            {% endfor %}
+            {% if has_any_details %}
                 <div class="ht-cg-schedule">
                     {% for cg in ambassador.comingsAndGoings %}
                         {% if cg.departure is not null %}<div>Leaving <strong>{{ cg.departure|date('D M j \\a\\t g:iA') }}</strong></div>{% endif %}
                         {% if cg.arrival is not null %}<div>Returning <strong>{{ cg.arrival|date('D M j \\a\\t g:iA') }}</strong></div>{% endif %}
                     {% endfor %}
                 </div>
-            </div>
+            {% else %}
+                <p>{{ ambassador.consolidatedFirstName }} has a schedule change on file. Details will be entered at the yellow sticker table.</p>
+            {% endif %}
         </div>
     {% else %}
-        <div class="ht-override-pair {{ cg_override ? 'override-active' : '' }}" data-override-section="cg" data-ambassador-id="{{ ambassador.id }}">
+        <div class="ht-override-pair {{ cg_override ? 'override-active' : '' }}"
+             data-override-section="cg"
+             data-ambassador-id="{{ ambassador.id }}"
+             data-toggle-url="{{ path('checkin_toggle_cg_override', {'id': ambassador.id}) }}">
 
             <div class="ht-override-default ht-script-section ht-script-section-confirm">
                 <div class="ht-script-content">
@@ -111,7 +123,10 @@
             </div>
         </div>
     {% else %}
-        <div class="ht-override-pair {{ meds_override ? 'override-active' : '' }}" data-override-section="meds" data-ambassador-id="{{ ambassador.id }}">
+        <div class="ht-override-pair {{ meds_override ? 'override-active' : '' }}"
+             data-override-section="meds"
+             data-ambassador-id="{{ ambassador.id }}"
+             data-toggle-url="{{ path('checkin_toggle_meds_override', {'id': ambassador.id}) }}">
 
             <div class="ht-override-default ht-script-section ht-script-section-confirm">
                 <div class="ht-script-content">

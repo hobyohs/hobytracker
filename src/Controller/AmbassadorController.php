@@ -143,6 +143,7 @@ class AmbassadorController extends AbstractController
             if ($session->get($cgOverrideKey, false)) {
                 $cg = new ComingsAndGoings();
                 $cg->setAmbassador($ambassador);
+                $cg->setSeminarYear($ambassador->getSeminarYear());
                 $entityManager->persist($cg);
             }
             if ($session->get($medsOverrideKey, false)) {
