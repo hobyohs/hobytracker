@@ -491,3 +491,21 @@ $(document).ready(function() {
   $('.show-bars').barrating('show', { theme: 'bars-movie' });
 
 });
+
+// ── Smart back buttons ────────────────────────────────────
+// If the referrer is same-origin (i.e. the user navigated here from
+// another HOBYtracker page), update every .ht-back-link href to go
+// back there instead of the hardcoded default.
+(function() {
+  var referrer = document.referrer;
+  if (!referrer) return;
+  try {
+    var ref = new URL(referrer);
+    if (ref.origin !== window.location.origin) return;
+    // Don't use the referrer if it's the same page (e.g. form re-submit)
+    if (ref.pathname === window.location.pathname) return;
+    document.querySelectorAll('a.ht-back-link').forEach(function(link) {
+      link.href = referrer;
+    });
+  } catch(e) {}
+})();
