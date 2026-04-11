@@ -324,7 +324,130 @@
         </div>
     </div>
 {% endif %}
+{% if ambassador.activeComingsAndGoings|length > 0 or is_granted('ROLE_BOARD') %}
+<div class="ht-section">
+    <div class="ht-section-label" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Comings &amp; Goings</span>
+        {% if is_granted('ROLE_BOARD') %}
+            <a href="{{ path('app_comings_and_goings_new', {'ambassador_id': ambassador.id}) }}" class="ht-btn ht-btn-secondary" style="font-size:12px; padding:4px 10px;">
+                <i class="fa fa-plus"></i> Add
+            </a>
+        {% endif %}
+    </div>
+    {% if ambassador.activeComingsAndGoings|length == 0 %}
+        <div class="ht-section-card">
+            <div class="ht-section-row"><span class="ht-section-val ht-empty">None on file</span></div>
+        </div>
+    {% else %}
+        <div class="ht-cg-cards" style="gap:8px;">
+        {% for cg in ambassador.activeComingsAndGoings %}
+            <div class="ht-cg-card" id="cg-card-{{ cg.id }}">
+                {% if cg.notes %}
+                    <div class="ht-cg-notes">{{ cg.notes }}</div>
+                {% endif %}
+                {% if cg.departure is not null %}
+                    <div class="ht-cg-block {{ cg.isCheckedOut ? 'is-confirmed' : '' }}" id="cg-out-{{ cg.id }}">
+                        <div class="ht-cg-block-meta">
+                            <span class="ht-cg-block-label">Leaving</span>
+                            <span class="ht-cg-block-time">{{ cg.departure|date('D M j \\a\\t g:iA') }}</span>
+                        </div>
+                        <div class="ht-cg-block-action">
+                            {% if cg.isCheckedOut %}
+                                <span class="ht-cg-confirmed-label"><i class="fa fa-check"></i> Checked out</span>
+                                <span class="ht-cg-by">by {{ cg.checkedOutBy }}</span>
+                                <button type="button" class="ht-cg-undo-btn" data-cg-id="{{ cg.id }}" data-field="checked_out">Undo</button>
+                            {% else %}
+                                <button type="button" class="ht-cg-action-btn" data-cg-id="{{ cg.id }}" data-field="checked_out">
+                                    <i class="fa fa-arrow-right-from-bracket"></i> Check Out
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if cg.arrival is not null %}
+                    <div class="ht-cg-block {{ cg.isCheckedIn ? 'is-confirmed' : '' }}" id="cg-in-{{ cg.id }}">
+                        <div class="ht-cg-block-meta">
+                            <span class="ht-cg-block-label">Returning</span>
+                            <span class="ht-cg-block-time">{{ cg.arrival|date('D M j \\a\\t g:iA') }}</span>
+                        </div>
+                        <div class="ht-cg-block-action">
+                            {% if cg.isCheckedIn %}
+                                <span class="ht-cg-confirmed-label"><i class="fa fa-check"></i> Checked in</span>
+                                <span class="ht-cg-by">by {{ cg.checkedInBy }}</span>
+                                <button type="button" class="ht-cg-undo-btn" data-cg-id="{{ cg.id }}" data-field="checked_in">Undo</button>
+                            {% else %}
+                                <button type="button" class="ht-cg-action-btn" data-cg-id="{{ cg.id }}" data-field="checked_in">
+                                    <i class="fa fa-arrow-right-to-bracket"></i> Check In
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endif %}
 
 </div>{# end ht-show-body #}
 
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function() {
+    var CG_URL  = '{{ path('cg_update') }}';
+    var BY_NAME = '{{ app.user.firstName }} {{ app.user.lastName }}';
+
+    document.addEventListener('click', function(e) {
+        var actionBtn = e.target.closest('.ht-cg-action-btn');
+        var undoBtn   = e.target.closest('.ht-cg-undo-btn');
+        if (actionBtn) handleAction(actionBtn);
+        if (undoBtn)   handleUndo(undoBtn);
+    });
+
+    function handleAction(btn) {
+        var cgId = btn.dataset.cgId, field = btn.dataset.field;
+        btn.disabled = true;
+        post(CG_URL, 'cg_id=' + cgId + '&field=' + field + '&field_status=1')
+            .then(function(d) { if (d.success) markConfirmed(cgId, field, BY_NAME); else btn.disabled = false; })
+            .catch(function() { btn.disabled = false; });
+    }
+
+    function handleUndo(btn) {
+        var cgId = btn.dataset.cgId, field = btn.dataset.field;
+        btn.disabled = true;
+        post(CG_URL, 'cg_id=' + cgId + '&field=' + field + '&field_status=0')
+            .then(function(d) { if (d.success) markPending(cgId, field); else btn.disabled = false; })
+            .catch(function() { btn.disabled = false; });
+    }
+
+    function markConfirmed(cgId, field, byName) {
+        var block = document.getElementById(field === 'checked_out' ? 'cg-out-' + cgId : 'cg-in-' + cgId);
+        if (!block) return;
+        block.classList.add('is-confirmed');
+        block.querySelector('.ht-cg-block-action').innerHTML =
+            '<span class="ht-cg-confirmed-label"><i class="fa fa-check"></i> ' + (field === 'checked_out' ? 'Checked out' : 'Checked in') + '</span>' +
+            '<span class="ht-cg-by">by ' + byName + '</span>' +
+            '<button type="button" class="ht-cg-undo-btn" data-cg-id="' + cgId + '" data-field="' + field + '">Undo</button>';
+    }
+
+    function markPending(cgId, field) {
+        var block = document.getElementById(field === 'checked_out' ? 'cg-out-' + cgId : 'cg-in-' + cgId);
+        if (!block) return;
+        block.classList.remove('is-confirmed');
+        var label = field === 'checked_out' ? '<i class="fa fa-arrow-right-from-bracket"></i> Check Out' : '<i class="fa fa-arrow-right-to-bracket"></i> Check In';
+        block.querySelector('.ht-cg-block-action').innerHTML =
+            '<button type="button" class="ht-cg-action-btn" data-cg-id="' + cgId + '" data-field="' + field + '">' + label + '</button>';
+    }
+
+    function post(url, body) {
+        return fetch(url, { method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: body
+        }).then(function(r) { return r.json(); });
+    }
+})();
+</script>
 {% endblock %}

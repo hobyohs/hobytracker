@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ComingsAndGoings;
+use App\Entity\Ambassador;
 use App\Form\ComingsAndGoingsType;
 use App\Repository\ComingsAndGoingsRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -10,7 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/comingsandgoings')]
@@ -29,6 +30,15 @@ class ComingsAndGoingsController extends AbstractController
     public function newAction(Request $request, ComingsAndGoingsRepository $comingsAndGoingsRepository, EntityManagerInterface $entityManager): Response
     {
         $comingsAndGoing = new ComingsAndGoings();
+
+        $ambassadorId = $request->query->get('ambassador_id');
+        if ($ambassadorId) {
+            $ambassador = $entityManager->getRepository(Ambassador::class)->find($ambassadorId);
+            if ($ambassador) {
+                $comingsAndGoing->setAmbassador($ambassador);
+            }
+        }
+
         $form = $this->createForm('App\Form\ComingsAndGoingsType', $comingsAndGoing);
         $form->handleRequest($request);
         
