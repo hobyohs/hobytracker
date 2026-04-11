@@ -15,22 +15,22 @@
         </div>
 
         <div class="ht-form-row">
-            {{ form_label(form.departure, 'Departure', { 'label_attr': { 'class': 'ht-form-label' } }) }}
-            <div class="ht-form-help">When the ambassador is leaving the seminar. Leave blank if only an arrival.</div>
+            {{ form_label(form.departure, 'Leaving seminar', { 'label_attr': { 'class': 'ht-form-label' } }) }}
+            <div class="ht-form-help">When the ambassador will be picked up and leave. Leave blank if this is a return only.</div>
             {{ form_widget(form.departure, { 'attr': { 'class': 'ht-form-input' } }) }}
             {{ form_errors(form.departure) }}
         </div>
 
         <div class="ht-form-row">
-            {{ form_label(form.arrival, 'Arrival', { 'label_attr': { 'class': 'ht-form-label' } }) }}
-            <div class="ht-form-help">When the ambassador is arriving (or returning). Leave blank if only a departure.</div>
+            {{ form_label(form.arrival, 'Returning to seminar', { 'label_attr': { 'class': 'ht-form-label' } }) }}
+            <div class="ht-form-help">When the ambassador will be returned. Leave blank if this is a departure only.</div>
             {{ form_widget(form.arrival, { 'attr': { 'class': 'ht-form-input' } }) }}
             {{ form_errors(form.arrival) }}
         </div>
 
         <div class="ht-form-row">
             {{ form_label(form.notes, 'Notes', { 'label_attr': { 'class': 'ht-form-label' } }) }}
-            {{ form_widget(form.notes, { 'attr': { 'class': 'ht-form-input', 'rows': 4, 'placeholder': 'Optional context (who is picking them up, why, etc.)' } }) }}
+            {{ form_widget(form.notes, { 'attr': { 'class': 'ht-form-input', 'rows': 4, 'placeholder': 'Optional — who is picking them up, reason, contact info, etc.' } }) }}
             {{ form_errors(form.notes) }}
         </div>
 

@@ -1,91 +1,188 @@
 {% extends 'base.html.twig' %}
 {% import 'partials/_avatar.html.twig' as avatar %}
-{% block maintag %}<main class="wide">{% endblock %}
+{% block maintag %}<main class="show">{% endblock %}
 {% block body %}
-<div class="ht-page-header"><h1>Comings &amp; Goings</h1></div>
-<div class="ht-dt-card ht-responsive-table">
-    <table class="table" id="cg-table">
-        <thead><tr>
-            <th class="ht-avatar-col no-export"></th>
-            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Group</th>
-            <th>Form</th><th>Departure</th><th>Return</th><th>Notes</th>
-            {% if is_granted('ROLE_BOARD') %}<th class="no-export"></th>{% endif %}
-            <th class="no-export ht-chevron-col"></th>
-        </tr></thead>
-        <tbody>
-            {% for cg in comings_and_goings %}
-                <tr data-href="{{ path('app_ambassador_show', { 'id': cg.ambassador.id }) }}">
-                    <td class="ht-avatar-col no-export">{{ avatar.render(cg.ambassador, 32) }}</td>
-                    <td data-label="First" class="ht-name-td">
-                        <span class="ht-name-desktop">{{ cg.ambassador.consolidatedFirstName }}</span>
-                        <span class="ht-name-mobile-header">
-                            {{ avatar.render(cg.ambassador, 36) }}
-                            <span class="ht-card-name">{{ cg.ambassador.consolidatedFirstName }} {{ cg.ambassador.lastName }}</span>
-                            {% if cg.ambassador.letterGroup %}<span class="ht-group-badge ht-group-{{ cg.ambassador.letterGroup.color }} ht-card-name-badge">{{ cg.ambassador.letterGroup.letter }}</span>{% endif %}
-                        </span>
-                    </td>
-                    <td data-label="Last" class="ht-mobile-hide">{{ cg.ambassador.lastName }}</td>
-                    <td data-label="Group" class="center ht-mobile-hide">{% if cg.ambassador.letterGroup %}<span class="ht-group-badge ht-group-{{ cg.ambassador.letterGroup.color }}">{{ cg.ambassador.letterGroup.letter }}</span>{% endif %}</td>
-                    {% if cg.ambassador.isCgForm %}<td data-label="Form" class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
-                    {% elseif cg.ambassador.comingsAndGoings|length > 0 %}<td data-label="Form" class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>
-                    {% else %}<td data-label="Form" class="gridblock okay">&nbsp;</td>{% endif %}
-                    <td data-label="Departure">
-                        {% if cg.departure is not null %}
-                            {{ cg.departure|date('D M j \\a\\t g:iA') }}<br>
-                            <input type="checkbox" data-cg-id="{{ cg.id }}" data-field="checked_out" class="cg-checkbox"{% if cg.isCheckedOut %} checked disabled{% endif %}>&nbsp;<span id="{{ cg.id }}-checked_out-by" class="byline">{% if cg.isCheckedOut %}by {{ cg.checkedOutBy }}{% endif %}</span>
-                        {% else %}N/A{% endif %}
-                    </td>
-                    <td data-label="Return">
-                        {% if cg.arrival is not null %}
-                            {{ cg.arrival|date('D M j \\a\\t g:iA') }}<br>
-                            <input type="checkbox" data-cg-id="{{ cg.id }}" data-field="checked_in" class="cg-checkbox"{% if cg.isCheckedIn %} checked disabled{% endif %}>&nbsp;<span id="{{ cg.id }}-checked_in-by" class="byline">{% if cg.isCheckedIn %}by {{ cg.checkedInBy }}{% endif %}</span>
-                        {% else %}N/A{% endif %}
-                    </td>
-                    <td data-label="Notes">{{ cg.notes }}</td>
-                    {% if is_granted('ROLE_BOARD') %}
-                        <td class="center no-export"><a href="{{ path('app_comings_and_goings_edit', { 'id': cg.id }) }}" class="ht-table-edit-link" title="Edit"><span class="fa fa-pencil"></span></a></td>
-                    {% endif %}
-                    <td class="no-export ht-chevron-col"><a href="{{ path('app_ambassador_show', { 'id': cg.ambassador.id }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+{%- set total     = comings_and_goings|length -%}
+{%- set out_count = comings_and_goings|filter(cg => cg.departure is not null)|length -%}
+
+<div class="ht-page-header">
+    <h1>Comings &amp; Goings</h1>
+    <span class="ht-page-count">{{ total }}</span>
 </div>
+
+{% if is_granted('ROLE_BOARD') %}
+<div style="padding: 0 16px 12px;">
+    <a href="{{ path('app_comings_and_goings_new') }}" class="ht-btn ht-btn-primary" style="font-size:14px;">
+        <i class="fa fa-plus"></i> New
+    </a>
+</div>
+{% endif %}
+
+{% if comings_and_goings is empty %}
+    <div style="padding: 40px 16px; text-align:center; color: var(--ht-sub);">No active comings &amp; goings.</div>
+{% else %}
+<div class="ht-cg-cards">
+{% for cg in comings_and_goings %}
+    <div class="ht-cg-card" id="cg-card-{{ cg.id }}">
+
+        {# ── Card header: avatar + name + group + form status + edit ── #}
+        <div class="ht-cg-card-header">
+            <a href="{{ path('app_ambassador_show', {'id': cg.ambassador.id}) }}" class="ht-cg-amb-link">
+                {{ avatar.render(cg.ambassador, 40) }}
+                <div class="ht-cg-amb-info">
+                    <div class="ht-cg-amb-name">{{ cg.ambassador.consolidatedFirstName }} {{ cg.ambassador.lastName }}</div>
+                    {% if cg.ambassador.letterGroup %}
+                        <div class="ht-cg-amb-sub">Group {{ cg.ambassador.letterGroup.letter }}</div>
+                    {% endif %}
+                </div>
+            </a>
+            <div class="ht-cg-card-header-right">
+                {% if cg.ambassador.letterGroup %}
+                    <span class="ht-group-badge ht-group-{{ cg.ambassador.letterGroup.color }}">{{ cg.ambassador.letterGroup.letter }}</span>
+                {% endif %}
+                {% if cg.ambassador.isCgForm %}
+                    <span class="ht-status-pill ht-yes" title="C&amp;G form on file"><i class="fa fa-file-lines"></i></span>
+                {% else %}
+                    <span class="ht-status-pill ht-no" title="No C&amp;G form"><i class="fa fa-file-lines"></i></span>
+                {% endif %}
+                {% if is_granted('ROLE_BOARD') %}
+                    <a href="{{ path('app_comings_and_goings_edit', {'id': cg.id}) }}" class="ht-cg-edit-btn" title="Edit">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if cg.notes %}
+            <div class="ht-cg-notes">{{ cg.notes }}</div>
+        {% endif %}
+
+        {# ── Departure block ─────────────────────────────────── #}
+        {% if cg.departure is not null %}
+            <div class="ht-cg-block {{ cg.isCheckedOut ? 'is-confirmed' : '' }}" id="cg-out-{{ cg.id }}">
+                <div class="ht-cg-block-meta">
+                    <span class="ht-cg-block-label">Leaving</span>
+                    <span class="ht-cg-block-time">{{ cg.departure|date('D M j \\a\\t g:iA') }}</span>
+                </div>
+                <div class="ht-cg-block-action">
+                    {% if cg.isCheckedOut %}
+                        <span class="ht-cg-confirmed-label"><i class="fa fa-check"></i> Checked out</span>
+                        <span class="ht-cg-by">by {{ cg.checkedOutBy }}</span>
+                        <button type="button" class="ht-cg-undo-btn"
+                                data-cg-id="{{ cg.id }}" data-field="checked_out">Undo</button>
+                    {% else %}
+                        <button type="button" class="ht-cg-action-btn"
+                                data-cg-id="{{ cg.id }}" data-field="checked_out">
+                            <i class="fa fa-arrow-right-from-bracket"></i> Check Out
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        {# ── Return block ────────────────────────────────────── #}
+        {% if cg.arrival is not null %}
+            <div class="ht-cg-block {{ cg.isCheckedIn ? 'is-confirmed' : '' }}" id="cg-in-{{ cg.id }}">
+                <div class="ht-cg-block-meta">
+                    <span class="ht-cg-block-label">Returning</span>
+                    <span class="ht-cg-block-time">{{ cg.arrival|date('D M j \\a\\t g:iA') }}</span>
+                </div>
+                <div class="ht-cg-block-action">
+                    {% if cg.isCheckedIn %}
+                        <span class="ht-cg-confirmed-label"><i class="fa fa-check"></i> Checked in</span>
+                        <span class="ht-cg-by">by {{ cg.checkedInBy }}</span>
+                        <button type="button" class="ht-cg-undo-btn"
+                                data-cg-id="{{ cg.id }}" data-field="checked_in">Undo</button>
+                    {% else %}
+                        <button type="button" class="ht-cg-action-btn"
+                                data-cg-id="{{ cg.id }}" data-field="checked_in">
+                            <i class="fa fa-arrow-right-to-bracket"></i> Check In
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+{% endfor %}
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('input.cg-checkbox').change(function() {
-                var field_status = $(this).is(":checked") ? 1 : 0;
-                $.post("{{ path('cg_update') }}", {
-                    cg_id: $(this).data('cg-id'),
-                    field: $(this).data('field'),
-                    field_status: field_status
-                });
-                $(this).attr("disabled", true);
-                $("#"+$(this).data('cg-id')+"-"+$(this).data('field')+"-by").text("by {{app.user.firstName}} {{app.user.lastName}}");
-            });
+{{ parent() }}
+<script>
+(function() {
+    var CG_URL  = '{{ path('cg_update') }}';
+    var BY_NAME = '{{ app.user.firstName }} {{ app.user.lastName }}';
 
-            $('table#cg-table').DataTable({
-                "order": [[5, "asc"], [2, "asc"]],
-                responsive: false,
-                "columnDefs": [
-                    { targets: [0, 9], orderable: false },
-                    { targets: 0, searchable: false }
-                    {% if is_granted('ROLE_BOARD') %}, { targets: 8, orderable: false }{% endif %}
-                ],
-                initComplete: function() {
-                    $('.ht-dt-card .dataTables_filter input').attr('placeholder', 'Search\u2026');
-                },
-                buttons: [
-                    {% if is_granted('ROLE_BOARD') %}
-                    { text: 'New', action: function(e, dt, node, config) { window.location.href = "{{ path('app_comings_and_goings_new') }}"; } },
-                    {% endif %}
-                    'excelHtml5', 'print'
-                ]
-            });
-        });
-    </script>
+    document.addEventListener('click', function(e) {
+        var actionBtn = e.target.closest('.ht-cg-action-btn');
+        var undoBtn   = e.target.closest('.ht-cg-undo-btn');
+        if (actionBtn) handleAction(actionBtn);
+        if (undoBtn)   handleUndo(undoBtn);
+    });
+
+    function handleAction(btn) {
+        var cgId  = btn.dataset.cgId;
+        var field = btn.dataset.field;
+        btn.disabled = true;
+        post(CG_URL, 'cg_id=' + cgId + '&field=' + field + '&field_status=1')
+            .then(function(data) {
+                if (data.success) markConfirmed(cgId, field, BY_NAME);
+                else btn.disabled = false;
+            })
+            .catch(function() { btn.disabled = false; });
+    }
+
+    function handleUndo(btn) {
+        var cgId  = btn.dataset.cgId;
+        var field = btn.dataset.field;
+        btn.disabled = true;
+        post(CG_URL, 'cg_id=' + cgId + '&field=' + field + '&field_status=0')
+            .then(function(data) {
+                if (data.success) markPending(cgId, field);
+                else btn.disabled = false;
+            })
+            .catch(function() { btn.disabled = false; });
+    }
+
+    function markConfirmed(cgId, field, byName) {
+        var blockId = field === 'checked_out' ? 'cg-out-' + cgId : 'cg-in-' + cgId;
+        var block = document.getElementById(blockId);
+        if (!block) return;
+        block.classList.add('is-confirmed');
+        var action = block.querySelector('.ht-cg-block-action');
+        action.innerHTML =
+            '<span class="ht-cg-confirmed-label"><i class="fa fa-check"></i> ' +
+            (field === 'checked_out' ? 'Checked out' : 'Checked in') + '</span>' +
+            '<span class="ht-cg-by">by ' + byName + '</span>' +
+            '<button type="button" class="ht-cg-undo-btn" data-cg-id="' + cgId + '" data-field="' + field + '">Undo</button>';
+    }
+
+    function markPending(cgId, field) {
+        var blockId = field === 'checked_out' ? 'cg-out-' + cgId : 'cg-in-' + cgId;
+        var block = document.getElementById(blockId);
+        if (!block) return;
+        block.classList.remove('is-confirmed');
+        var label = field === 'checked_out' ? '<i class="fa fa-arrow-right-from-bracket"></i> Check Out'
+                                             : '<i class="fa fa-arrow-right-to-bracket"></i> Check In';
+        var action = block.querySelector('.ht-cg-block-action');
+        action.innerHTML =
+            '<button type="button" class="ht-cg-action-btn" data-cg-id="' + cgId + '" data-field="' + field + '">' +
+            label + '</button>';
+    }
+
+    function post(url, body) {
+        return fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body
+        }).then(function(r) { return r.json(); });
+    }
+})();
+</script>
 {% endblock %}

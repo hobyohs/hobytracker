@@ -5,8 +5,12 @@
     <a href="{{ path('app_letter_group_show', { 'letter': group.letter }) }}" class="ht-back-link">
         <i class="fa fa-chevron-left" style="font-size:11px;"></i> Group {{ group.letter }}
     </a>
-    <h1>{{ group.printLetterGroup | raw }}</h1>
-    <h2>Pre-Seminar Calls</h2>
+    <div class="ht-group-show-header">
+        <div class="ht-group-letter-display ht-group-{{ group.color }}">{{ group.letter }}</div>
+        <div class="ht-show-name">Group {{ group.letter }}</div>
+        <div class="ht-show-subtitle">Pre-Seminar Calls</div>
+    </div>
+    <div class="ht-show-body">
     <div class="ht-dt-card ht-responsive-table">
         <table class="table" id="my-group-calls-ambassadors-table">
             <thead><tr>
@@ -45,4 +49,5 @@
             </tbody>
         </table>
     </div>
+    </div>{# ht-show-body #}
 {% endblock %}

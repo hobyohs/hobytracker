@@ -343,12 +343,9 @@ $(document).ready(function() {
   // DataTables tables — also called from each table's initComplete
   document.querySelectorAll('.ht-responsive-table .dataTables_wrapper').forEach(initSearchClear);
 
-  // Custom card-filter inputs (checkin, checkout index pages)
-  ['checkinSearch', 'checkoutSearch'].forEach(function(id) {
-    var input = document.getElementById(id);
-    if (!input) return;
+  // All custom card-filter search inputs (.ht-search-input)
+  document.querySelectorAll('.ht-search-input').forEach(function(input) {
     addClearBtn(input, function() {
-      // Trigger the existing card filter by dispatching an input event
       input.dispatchEvent(new Event('input'));
     });
   });
