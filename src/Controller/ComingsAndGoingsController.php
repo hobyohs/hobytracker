@@ -33,6 +33,7 @@ class ComingsAndGoingsController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+            $comingsAndGoing->setSeminarYear($comingsAndGoing->getAmbassador()->getSeminarYear());
             $entityManager->persist($comingsAndGoing);
             $entityManager->flush();
         
