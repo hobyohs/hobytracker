@@ -506,6 +506,11 @@ $(document).ready(function() {
     if (ref.pathname === window.location.pathname) return;
     document.querySelectorAll('a.ht-back-link').forEach(function(link) {
       link.href = referrer;
+      // Update the text node (last child) to "Back" — preserves the chevron <i>
+      var textNode = link.lastChild;
+      if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+        textNode.textContent = ' Back';
+      }
     });
   } catch(e) {}
 })();
