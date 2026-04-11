@@ -305,11 +305,17 @@ $(document).ready(function() {
     btn.innerHTML = '<i class="fa fa-times"></i>';
     btn.style.display = 'none';
 
+    // Wrap input in a position:relative container
     var container = document.createElement('div');
     container.className = 'ht-search-wrap';
     input.parentNode.insertBefore(container, input);
     container.appendChild(input);
-    container.appendChild(btn);
+
+    // Overlay div covers the input exactly; flexbox centers the button
+    var overlay = document.createElement('div');
+    overlay.className = 'ht-search-clear-overlay';
+    overlay.appendChild(btn);
+    container.appendChild(overlay);
 
     function updateBtn() {
       btn.style.display = input.value.length > 0 ? 'flex' : 'none';

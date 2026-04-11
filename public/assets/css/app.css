@@ -1271,6 +1271,7 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 
   /* Card styling per row — more separation, cleaner shadow */
   .ht-responsive-table table.dataTable tbody tr {
+    border: 1px solid rgba(0,0,0,0.07);
     background: var(--ht-white);
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
@@ -2403,21 +2404,24 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 /* ── Search clear button ─────────────────────────────────── */
 .ht-search-wrap {
   position: relative;
-  display: flex;
-  align-items: center;
+  display: block;
   width: 100%;
 }
-.ht-search-wrap input {
-  flex: 1;
-  width: 100% !important;
-  padding-right: 36px !important;
-  min-width: 0;
+.ht-search-wrap input { width: 100% !important; padding-right: 36px !important; }
+/* Overlay sits exactly over the input; pointer-events:none lets clicks
+   through to the input except on the button itself */
+.ht-search-clear-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  pointer-events: none;
 }
 .ht-search-clear {
+  pointer-events: auto;
   flex-shrink: 0;
-  margin-left: -28px;
-  position: relative;
-  z-index: 1;
   width: 20px;
   height: 20px;
   border-radius: 50% !important;
