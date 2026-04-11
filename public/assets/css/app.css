@@ -308,6 +308,7 @@ main {
   transition: background 0.1s;
 }
 .ht-card-row:last-child { border-bottom: none !important; }
+.ht-card-list .ht-card-row { border-bottom: 1px solid #e8e8e8 !important; }
 .ht-card-row:hover {
   background: #fafafa;
   text-decoration: none !important;
@@ -2407,9 +2408,15 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   display: block;
   width: 100%;
 }
-.ht-search-wrap input { width: 100% !important; padding-right: 36px !important; }
-/* Overlay sits exactly over the input; pointer-events:none lets clicks
-   through to the input except on the button itself */
+.ht-search-wrap input {
+  width: 100% !important;
+  padding-right: 36px !important;
+  margin-bottom: 0 !important;
+  display: block;
+}
+/* Push the margin-bottom down to the wrapper itself */
+.ht-list-controls .ht-search-wrap,
+.dataTables_filter .ht-search-wrap { margin-bottom: 12px; }
 .ht-search-clear-overlay {
   position: absolute;
   inset: 0;
