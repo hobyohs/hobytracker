@@ -1,15 +1,116 @@
 {% extends 'base.html.twig' %}
-{% block maintag %}<main>{% endblock %}
+{% block maintag %}<main class="show">{% endblock %}
+
 {% block body %}
 
-<div style="padding: 24px 16px 0;">
-    <div class="ht-section-card" style="padding: 24px; text-align: center;">
-        <img src="{{ asset('assets/images/logo.png') }}" alt="HOBYTracker" style="height: 48px; margin-bottom: 16px;">
-        <h2 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Welcome to HOBYtracker</h2>
-        <p style="font-size: 14px; color: var(--ht-sub); margin: 0;">
-            Use the menu to navigate. If you experience any problems, please let the Director of Facilitators know.
-        </p>
+<div class="ht-homepage">
+
+    {# ── Greeting ────────────────────────────────────────────── #}
+    <div class="ht-homepage-greeting">
+        Good to see you, {{ app.user.consolidatedFirstName }}.
     </div>
+
+    {# ── My Group card (users with a group assigned) ──────────── #}
+    {% if app.user.letterGroup %}
+        {%- set grp = app.user.letterGroup -%}
+        {%- set ambassadors = grp.ambassadors -%}
+        {%- set called = ambassadors|filter(a => a.juniorCallMade)|length -%}
+        {%- set total  = ambassadors|length -%}
+        {%- set callPct = total > 0 ? ((called / total) * 100)|round : 0 -%}
+
+        <div class="ht-homepage-section-label">My Group</div>
+        <div class="ht-homepage-group-card">
+            <div class="ht-homepage-group-header">
+                <span class="ht-group-badge ht-group-badge-lg ht-group-{{ grp.color }}">{{ grp.letter }}</span>
+                <div class="ht-homepage-group-meta">
+                    <div class="ht-homepage-group-name">Group {{ grp.letter }}</div>
+                    <div class="ht-homepage-group-sub">{{ total }} ambassador{{ total != 1 ? 's' : '' }}</div>
+                </div>
+            </div>
+
+            <div class="ht-homepage-stat-row">
+                <div class="ht-homepage-stat-label">Pre-Seminar Calls</div>
+                <div class="ht-homepage-stat-value">{{ called }} / {{ total }}</div>
+            </div>
+            <div class="ht-homepage-progress">
+                <div class="ht-homepage-progress-bar" style="width: {{ callPct }}%"></div>
+            </div>
+
+            <div class="ht-homepage-group-links">
+                <a href="{{ path('app_letter_group_show',       {'letter': grp.letter}) }}" class="ht-homepage-group-link">Overview</a>
+                <a href="{{ path('app_letter_group_show_faces', {'letter': grp.letter}) }}" class="ht-homepage-group-link">Faces</a>
+                <a href="{{ path('app_letter_group_calls',      {'letter': grp.letter}) }}" class="ht-homepage-group-link">Calls</a>
+                <a href="{{ path('ambeval_index',               {'letter': grp.letter}) }}" class="ht-homepage-group-link">Evals</a>
+            </div>
+        </div>
+    {% endif %}
+
+    {# ── Board stats ─────────────────────────────────────────── #}
+    {% if is_granted('ROLE_BOARD') %}
+        <div class="ht-homepage-section-label">Seminar Stats</div>
+        <div class="ht-homepage-stats-grid">
+
+            <div class="ht-homepage-stat-card">
+                <div class="ht-homepage-stat-card-label">Pre-Seminar Calls</div>
+                <div class="ht-homepage-stat-card-nums">
+                    <span class="ht-homepage-stat-card-main">{{ totalCalled }}</span>
+                    <span class="ht-homepage-stat-card-denom">/ {{ totalAmb }}</span>
+                </div>
+                <div class="ht-homepage-progress">
+                    <div class="ht-homepage-progress-bar" style="width: {{ callPct }}%"></div>
+                </div>
+                <div class="ht-homepage-stat-card-sub">{{ totalCallSuccess }} spoke with ambassador</div>
+                <a href="{{ path('app_ambassador_calls') }}" class="ht-homepage-stat-card-link">View report →</a>
+            </div>
+
+            <div class="ht-homepage-stat-card">
+                <div class="ht-homepage-stat-card-label">PSM Forms Returned</div>
+                <div class="ht-homepage-stat-card-nums">
+                    <span class="ht-homepage-stat-card-main">{{ totalPsm }}</span>
+                    <span class="ht-homepage-stat-card-denom">/ {{ totalAmb }}</span>
+                </div>
+                <div class="ht-homepage-progress">
+                    <div class="ht-homepage-progress-bar" style="width: {{ psmPct }}%"></div>
+                </div>
+                <div class="ht-homepage-stat-card-sub">{{ totalAmb - totalPsm }} outstanding</div>
+                <a href="{{ path('app_ambassador_psm') }}" class="ht-homepage-stat-card-link">View report →</a>
+            </div>
+
+        </div>
+    {% endif %}
+
+    {# ── Quick Links ─────────────────────────────────────────── #}
+    <div class="ht-homepage-section-label">Quick Links</div>
+    <a href="{{ path('app_user_my_assignments') }}" class="ht-homepage-shortcut">
+        <i class="fa fa-clipboard-check"></i>
+        <span>My Assignments</span>
+        <i class="fa fa-chevron-right ht-homepage-shortcut-arrow"></i>
+    </a>
+    {% if app.user.letterGroup %}
+        <a href="{{ path('app_letter_group_calls', {'letter': app.user.letterGroup.letter}) }}" class="ht-homepage-shortcut">
+            <i class="fa fa-phone"></i>
+            <span>Pre-Seminar Calls</span>
+            <i class="fa fa-chevron-right ht-homepage-shortcut-arrow"></i>
+        </a>
+    {% endif %}
+    {% if app.user.controlledAge >= 21 %}
+        <a href="{{ path('app_ambassador_checkin') }}" class="ht-homepage-shortcut">
+            <i class="fa fa-right-to-bracket"></i>
+            <span>Check In</span>
+            <i class="fa fa-chevron-right ht-homepage-shortcut-arrow"></i>
+        </a>
+        <a href="{{ path('app_ambassador_checkout') }}" class="ht-homepage-shortcut">
+            <i class="fa fa-right-from-bracket"></i>
+            <span>Check Out</span>
+            <i class="fa fa-chevron-right ht-homepage-shortcut-arrow"></i>
+        </a>
+        <a href="{{ path('app_ambassador_bedchecks') }}" class="ht-homepage-shortcut">
+            <i class="fa fa-moon"></i>
+            <span>Bed Checks</span>
+            <i class="fa fa-chevron-right ht-homepage-shortcut-arrow"></i>
+        </a>
+    {% endif %}
+
 </div>
 
 {% endblock %}

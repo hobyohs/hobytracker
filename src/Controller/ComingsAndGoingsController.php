@@ -5,13 +5,13 @@ namespace App\Controller;
 use App\Entity\ComingsAndGoings;
 use App\Form\ComingsAndGoingsType;
 use App\Repository\ComingsAndGoingsRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/comingsandgoings')]
 class ComingsAndGoingsController extends AbstractController

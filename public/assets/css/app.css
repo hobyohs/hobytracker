@@ -935,13 +935,168 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 .ht-summary-details-card table td { font-size: 13px; padding: 3px 0; }
 .ht-summary-details-card table td:last-child { text-align: right; font-weight: 600; }
 
-/* ── Quote (homepage) ────────────────────────────────────── */
-main #quote { margin: 50px auto; width: 90%; background: #e8ecef; padding: 24px; border-radius: 12px; }
-@media (min-width: 768px) { main #quote { width: 55%; } }
-main #quote p { font-size: 1.8em; }
-@media (min-width: 768px) { main #quote p { font-size: 2.5em; } }
-main #quote p .quoties { font-family: "Times New Roman", Times, serif; }
-main #quote p em { margin-top: 10px; text-align: right; display: block; }
+/* ── Homepage ────────────────────────────────────────────── */
+.ht-homepage {
+  padding: 8px 16px 40px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.ht-homepage-greeting {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ht-navy);
+  padding: 20px 0 16px;
+}
+.ht-homepage-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--ht-sub);
+  margin: 20px 0 8px;
+}
+
+/* Group card */
+.ht-homepage-group-card {
+  background: var(--ht-white);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+}
+.ht-homepage-group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.ht-homepage-group-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ht-navy);
+}
+.ht-homepage-group-sub {
+  font-size: 13px;
+  color: var(--ht-sub);
+  margin-top: 2px;
+}
+.ht-homepage-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.ht-homepage-stat-label { font-size: 13px; color: var(--ht-sub); }
+.ht-homepage-stat-value { font-size: 13px; font-weight: 600; color: var(--ht-navy); }
+
+/* Progress bar (shared by group card and stat cards) */
+.ht-homepage-progress {
+  height: 5px;
+  background: #eef1f4;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.ht-homepage-progress-bar {
+  height: 100%;
+  background: var(--ht-navy);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+/* Group quick-link pills */
+.ht-homepage-group-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.ht-homepage-group-link {
+  display: inline-block;
+  padding: 6px 14px;
+  background: var(--ht-section-bg);
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ht-navy) !important;
+  border-bottom: none !important;
+  text-shadow: none !important;
+}
+.ht-homepage-group-link:hover { background: #e2e6ea; }
+
+/* Board stat cards */
+.ht-homepage-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ht-homepage-stat-card {
+  background: var(--ht-white);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+}
+.ht-homepage-stat-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--ht-sub);
+  margin-bottom: 6px;
+}
+.ht-homepage-stat-card-nums {
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.ht-homepage-stat-card-main {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ht-navy);
+}
+.ht-homepage-stat-card-denom {
+  font-size: 14px;
+  color: var(--ht-sub);
+  margin-left: 2px;
+}
+.ht-homepage-stat-card-sub {
+  font-size: 12px;
+  color: var(--ht-sub);
+  margin-bottom: 10px;
+}
+.ht-homepage-stat-card-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ht-navy) !important;
+  border-bottom: none !important;
+  text-shadow: none !important;
+}
+.ht-homepage-stat-card-link:hover { opacity: 0.7; }
+
+/* Quick-link shortcuts (iOS settings row style) */
+.ht-homepage-shortcut {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  background: var(--ht-white);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.05);
+  color: var(--ht-navy) !important;
+  font-size: 15px;
+  font-weight: 500;
+  border-bottom: none !important;
+  text-shadow: none !important;
+}
+.ht-homepage-shortcut i:first-child {
+  width: 20px;
+  text-align: center;
+  color: var(--ht-navy);
+  opacity: 0.7;
+}
+.ht-homepage-shortcut span { flex: 1; }
+.ht-homepage-shortcut-arrow { font-size: 11px; color: #c0c0c0; }
+.ht-homepage-shortcut:hover { background: #f5f7f9; }
 
 /* ── Sidebar Backdrop ────────────────────────────────────── */
 #sidebarBackdrop {
