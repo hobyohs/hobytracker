@@ -38,6 +38,21 @@ class DormRoomRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    /**
+     * Returns all DormRooms ordered by dorm, floor, sort_order.
+     * Used to build the bed checks floor groupings.
+     */
+    public function findAllOrderedForBedChecks(): array
+    {
+        return $this->createQueryBuilder('dr')
+            ->select('dr')
+            ->orderBy('dr.dorm', 'ASC')
+            ->addOrderBy('dr.floor', 'ASC')
+            ->addOrderBy('dr.sort_order', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
     
 
 //    /**

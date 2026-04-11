@@ -1,0 +1,246 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+{% block maintag %}<main class="show">{% endblock %}
+
+{% block body %}
+
+<a href="{{ path('app_ambassador_bedchecks') }}?night={{ nightName }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Bed Checks
+</a>
+
+<div class="ht-page-header">
+    <h1>{{ dorm }} — Floor {{ floor }}</h1>
+    <span class="ht-page-count">{{ confirmedAmbs }} / {{ totalAmbs }}</span>
+</div>
+
+{# ── Night selector ──────────────────────────────────────── #}
+<div class="ht-bc-night-bar">
+    <span class="ht-bc-night-label">Night:</span>
+    <div class="ht-bc-night-tabs">
+        {% for night in ['Thursday', 'Friday', 'Saturday'] %}
+            <a href="{{ path('app_ambassador_bedchecks_floor', {'dorm': dorm, 'floor': floor}) }}?night={{ night }}"
+               class="ht-bc-night-tab {{ nightName == night ? 'is-active' : '' }}">
+                {{ night }}
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+{# ── Room cards ──────────────────────────────────────────── #}
+<div class="ht-bc-rooms">
+{% for room in rooms %}
+    {%- set roomId   = room.dormRoom.id -%}
+    {%- set roomNum  = room.dormRoom.room -%}
+    {%- set present  = room.occupants|filter(o => not o.isAway) -%}
+    {%- set allIn    = present|filter(o => not o.confirmed)|length == 0 -%}
+
+    <div class="ht-bc-room {{ room.allAway ? 'is-away' : (room.roomConfirmed ? 'is-confirmed' : '') }}"
+         id="bc-room-{{ roomId }}">
+
+        <div class="ht-bc-room-header">
+            <div class="ht-bc-room-number">Room {{ roomNum }}</div>
+            {% if room.allAway %}
+                <span class="ht-bc-room-badge badge-away">All Away</span>
+            {% elseif room.roomConfirmed %}
+                <span class="ht-bc-room-badge badge-confirmed"><i class="fa fa-check"></i> Confirmed</span>
+            {% else %}
+                {%- set remaining = present|filter(o => not o.confirmed)|length -%}
+                <span class="ht-bc-room-badge badge-pending">{{ remaining }} remaining</span>
+            {% endif %}
+        </div>
+
+        <div class="ht-bc-room-occupants">
+        {% for occ in room.occupants %}
+            <div class="ht-bc-occupant {{ occ.isAway ? 'is-away' : (occ.confirmed ? 'is-confirmed' : '') }}"
+                 id="bc-occ-{{ occ.ambassador.id }}">
+                <a href="{{ path('app_ambassador_show', {'id': occ.ambassador.id}) }}" class="ht-bc-occupant-link">
+                    {{ avatar.render(occ.ambassador, 32) }}
+                    <div class="ht-bc-occupant-name">
+                        {{ occ.ambassador.consolidatedFirstName }} {{ occ.ambassador.lastName }}
+                        {% if occ.isAway %}
+                            {% if occ.awayReturn %}
+                                <span class="ht-bc-cg-badge">Away, returning {{ occ.awayReturn|date('D M j \\a\\t g:iA') }}</span>
+                            {% else %}
+                                <span class="ht-bc-cg-badge">Away, not expected to return</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </a>
+                {% if not occ.isAway %}
+                    {% if occ.confirmed %}
+                        <div class="ht-bc-occupant-by">by {{ occ.confirmedBy }}</div>
+                        <button type="button"
+                                class="ht-bc-unconfirm-btn"
+                                data-amb-id="{{ occ.ambassador.id }}"
+                                data-night="{{ nightField }}"
+                                data-unconfirm-url="{{ path('bc_update') }}">
+                            Undo
+                        </button>
+                    {% else %}
+                        <button type="button"
+                                class="ht-bc-confirm-btn"
+                                data-amb-id="{{ occ.ambassador.id }}"
+                                data-night="{{ nightField }}"
+                                data-confirm-url="{{ path('bc_update') }}">
+                            In Room
+                        </button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+
+        {% if not room.allAway and not room.roomConfirmed %}
+            <button type="button"
+                    class="ht-bc-allin-btn"
+                    data-room-id="{{ roomId }}"
+                    data-night="{{ nightField }}"
+                    data-allin-url="{{ path('bc_room_confirm') }}">
+                <i class="fa fa-check-double"></i> All In
+            </button>
+        {% endif %}
+
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function() {
+
+    var NIGHT    = '{{ nightField }}';
+    var BC_URL   = '{{ path('bc_update') }}';
+    var ALLIN_URL = '{{ path('bc_room_confirm') }}';
+    var BY_NAME  = '{{ app.user.firstName }} {{ app.user.lastName }}';
+
+    // ── Event delegation — single listener for all button taps ──
+    document.addEventListener('click', function(e) {
+        var confirmBtn   = e.target.closest('.ht-bc-confirm-btn');
+        var unconfirmBtn = e.target.closest('.ht-bc-unconfirm-btn');
+        var allInBtn     = e.target.closest('.ht-bc-allin-btn');
+
+        if (confirmBtn)   handleConfirm(confirmBtn);
+        if (unconfirmBtn) handleUnconfirm(unconfirmBtn);
+        if (allInBtn)     handleAllIn(allInBtn);
+    });
+
+    // ── Individual confirm ─────────────────────────────────────
+    function handleConfirm(btn) {
+        var ambId = btn.dataset.ambId;
+        btn.disabled = true;
+
+        post(BC_URL, 'amb_id=' + ambId + '&field=' + NIGHT + '&field_status=1')
+            .then(function(data) {
+                if (data.success) markConfirmed(ambId, BY_NAME);
+                else btn.disabled = false;
+            })
+            .catch(function() { btn.disabled = false; });
+    }
+
+    // ── Individual undo ────────────────────────────────────────
+    function handleUnconfirm(btn) {
+        if (!confirm('Remove confirmation for this ambassador?')) return;
+        var ambId = btn.dataset.ambId;
+        btn.disabled = true;
+
+        post(BC_URL, 'amb_id=' + ambId + '&field=' + NIGHT + '&field_status=0')
+            .then(function(data) {
+                if (data.success) markUnconfirmed(ambId);
+                else btn.disabled = false;
+            })
+            .catch(function() { btn.disabled = false; });
+    }
+
+    // ── All In ─────────────────────────────────────────────────
+    function handleAllIn(btn) {
+        var roomId = btn.dataset.roomId;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Confirming\u2026';
+
+        post(ALLIN_URL, 'room_id=' + roomId + '&night=' + NIGHT)
+            .then(function(data) {
+                if (data.success) {
+                    data.confirmed.forEach(function(ambId) {
+                        markConfirmed(ambId, data.by);
+                    });
+                    btn.remove();
+                } else {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa fa-check-double"></i> All In';
+                }
+            })
+            .catch(function() {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa fa-check-double"></i> All In';
+            });
+    }
+
+    // ── DOM helpers ────────────────────────────────────────────
+    function markConfirmed(ambId, byName) {
+        var occ = document.getElementById('bc-occ-' + ambId);
+        if (!occ) return;
+        occ.classList.add('is-confirmed');
+
+        var btn = occ.querySelector('.ht-bc-confirm-btn');
+        if (btn) {
+            btn.outerHTML =
+                '<div class="ht-bc-occupant-by">by ' + byName + '</div>' +
+                '<button type="button" class="ht-bc-unconfirm-btn" data-amb-id="' + ambId + '">Undo</button>';
+        }
+        updateRoomState(occ.closest('.ht-bc-room'));
+    }
+
+    function markUnconfirmed(ambId) {
+        var occ = document.getElementById('bc-occ-' + ambId);
+        if (!occ) return;
+        occ.classList.remove('is-confirmed');
+
+        var byDiv = occ.querySelector('.ht-bc-occupant-by');
+        if (byDiv) byDiv.remove();
+
+        var btn = occ.querySelector('.ht-bc-unconfirm-btn');
+        if (btn) {
+            btn.outerHTML =
+                '<button type="button" class="ht-bc-confirm-btn" data-amb-id="' + ambId + '">In Room</button>';
+        }
+        updateRoomState(occ.closest('.ht-bc-room'));
+    }
+
+    function updateRoomState(roomEl) {
+        if (!roomEl) return;
+        var remaining = roomEl.querySelectorAll('.ht-bc-occupant:not(.is-away):not(.is-confirmed)').length;
+        var badge     = roomEl.querySelector('.ht-bc-room-badge');
+        var allInBtn  = roomEl.querySelector('.ht-bc-allin-btn');
+
+        if (remaining === 0) {
+            roomEl.classList.add('is-confirmed');
+            if (badge) { badge.className = 'ht-bc-room-badge badge-confirmed'; badge.innerHTML = '<i class="fa fa-check"></i> Confirmed'; }
+            if (allInBtn) allInBtn.remove();
+        } else {
+            roomEl.classList.remove('is-confirmed');
+            if (badge) { badge.className = 'ht-bc-room-badge badge-pending'; badge.textContent = remaining + ' remaining'; }
+        }
+
+        // Update page-level counter
+        var total     = document.querySelectorAll('.ht-bc-occupant:not(.is-away)').length;
+        var confirmed = document.querySelectorAll('.ht-bc-occupant:not(.is-away).is-confirmed').length;
+        var counter   = document.querySelector('.ht-page-count');
+        if (counter) counter.textContent = confirmed + ' / ' + total;
+    }
+
+    // ── Fetch helper ───────────────────────────────────────────
+    function post(url, body) {
+        return fetch(url, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body
+        }).then(function(r) { return r.json(); });
+    }
+
+})();
+</script>
+{% endblock %}

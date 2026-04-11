@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Ambassador;
 use App\Repository\AmbassadorRepository;
 use App\Repository\ComingsAndGoingsRepository;
+use App\Repository\DormRoomRepository;
 use App\Repository\UserRepository;
 use App\Repository\ApplicantRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -72,6 +73,60 @@ class AjaxController extends AbstractController
 		return new JsonResponse($response); 
 		
     }
+
+	/**
+	 * Confirm all non-away ambassadors in a room for a given night.
+	 * Accepts: room_id, night (bedThursday|bedFriday|bedSaturday)
+	 */
+	#[Route('/bc_room_confirm', name: 'bc_room_confirm', methods: ['POST'])]
+	public function bcRoomConfirm(Request $request, DormRoomRepository $dormRoomRepository, EntityManagerInterface $entityManager): JsonResponse
+	{
+		$roomId    = $request->request->get('room_id');
+		$nightField = $request->request->get('night');
+
+		if (!in_array($nightField, ['bedThursday', 'bedFriday', 'bedSaturday'])) {
+			return new JsonResponse(['success' => false, 'error' => 'Invalid night'], 400);
+		}
+
+		$room = $dormRoomRepository->find($roomId);
+		if (!$room) {
+			return new JsonResponse(['success' => false, 'error' => 'Room not found'], 404);
+		}
+
+		$now = new \DateTime('now', new \DateTimeZone('America/New_York'));
+		$confirmed = [];
+
+		foreach ($room->getAmbassadors() as $amb) {
+			// Skip ambassadors who are currently away via active C&G
+			$isAway = false;
+			foreach ($amb->getActiveComingsAndGoings() as $cg) {
+				if ($cg->getDeparture() !== null && $cg->getDeparture() < $now) {
+					if ($cg->getArrival() === null || $cg->getArrival() > $now) {
+						$isAway = true;
+						break;
+					}
+				}
+			}
+			if ($isAway) continue;
+
+			if ($nightField === 'bedFriday') {
+				$amb->setBedFriday(true);
+				$amb->setBedFridayUser($this->getUser());
+			} elseif ($nightField === 'bedSaturday') {
+				$amb->setBedSaturday(true);
+				$amb->setBedSaturdayUser($this->getUser());
+			} else {
+				$amb->setBedThursday(true);
+				$amb->setBedThursdayUser($this->getUser());
+			}
+			$entityManager->persist($amb);
+			$confirmed[] = $amb->getId();
+		}
+
+		$entityManager->flush();
+
+		return new JsonResponse(['success' => true, 'confirmed' => $confirmed, 'by' => $this->getUser()->getFirstName() . ' ' . $this->getUser()->getLastName()]);
+	}
 
 
 	#[Route('/applicant_update', name: 'applicant_update', methods: ['POST'])]

@@ -2018,3 +2018,167 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   border-color: #c2cad8 !important;
   color: var(--ht-navy) !important;
 }
+
+/* ── Bed Checks ──────────────────────────────────────────── */
+.ht-bc-night-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px 16px;
+}
+@media (min-width: 768px) { .ht-bc-night-bar { padding: 0 0 16px; } }
+.ht-bc-night-label { font-size: 13px; color: var(--ht-sub); white-space: nowrap; }
+.ht-bc-night-tabs {
+  display: flex;
+  gap: 4px;
+  background: #eef1f4;
+  border-radius: 8px;
+  padding: 3px;
+}
+.ht-bc-night-tab {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ht-sub) !important;
+  border-bottom: none !important;
+  text-shadow: none !important;
+  transition: background 0.15s;
+}
+.ht-bc-night-tab.is-active {
+  background: var(--ht-white);
+  color: var(--ht-navy) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Floor cards (landing page) */
+.ht-bc-floors { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 768px) { .ht-bc-floors { padding: 0; } }
+.ht-bc-floor-card {
+  display: block;
+  background: var(--ht-white);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  border-bottom: none !important;
+  text-shadow: none !important;
+  color: var(--ht-text) !important;
+  transition: background 0.15s;
+}
+.ht-bc-floor-card:hover { background: #f7f9fb; }
+.ht-bc-floor-card.is-complete { border-left: 3px solid #27863a; }
+.ht-bc-floor-card-header { display: flex; justify-content: space-between; align-items: center; }
+.ht-bc-floor-title { font-size: 16px; font-weight: 600; color: var(--ht-navy); }
+.ht-bc-floor-sub { font-size: 13px; color: var(--ht-sub); margin-top: 3px; }
+.ht-bc-floor-icon { color: #c0c0c0; font-size: 14px; }
+.ht-bc-floor-card.is-complete .ht-bc-floor-icon { color: #27863a; font-size: 18px; }
+
+/* Room cards (floor page) */
+.ht-bc-rooms { padding: 0 16px 40px; display: flex; flex-direction: column; gap: 12px; }
+@media (min-width: 768px) { .ht-bc-rooms { padding: 0 0 40px; } }
+.ht-bc-room {
+  background: var(--ht-white);
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.06);
+  transition: border-color 0.2s;
+}
+.ht-bc-room.is-confirmed { border-left: 3px solid #27863a; }
+.ht-bc-room.is-away { opacity: 0.6; }
+
+.ht-bc-room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.ht-bc-room-number { font-size: 15px; font-weight: 600; color: var(--ht-navy); }
+.ht-bc-room-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.badge-confirmed { background: #e6f4ea; color: #27863a; }
+.badge-pending   { background: #fff3cd; color: #856404; }
+.badge-away      { background: #eef1f4; color: var(--ht-sub); }
+
+.ht-bc-room-occupants { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.ht-bc-occupant {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--ht-section-bg);
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.ht-bc-occupant.is-confirmed { background: #e6f4ea; }
+.ht-bc-occupant.is-away { opacity: 0.5; font-style: italic; }
+.ht-bc-occupant .ht-card-avatar,
+.ht-bc-occupant .ht-card-avatar-img { flex-shrink: 0; }
+.ht-bc-occupant-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  color: inherit !important;
+  border-bottom: none !important;
+  text-shadow: none !important;
+}
+.ht-bc-occupant-link:hover { opacity: 0.8; }
+.ht-bc-occupant-name { flex: 1; font-size: 14px; font-weight: 500; }
+.ht-bc-occupant-by { font-size: 11px; color: var(--ht-sub); white-space: nowrap; }
+.ht-bc-cg-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  background: #eef1f4;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ht-sub);
+  font-style: normal;
+}
+
+.ht-bc-confirm-btn, .ht-bc-unconfirm-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+.ht-bc-confirm-btn {
+  background: var(--ht-navy);
+  color: #fff;
+}
+.ht-bc-confirm-btn:hover { background: #00243f; }
+.ht-bc-unconfirm-btn {
+  background: #eef1f4;
+  color: var(--ht-sub);
+}
+.ht-bc-unconfirm-btn:hover { background: #e2e6ea; }
+
+.ht-bc-allin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px;
+  background: var(--ht-navy);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.ht-bc-allin-btn:hover { background: #00243f; }
+.ht-bc-allin-btn:disabled { opacity: 0.6; cursor: wait; }

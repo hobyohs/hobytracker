@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Ambassador;
 use App\Entity\ComingsAndGoings;
+use App\Entity\User;
 use App\Form\AmbassadorType;
 use App\Repository\AmbassadorRepository;
+use App\Repository\DormRoomRepository;
 use App\Entity\LetterGroup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -253,11 +255,165 @@ class AmbassadorController extends AbstractController
     }
     
     #[Route('/bedchecks', name: 'app_ambassador_bedchecks', methods: ['GET'])]
-    public function bedChecksAction(AmbassadorRepository $ambassadorRepository): Response
+    public function bedChecksAction(DormRoomRepository $dormRoomRepository, Request $request): Response
     {
-        return $this->render('ambassador/bedchecks.html.twig', array(
-            'ambassadors' => $ambassadorRepository->findAllNotCheckedOutOrderedByName()
-        ));
+        [$nightField, $nightName] = $this->resolveNight($request);
+        $allRooms = $dormRoomRepository->findAllOrderedForBedChecks();
+        $now = new \DateTime('now', new \DateTimeZone('America/New_York'));
+
+        $floors = [];
+        foreach ($allRooms as $room) {
+            $ambassadors = $room->getAmbassadors();
+            if ($ambassadors->isEmpty()) continue;
+
+            $key = $room->getDorm() . '|||' . $room->getFloor();
+            if (!isset($floors[$key])) {
+                $floors[$key] = [
+                    'dorm'           => $room->getDorm(),
+                    'floor'          => $room->getFloor(),
+                    'totalRooms'     => 0,
+                    'confirmedRooms' => 0,
+                    'totalAmbs'      => 0,
+                    'confirmedAmbs'  => 0,
+                ];
+            }
+
+            $floors[$key]['totalRooms']++;
+            $roomConfirmed = true;
+            foreach ($ambassadors as $amb) {
+                $isAway = $this->isAmbassadorAway($amb, $now);
+                if ($isAway) continue;
+                $floors[$key]['totalAmbs']++;
+                $confirmed = $this->getNightConfirmed($amb, $nightField);
+                if ($confirmed) {
+                    $floors[$key]['confirmedAmbs']++;
+                } else {
+                    $roomConfirmed = false;
+                }
+            }
+            if ($roomConfirmed) $floors[$key]['confirmedRooms']++;
+        }
+
+        return $this->render('ambassador/bedchecks.html.twig', [
+            'floors'     => array_values($floors),
+            'nightField' => $nightField,
+            'nightName'  => $nightName,
+        ]);
+    }
+
+    #[Route('/bedchecks/{dorm}/{floor}', name: 'app_ambassador_bedchecks_floor', methods: ['GET'])]
+    public function bedChecksFloorAction(string $dorm, string $floor, DormRoomRepository $dormRoomRepository, Request $request): Response
+    {
+        [$nightField, $nightName] = $this->resolveNight($request);
+        $allRooms = $dormRoomRepository->findAllOrderedForBedChecks();
+        $now = new \DateTime('now', new \DateTimeZone('America/New_York'));
+
+        $rooms = [];
+        $totalAmbs = 0;
+        $confirmedAmbs = 0;
+
+        foreach ($allRooms as $room) {
+            if ($room->getDorm() !== $dorm || $room->getFloor() !== $floor) continue;
+            $ambassadors = $room->getAmbassadors();
+            if ($ambassadors->isEmpty()) continue;
+
+            $occupants = [];
+            $roomConfirmed = true;
+            foreach ($ambassadors as $amb) {
+                $isAway      = $this->isAmbassadorAway($amb, $now);
+                $confirmed   = $this->getNightConfirmed($amb, $nightField);
+                $confirmedBy = $this->getNightConfirmedBy($amb, $nightField);
+                $occupants[] = [
+                    'ambassador'  => $amb,
+                    'isAway'      => $isAway,
+                    'awayReturn'  => $isAway ? $this->getAmbassadorAwayReturn($amb, $now) : null,
+                    'confirmed'   => $confirmed,
+                    'confirmedBy' => $confirmedBy,
+                ];
+                if (!$isAway) {
+                    $totalAmbs++;
+                    if ($confirmed) { $confirmedAmbs++; } else { $roomConfirmed = false; }
+                }
+            }
+
+            $allAway = !array_filter($occupants, fn($o) => !$o['isAway']);
+
+            $rooms[] = [
+                'dormRoom'      => $room,
+                'occupants'     => $occupants,
+                'roomConfirmed' => $roomConfirmed && !$allAway,
+                'allAway'       => $allAway,
+            ];
+        }
+
+        return $this->render('ambassador/bedchecks_floor.html.twig', [
+            'dorm'          => $dorm,
+            'floor'         => $floor,
+            'rooms'         => $rooms,
+            'nightField'    => $nightField,
+            'nightName'     => $nightName,
+            'totalAmbs'     => $totalAmbs,
+            'confirmedAmbs' => $confirmedAmbs,
+        ]);
+    }
+
+    private function resolveNight(Request $request): array
+    {
+        $override = $request->query->get('night');
+        if ($override && in_array($override, ['Thursday', 'Friday', 'Saturday'])) {
+            $nightName = $override;
+        } else {
+            $now = new \DateTime('now', new \DateTimeZone('America/New_York'));
+            if ((int)$now->format('G') < 4) {
+                $now->modify('-1 day');
+            }
+            $day = $now->format('l');
+            $nightName = in_array($day, ['Thursday', 'Friday', 'Saturday']) ? $day : 'Thursday';
+        }
+        $nightField = 'bed' . $nightName;
+        return [$nightField, $nightName];
+    }
+
+    private function isAmbassadorAway(Ambassador $ambassador, \DateTime $now): bool
+    {
+        foreach ($ambassador->getActiveComingsAndGoings() as $cg) {
+            if ($cg->getDeparture() !== null && $cg->getDeparture() < $now) {
+                if ($cg->getArrival() === null || $cg->getArrival() > $now) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private function getAmbassadorAwayReturn(Ambassador $ambassador, \DateTime $now): ?\DateTimeInterface
+    {
+        foreach ($ambassador->getActiveComingsAndGoings() as $cg) {
+            if ($cg->getDeparture() !== null && $cg->getDeparture() < $now) {
+                if ($cg->getArrival() === null || $cg->getArrival() > $now) {
+                    return $cg->getArrival(); // null = no return expected
+                }
+            }
+        }
+        return null;
+    }
+
+    private function getNightConfirmed(Ambassador $ambassador, string $nightField): bool
+    {
+        return (bool) match($nightField) {
+            'bedFriday'   => $ambassador->isBedFriday(),
+            'bedSaturday' => $ambassador->isBedSaturday(),
+            default       => $ambassador->isBedThursday(),
+        };
+    }
+
+    private function getNightConfirmedBy(Ambassador $ambassador, string $nightField): ?User
+    {
+        return match($nightField) {
+            'bedFriday'   => $ambassador->getBedFridayUser(),
+            'bedSaturday' => $ambassador->getBedSaturdayUser(),
+            default       => $ambassador->getBedThursdayUser(),
+        };
     }
 
     #[Route('/evaluations/{letter}', name: 'ambeval_index', methods: ['GET'])]

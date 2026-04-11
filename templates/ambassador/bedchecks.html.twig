@@ -1,110 +1,49 @@
 {% extends 'base.html.twig' %}
-{% block maintag %}<main class="wide">{% endblock %}
-{% block body %}
+{% block maintag %}<main class="show">{% endblock %}
 
-{% set day = "now"|date("l", "America/New_York") %}
+{% block body %}
 
 <div class="ht-page-header">
     <h1>Bed Checks</h1>
-    <span class="ht-page-count">{{ day }}</span>
 </div>
 
-<div class="ht-dt-card">
-    <table class="table" id="bc-table">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Group</th>
-                <th class="hidden">Floor</th>
-                <th class="hidden">Sort Order</th>
-                <th>Dorm</th>
-                <th>Room</th>
-                {% if day == "Friday" %}
-                    <th class="hidden">Thursday</th>
-                    <th>Friday</th>
-                    <th class="hidden">Saturday</th>
-                {% elseif day == "Saturday" %}
-                    <th class="hidden">Thursday</th>
-                    <th class="hidden">Friday</th>
-                    <th>Saturday</th>
-                {% else %}
-                    <th>Thursday</th>
-                    <th class="hidden">Friday</th>
-                    <th class="hidden">Saturday</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for ambassador in ambassadors %}
-                {% if ambassador.dormRoom is not null %}
-                    <tr>
-                        <td><a href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}" class="ht-table-name-link">{{ ambassador.consolidatedFirstName }}</a></td>
-                        <td>{{ ambassador.lastName }}</td>
-                        <td class="center">
-                            {% if not ambassador.letterGroup is empty %}
-                                <a href="{{ path('app_letter_group_show', { 'letter': ambassador.letterGroup.letter }) }}" class="letter {{ambassador.letterGroup.color}}">{{ ambassador.letterGroup.letter }}</a>
-                            {% endif %}
-                        </td>
-                        <td class="hidden">{{ ambassador.dormRoom.floor }}</td>
-                        <td class="hidden">{{ ambassador.dormRoom.sortOrder }}</td>
-                        <td>{{ ambassador.dorm }}</td>
-                        <td>{{ ambassador.room }}</td>
-
-                        {% if day == "Friday" %}
-                            <td class="hidden">
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedThursday" class="bc-checkbox"{% if ambassador.bedThursday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedThursday-user" class="byline">{% if ambassador.bedThursday %}by {{ambassador.bedThursdayUser}}{% endif %}</span>
-                            </td>
-                            <td>
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedFriday" class="bc-checkbox"{% if ambassador.bedFriday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedFriday-user" class="byline">{% if ambassador.bedFriday %}by {{ambassador.bedFridayUser}}{% endif %}</span>
-                            </td>
-                            <td class="hidden">
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedSaturday" class="bc-checkbox"{% if ambassador.bedSaturday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedSaturday-user" class="byline">{% if ambassador.bedSaturday %}by {{ambassador.bedSaturdayUser}}{% endif %}</span>
-                            </td>
-                        {% elseif day == "Saturday" %}
-                            <td class="hidden">
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedThursday" class="bc-checkbox"{% if ambassador.bedThursday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedThursday-user" class="byline">{% if ambassador.bedThursday %}by {{ambassador.bedThursdayUser}}{% endif %}</span>
-                            </td>
-                            <td class="hidden">
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedFriday" class="bc-checkbox"{% if ambassador.bedFriday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedFriday-user" class="byline">{% if ambassador.bedFriday %}by {{ambassador.bedFridayUser}}{% endif %}</span>
-                            </td>
-                            <td>
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedSaturday" class="bc-checkbox"{% if ambassador.bedSaturday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedSaturday-user" class="byline">{% if ambassador.bedSaturday %}by {{ambassador.bedSaturdayUser}}{% endif %}</span>
-                            </td>
-                        {% else %}
-                            <td>
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedThursday" class="bc-checkbox"{% if ambassador.bedThursday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedThursday-user" class="byline">{% if ambassador.bedThursday %}by {{ambassador.bedThursdayUser}}{% endif %}</span>
-                            </td>
-                            <td class="hidden">
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedFriday" class="bc-checkbox"{% if ambassador.bedFriday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedFriday-user" class="byline">{% if ambassador.bedFriday %}by {{ambassador.bedFridayUser}}{% endif %}</span>
-                            </td>
-                            <td class="hidden">
-                                <input type="checkbox" data-amb-id="{{ambassador.id}}" data-field="bedSaturday" class="bc-checkbox"{% if ambassador.bedSaturday %} checked disabled{% endif %}>&nbsp;<span id="{{ambassador.id}}-bedSaturday-user" class="byline">{% if ambassador.bedSaturday %}by {{ambassador.bedSaturdayUser}}{% endif %}</span>
-                            </td>
-                        {% endif %}
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+{# ── Night selector ──────────────────────────────────────── #}
+<div class="ht-bc-night-bar">
+    <span class="ht-bc-night-label">Tonight:</span>
+    <div class="ht-bc-night-tabs">
+        {% for night in ['Thursday', 'Friday', 'Saturday'] %}
+            <a href="?night={{ night }}"
+               class="ht-bc-night-tab {{ nightName == night ? 'is-active' : '' }}">
+                {{ night }}
+            </a>
+        {% endfor %}
+    </div>
 </div>
 
-{% endblock %}
+{# ── Floor cards ─────────────────────────────────────────── #}
+{% if floors is empty %}
+    <div class="ht-section-card" style="margin: 20px 16px; text-align: center; color: var(--ht-sub);">
+        No dorm rooms assigned yet.
+    </div>
+{% else %}
+    <div class="ht-bc-floors">
+        {% for floor in floors %}
+            {%- set pct = floor.totalAmbs > 0 ? ((floor.confirmedAmbs / floor.totalAmbs) * 100)|round : 0 -%}
+            <a href="{{ path('app_ambassador_bedchecks_floor', {'dorm': floor.dorm, 'floor': floor.floor}) }}?night={{ nightName }}"
+               class="ht-bc-floor-card {{ floor.confirmedAmbs == floor.totalAmbs and floor.totalAmbs > 0 ? 'is-complete' : '' }}">
+                <div class="ht-bc-floor-card-header">
+                    <div>
+                        <div class="ht-bc-floor-title">{{ floor.dorm }} — Floor {{ floor.floor }}</div>
+                        <div class="ht-bc-floor-sub">{{ floor.confirmedRooms }} / {{ floor.totalRooms }} rooms &middot; {{ floor.confirmedAmbs }} / {{ floor.totalAmbs }} ambassadors</div>
+                    </div>
+                    <i class="fa {{ floor.confirmedAmbs == floor.totalAmbs and floor.totalAmbs > 0 ? 'fa-circle-check' : 'fa-chevron-right' }} ht-bc-floor-icon"></i>
+                </div>
+                <div class="ht-homepage-progress" style="margin: 10px 0 0;">
+                    <div class="ht-homepage-progress-bar" style="width: {{ pct }}%"></div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endif %}
 
-{% block javascripts %}
-    {{ parent() }}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('input.bc-checkbox').change(function() {
-                var field_status = $(this).is(":checked") ? 1 : 0;
-                $.post("{{ path('bc_update') }}", {
-                    amb_id: $(this).data('amb-id'),
-                    field: $(this).data('field'),
-                    field_status: field_status
-                });
-                $(this).attr("disabled", true);
-                $("#"+$(this).data('amb-id')+"-"+$(this).data('field')+"-user").text("by {{app.user.firstName}} {{app.user.lastName}}");
-            });
-        });
-    </script>
 {% endblock %}
