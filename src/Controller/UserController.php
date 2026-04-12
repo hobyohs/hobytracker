@@ -63,33 +63,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/assignments/checkin', name: 'app_user_checkin_assignments', methods: ['GET'])]
-    #[IsGranted('ROLE_BOARD')]
-    public function checkinAssignmentsAction(StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
-    {
-        return $this->render('user/checkin_assignments.html.twig', [
-            'users' => $saRepo->findActiveByYear($yearService->getActiveSeminarYear()),
-        ]);
-    }
-
-    #[Route('/assignments/closingceremony', name: 'app_user_cc_assignments', methods: ['GET'])]
-    #[IsGranted('ROLE_BOARD')]
-    public function ccAssignmentsAction(StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
-    {
-        return $this->render('user/cc_assignments.html.twig', [
-            'users' => $saRepo->findActiveByYear($yearService->getActiveSeminarYear()),
-        ]);
-    }
-
-    #[Route('/assignments/checkout', name: 'app_user_checkout_assignments', methods: ['GET'])]
-    #[IsGranted('ROLE_BOARD')]
-    public function checkoutAssignmentsAction(StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
-    {
-        return $this->render('user/checkout_assignments.html.twig', [
-            'users' => $saRepo->findActiveByYear($yearService->getActiveSeminarYear()),
-        ]);
-    }
-
     #[Route('/assignments', name: 'app_user_duty_assignments', methods: ['GET'])]
     #[IsGranted('ROLE_BOARD')]
     public function dutyAssignmentsAction(Request $request, StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
