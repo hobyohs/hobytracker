@@ -514,3 +514,136 @@ $(document).ready(function() {
     });
   } catch(e) {}
 })();
+
+// ── Global Search ─────────────────────────────────────────
+(function() {
+  var overlay   = document.getElementById('ht-search-overlay');
+  var input     = document.getElementById('ht-search-input');
+  var results   = document.getElementById('ht-search-results');
+  var trigger   = document.getElementById('ht-search-trigger');
+  var closeBtn  = document.getElementById('ht-search-close');
+  if (!overlay || !input) return;
+
+  var searchUrl = window.HT_SEARCH_URL || '';
+  var pages     = window.HT_PAGES || [];
+  var debounceTimer, lastQuery = '';
+
+  // ── Open / close ────────────────────────────────────────
+  function open() {
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+    input.value = '';
+    results.innerHTML = '';
+    setTimeout(function() { input.focus(); }, 50);
+  }
+  function close() {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    input.blur();
+  }
+
+  trigger.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) close();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') close();
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); open(); }
+  });
+
+  // ── Page fuzzy match ─────────────────────────────────────
+  function matchPages(q) {
+    q = q.toLowerCase();
+    return pages.filter(function(p) {
+      return p.name.toLowerCase().indexOf(q) !== -1 ||
+             p.desc.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 6);
+  }
+
+  // ── Avatar HTML ──────────────────────────────────────────
+  function avatarHtml(person, size) {
+    size = size || 40;
+    var dim = 'width:' + size + 'px;height:' + size + 'px;';
+    if (person.photo) {
+      var initials = person.initials || '??';
+      return '<img src="' + person.photo + '" class="ht-card-avatar-img" style="' + dim + '" ' +
+             'onerror="this.outerHTML=\'<div class=&quot;ht-card-avatar&quot; style=&quot;' + dim + '&quot;>' + initials + '</div>\'">';
+    }
+    return '<div class="ht-card-avatar" style="' + dim + '">' + (person.initials || '??') + '</div>';
+  }
+
+  // ── Render results ───────────────────────────────────────
+  function render(people, pageMatches, q) {
+    if (!q || q.length < 1) { results.innerHTML = ''; return; }
+    var html = '';
+
+    if (people.length > 0) {
+      html += '<div class="ht-sr-section-label">People</div>';
+      people.forEach(function(p) {
+        html += '<a href="' + p.url + '" class="ht-sr-card">' +
+          '<div class="ht-sr-avatar">' + avatarHtml(p) + '</div>' +
+          '<div class="ht-sr-info">' +
+            '<div class="ht-sr-name">' + p.name + '</div>' +
+            (p.sub ? '<div class="ht-sr-sub">' + p.sub + '</div>' : '') +
+          '</div>' +
+          (p.badge ? '<span class="ht-group-badge ht-group-' + p.badge.color + '">' + p.badge.label + '</span>' : '') +
+          '<i class="fa fa-chevron-right ht-sr-chevron"></i>' +
+          '</a>';
+      });
+    }
+
+    if (pageMatches.length > 0) {
+      html += '<div class="ht-sr-section-label">Pages</div>';
+      pageMatches.forEach(function(p) {
+        html += '<a href="' + p.url + '" class="ht-sr-card">' +
+          '<div class="ht-sr-page-icon"><i class="fa-solid ' + p.icon + '"></i></div>' +
+          '<div class="ht-sr-info">' +
+            '<div class="ht-sr-name">' + p.name + '</div>' +
+            '<div class="ht-sr-sub">' + p.desc + '</div>' +
+          '</div>' +
+          '<i class="fa fa-chevron-right ht-sr-chevron"></i>' +
+          '</a>';
+      });
+    }
+
+    if (people.length === 0 && pageMatches.length === 0) {
+      html = '<div class="ht-sr-empty">No results for "<strong>' + q + '</strong>"</div>';
+    }
+
+    results.innerHTML = html;
+
+    // Close overlay when a result is clicked
+    results.querySelectorAll('.ht-sr-card').forEach(function(card) {
+      card.addEventListener('click', close);
+    });
+  }
+
+  // ── Input handler with debounce ──────────────────────────
+  input.addEventListener('input', function() {
+    var q = input.value.trim();
+    if (q === lastQuery) return;
+    lastQuery = q;
+    clearTimeout(debounceTimer);
+
+    var pageMatches = matchPages(q);
+
+    if (q.length < 2) {
+      render([], pageMatches, q);
+      return;
+    }
+
+    debounceTimer = setTimeout(function() {
+      fetch(searchUrl + '?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (input.value.trim() === q) {
+            render(data.people || [], matchPages(q), q);
+          }
+        })
+        .catch(function() {
+          render([], pageMatches, q);
+        });
+    }, 200);
+  });
+})();

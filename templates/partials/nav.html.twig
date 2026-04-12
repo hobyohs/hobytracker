@@ -10,7 +10,7 @@
 
         {% if is_granted('ROLE_USER') %}
 
-        <div class="sidebar-section-label">Main</div>
+        {# ── Home & Program ───────────────────────────────── #}
         <a href="{{ path('homepage') }}" class="sidebar-nav-link">
             <i class="fa fa-house"></i> Home
         </a>
@@ -18,7 +18,8 @@
             <i class="fa fa-calendar-days"></i> Program
         </a>
 
-        {% if not app.user.letterGroup is empty %}
+        {# ── My Group ─────────────────────────────────────── #}
+        {% if app.user.letterGroup %}
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">My Group</div>
             <a href="{{ path('app_letter_group_show', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-nav-link">
@@ -31,76 +32,102 @@
             <a href="{{ path('staffeval_index', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Co-Fac. Evaluations</a>
         {% endif %}
 
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section-label">Ambassadors</div>
-        <a href="{{ path('app_ambassador_index') }}" class="sidebar-nav-link">
-            <i class="fa fa-person"></i> All Ambassadors
-        </a>
-        <a href="{{ path('app_ambassador_faces') }}" class="sidebar-sub-link">Faces</a>
+        {# ── Seminar Ops (21+) ────────────────────────────── #}
         {% if app.user.controlledAge >= 21 %}
-            <a href="{{ path('app_comings_and_goings_index') }}" class="sidebar-sub-link">Comings &amp; Goings</a>
-            <a href="{{ path('app_ambassador_bus') }}" class="sidebar-sub-link">Bus List</a>
-            {% if is_granted('ROLE_BOARD') %}
-                <a href="{{ path('app_ambassador_thankyous') }}" class="sidebar-sub-link">Thank You Assignments</a>
-                <a href="{{ path('app_ambassador_psm') }}" class="sidebar-sub-link">Pre-Seminar Materials</a>
-                <a href="{{ path('app_ambassador_calls') }}" class="sidebar-sub-link">Pre-Seminar Calls Report</a>
-                <a href="{{ path('app_ambassador_noshows') }}" class="sidebar-sub-link">No Shows</a>
-            {% endif %}
-        {% endif %}
-
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section-label">Staff</div>
-        <a href="{{ path('app_user_index') }}" class="sidebar-nav-link">
-            <i class="fa fa-id-badge"></i> All Staff
-        </a>
-        <a href="{{ path('app_user_faces') }}" class="sidebar-sub-link">Faces</a>
-        {% if is_granted('ROLE_BOARD') %}
-            <a href="{{ path('app_user_requirements') }}" class="sidebar-sub-link">Requirements Report</a>
-            {% if is_granted('ROLE_DOF') %}
-                <a href="{{ path('app_applicant_index') }}" class="sidebar-sub-link">Staff Applications</a>
-            {% endif %}
-        {% endif %}
-
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section-label">Lists</div>
-        <a href="{{ path('all_groups') }}" class="sidebar-nav-link">
-            <i class="fa fa-table-cells"></i> All Groups
-        </a>
-        <a href="{{ path('app_letter_group_index') }}" class="sidebar-sub-link">Homerooms</a>
-        <a href="{{ path('dorm_list') }}" class="sidebar-sub-link">Dorm List</a>
-        <a href="{{ path('app_letter_group_interviews') }}" class="sidebar-sub-link">Interview Assignments</a>
-        {% if is_granted('ROLE_BOARD') %}
-            <a href="{{ path('emergency_contacts') }}" class="sidebar-sub-link">Emergency Contacts</a>
-            <a href="{{ path('dietary') }}" class="sidebar-sub-link">Dietary Needs</a>
-        {% endif %}
-        {% if is_granted('ROLE_NURSE') %}
-            <a href="{{ path('medical') }}" class="sidebar-sub-link">Medical Report</a>
-        {% endif %}
-
-        <div class="sidebar-divider"></div>
-        <div class="sidebar-section-label">Duties</div>
-        <a href="{{ path('app_user_my_assignments') }}" class="sidebar-nav-link">
-            <i class="fa fa-clipboard-check"></i> My Assignments
-        </a>
-        {% if is_granted('ROLE_BOARD') %}
-            <a href="{{ path('app_user_checkin_assignments') }}" class="sidebar-sub-link">Check-In Assignments</a>
-            <a href="{{ path('app_user_cc_assignments') }}" class="sidebar-sub-link">Closing Ceremony Assignments</a>
-            <a href="{{ path('app_user_checkout_assignments') }}" class="sidebar-sub-link">Check-Out Assignments</a>
-        {% endif %}
-        {% if app.user.controlledAge >= 21 %}
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Seminar Ops</div>
             <a href="{{ path('app_ambassador_checkin') }}" class="sidebar-nav-link">
                 <i class="fa fa-right-to-bracket"></i> Check In
             </a>
-            <a href="{{ path('app_ambassador_keydeposits') }}" class="sidebar-sub-link">Key Deposits</a>
-            <a href="{{ path('app_ambassador_psm') }}" class="sidebar-sub-link">Paperwork</a>
             <a href="{{ path('app_ambassador_checkout') }}" class="sidebar-nav-link">
                 <i class="fa fa-right-from-bracket"></i> Check Out
             </a>
             <a href="{{ path('app_ambassador_bedchecks') }}" class="sidebar-nav-link">
                 <i class="fa fa-moon"></i> Bed Checks
             </a>
+            <a href="{{ path('app_comings_and_goings_index') }}" class="sidebar-nav-link">
+                <i class="fa fa-arrows-left-right"></i> Comings &amp; Goings
+            </a>
         {% endif %}
 
+        {# ── People ───────────────────────────────────────── #}
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section-label">People</div>
+        <a href="{{ path('app_ambassador_index') }}" class="sidebar-nav-link">
+            <i class="fa fa-person"></i> Ambassadors
+        </a>
+        <a href="{{ path('app_ambassador_faces') }}" class="sidebar-sub-link">Faces</a>
+        <a href="{{ path('app_user_index') }}" class="sidebar-nav-link">
+            <i class="fa fa-id-badge"></i> Staff
+        </a>
+        <a href="{{ path('app_user_faces') }}" class="sidebar-sub-link">Faces</a>
+        <a href="{{ path('all_groups') }}" class="sidebar-nav-link">
+            <i class="fa fa-table-cells"></i> All Groups
+        </a>
+        <a href="{{ path('app_letter_group_index') }}" class="sidebar-sub-link">Homerooms</a>
+
+        {# ── Reports ──────────────────────────────────────── #}
+        {% if app.user.controlledAge >= 21 or is_granted('ROLE_BOARD') or is_granted('ROLE_NURSE') %}
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-section-label">Reports</div>
+            {% if is_granted('ROLE_BOARD') %}
+                <a href="{{ path('app_ambassador_psm') }}" class="sidebar-nav-link">
+                    <i class="fa fa-file-lines"></i> Pre-Seminar Materials
+                </a>
+                <a href="{{ path('app_ambassador_calls') }}" class="sidebar-sub-link">Pre-Seminar Calls</a>
+                <a href="{{ path('app_ambassador_noshows') }}" class="sidebar-sub-link">No Shows</a>
+                <a href="{{ path('app_ambassador_thankyous') }}" class="sidebar-sub-link">Thank You Assignments</a>
+            {% endif %}
+            {% if app.user.controlledAge >= 21 %}
+                <a href="{{ path('app_ambassador_bus') }}" class="sidebar-nav-link">
+                    <i class="fa fa-bus"></i> Bus List
+                </a>
+                <a href="{{ path('dorm_list') }}" class="sidebar-nav-link">
+                    <i class="fa fa-building"></i> Dorm List
+                </a>
+            {% endif %}
+            <a href="{{ path('app_letter_group_interviews') }}" class="sidebar-nav-link">
+                <i class="fa fa-handshake"></i> Interview Assignments
+            </a>
+            {% if is_granted('ROLE_BOARD') %}
+                <a href="{{ path('emergency_contacts') }}" class="sidebar-nav-link">
+                    <i class="fa fa-phone-volume"></i> Emergency Contacts
+                </a>
+                <a href="{{ path('dietary') }}" class="sidebar-nav-link">
+                    <i class="fa fa-utensils"></i> Dietary Needs
+                </a>
+                <a href="{{ path('app_user_requirements') }}" class="sidebar-nav-link">
+                    <i class="fa fa-clipboard-list"></i> Staff Requirements
+                </a>
+            {% endif %}
+            {% if is_granted('ROLE_NURSE') %}
+                <a href="{{ path('medical') }}" class="sidebar-nav-link">
+                    <i class="fa fa-kit-medical"></i> Medical Report
+                </a>
+            {% endif %}
+        {% endif %}
+
+        {# ── My Stuff ─────────────────────────────────────── #}
+        <div class="sidebar-divider"></div>
+        <div class="sidebar-section-label">My Stuff</div>
+        <a href="{{ path('app_user_my_assignments') }}" class="sidebar-nav-link">
+            <i class="fa fa-clipboard-check"></i> My Assignments
+        </a>
+        {% if is_granted('ROLE_BOARD') %}
+            <a href="{{ path('app_user_checkin_assignments') }}" class="sidebar-sub-link">Check-In Duties</a>
+            <a href="{{ path('app_user_cc_assignments') }}" class="sidebar-sub-link">Closing Ceremony Duties</a>
+            <a href="{{ path('app_user_checkout_assignments') }}" class="sidebar-sub-link">Check-Out Duties</a>
+        {% endif %}
+
+        {# ── Staff Applications ───────────────────────────── #}
+        {% if is_granted('ROLE_DOF') %}
+            <div class="sidebar-divider"></div>
+            <a href="{{ path('app_applicant_index') }}" class="sidebar-nav-link">
+                <i class="fa fa-gavel"></i> Staff Applications
+            </a>
+        {% endif %}
+
+        {# ── Admin ────────────────────────────────────────── #}
         {% if is_granted('ROLE_ADMIN') %}
             <div class="sidebar-divider"></div>
             <a href="{{ path('admin') }}" class="sidebar-nav-link">
@@ -116,6 +143,22 @@
 {# ── Sidebar backdrop #}
 <div id="sidebarBackdrop"></div>
 
+{# ── Global Search Overlay ────────────────────────────────── #}
+<div id="ht-search-overlay" class="ht-search-overlay" aria-hidden="true">
+    <div class="ht-search-modal">
+        <div class="ht-search-input-row">
+            <i class="fa fa-magnifying-glass ht-search-modal-icon"></i>
+            <input type="text" id="ht-search-input" class="ht-search-modal-input"
+                   placeholder="Search people, pages, reports…"
+                   autocomplete="off" autocorrect="off" spellcheck="false">
+            <button type="button" class="ht-search-modal-close" id="ht-search-close" aria-label="Close search">
+                <span>esc</span>
+            </button>
+        </div>
+        <div class="ht-search-results" id="ht-search-results"></div>
+    </div>
+</div>
+
 {# ── Top Header Bar ──────────────────────────────────────── #}
 <header class="ht-header">
     <button class="ht-hamburger" type="button" aria-label="Open menu">
@@ -125,6 +168,9 @@
     </button>
     <a href="{{ path('homepage') }}" class="ht-brand">HOBYtracker</a>
     {% if is_granted('ROLE_USER') %}
+        <button type="button" class="ht-search-trigger" id="ht-search-trigger" aria-label="Search">
+            <i class="fa fa-magnifying-glass"></i>
+        </button>
         <div class="dropdown">
             <button type="button" class="ht-user-chip" id="userChipDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu" title="{{ app.user.fullName }}">
                 {{ app.user.consolidatedFirstName[0:1]|upper }}{{ app.user.lastName[0:1]|upper }}
@@ -140,3 +186,55 @@
         </div>
     {% endif %}
 </header>
+
+{# ── Static page index for search ────────────────────────── #}
+{% if is_granted('ROLE_USER') %}
+<script>
+window.HT_SEARCH_URL = '{{ path('app_search_people') }}';
+window.HT_PAGES = [
+    { name: 'Home',                  icon: 'fa-house',               desc: 'Dashboard',                    url: '{{ path('homepage') }}' },
+    { name: 'Program',               icon: 'fa-calendar-days',        desc: 'Seminar schedule & calendar',  url: '{{ path('program_index') }}' },
+    { name: 'Ambassadors',           icon: 'fa-person',               desc: 'All ambassadors list',         url: '{{ path('app_ambassador_index') }}' },
+    { name: 'Ambassador Faces',      icon: 'fa-images',               desc: 'Ambassador photo grid',        url: '{{ path('app_ambassador_faces') }}' },
+    { name: 'Staff',                 icon: 'fa-id-badge',             desc: 'All staff list',               url: '{{ path('app_user_index') }}' },
+    { name: 'Staff Faces',           icon: 'fa-images',               desc: 'Staff photo grid',             url: '{{ path('app_user_faces') }}' },
+    { name: 'All Groups',            icon: 'fa-table-cells',          desc: 'Everyone sorted by group',     url: '{{ path('all_groups') }}' },
+    { name: 'Homerooms',             icon: 'fa-door-open',            desc: 'Letter group index',           url: '{{ path('app_letter_group_index') }}' },
+    { name: 'Interview Assignments', icon: 'fa-handshake',            desc: 'Group interview schedule',     url: '{{ path('app_letter_group_interviews') }}' },
+    { name: 'My Assignments',        icon: 'fa-clipboard-check',      desc: 'My seminar duties',            url: '{{ path('app_user_my_assignments') }}' },
+    {% if app.user.controlledAge >= 21 %}
+    { name: 'Check In',              icon: 'fa-right-to-bracket',     desc: 'Ambassador arrivals',          url: '{{ path('app_ambassador_checkin') }}' },
+    { name: 'Check Out',             icon: 'fa-right-from-bracket',   desc: 'Ambassador departures',        url: '{{ path('app_ambassador_checkout') }}' },
+    { name: 'Bed Checks',            icon: 'fa-moon',                 desc: 'Nightly room checks',          url: '{{ path('app_ambassador_bedchecks') }}' },
+    { name: 'Comings & Goings',      icon: 'fa-arrows-left-right',    desc: 'Pickups and returns',          url: '{{ path('app_comings_and_goings_index') }}' },
+    { name: 'Bus List',              icon: 'fa-bus',                  desc: 'Ambassador transportation',    url: '{{ path('app_ambassador_bus') }}' },
+    { name: 'Dorm List',             icon: 'fa-building',             desc: 'Room assignments',             url: '{{ path('dorm_list') }}' },
+    {% endif %}
+    {% if is_granted('ROLE_BOARD') %}
+    { name: 'Pre-Seminar Materials', icon: 'fa-file-lines',           desc: 'Forms, deposits, C&G status',  url: '{{ path('app_ambassador_psm') }}' },
+    { name: 'Pre-Seminar Calls',     icon: 'fa-phone',                desc: 'Call report & dispositions',   url: '{{ path('app_ambassador_calls') }}' },
+    { name: 'No Shows',              icon: 'fa-person-circle-xmark',  desc: 'Ambassadors not yet arrived',  url: '{{ path('app_ambassador_noshows') }}' },
+    { name: 'Thank You Assignments', icon: 'fa-envelope-open-text',   desc: 'Ambassador thank-you tasks',   url: '{{ path('app_ambassador_thankyous') }}' },
+    { name: 'Key Deposits',          icon: 'fa-key',                  desc: 'Room key deposit tracking',    url: '{{ path('app_ambassador_keydeposits') }}' },
+    { name: 'Emergency Contacts',    icon: 'fa-phone-volume',         desc: 'Ambassador EC information',    url: '{{ path('emergency_contacts') }}' },
+    { name: 'Dietary Needs',         icon: 'fa-utensils',             desc: 'Food restrictions & info',     url: '{{ path('dietary') }}' },
+    { name: 'Staff Requirements',    icon: 'fa-clipboard-list',       desc: 'Paperwork, BG checks, hours',  url: '{{ path('app_user_requirements') }}' },
+    { name: 'Check-In Duties',       icon: 'fa-clipboard-check',      desc: 'Staff check-in assignments',   url: '{{ path('app_user_checkin_assignments') }}' },
+    { name: 'Check-Out Duties',      icon: 'fa-clipboard-check',      desc: 'Staff check-out assignments',  url: '{{ path('app_user_cc_assignments') }}' },
+    { name: 'Closing Ceremony Duties', icon: 'fa-clipboard-check',    desc: 'Staff CC assignments',         url: '{{ path('app_user_checkout_assignments') }}' },
+    {% endif %}
+    {% if is_granted('ROLE_NURSE') %}
+    { name: 'Medical Report',        icon: 'fa-kit-medical',          desc: 'Medications, conditions, allergies', url: '{{ path('medical') }}' },
+    {% endif %}
+    {% if is_granted('ROLE_DOF') %}
+    { name: 'Staff Applications',    icon: 'fa-gavel',                desc: 'Hiring decisions & reviews',   url: '{{ path('app_applicant_index') }}' },
+    {% endif %}
+    {% if app.user.letterGroup %}
+    { name: 'Group {{ app.user.letterGroup.letter }} Overview',    icon: 'fa-users', desc: 'My group home page', url: '{{ path('app_letter_group_show', {'letter': app.user.letterGroup.letter}) }}' },
+    { name: 'Group {{ app.user.letterGroup.letter }} Faces',       icon: 'fa-images', desc: 'My group photos',   url: '{{ path('app_letter_group_show_faces', {'letter': app.user.letterGroup.letter}) }}' },
+    { name: 'Group {{ app.user.letterGroup.letter }} Calls',       icon: 'fa-phone', desc: 'My group call list', url: '{{ path('app_letter_group_calls', {'letter': app.user.letterGroup.letter}) }}' },
+    { name: 'Group {{ app.user.letterGroup.letter }} Thank Yous',  icon: 'fa-envelope-open-text', desc: 'My group thank-you assignments', url: '{{ path('app_letter_group_show_thankyous', {'letter': app.user.letterGroup.letter}) }}' },
+    {% endif %}
+];
+</script>
+{% endif %}

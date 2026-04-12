@@ -281,5 +281,17 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    public function searchByName(string $query, int $limit = 8): array
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.firstName LIKE :q OR a.lastName LIKE :q OR a.prefName LIKE :q')
+            ->setParameter('q', '%' . $query . '%')
+            ->orderBy('a.lastName', 'ASC')
+            ->addOrderBy('a.firstName', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
 
 }
