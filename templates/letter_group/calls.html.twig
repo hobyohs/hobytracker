@@ -21,7 +21,7 @@
             </tr></thead>
             <tbody>
                 {% for ambassador in group.ambassadors %}
-                    <tr data-href="{{ path('app_ambassador_show', { 'id': ambassador.id }) }}">
+                    <tr data-href="{{ path('app_ambassador_call_form', {'id': ambassador.id}) }}">
                         <td class="ht-avatar-col no-export">{{ avatar.render(ambassador, 32) }}</td>
                         <td data-label="First" class="ht-name-td">
                             <span class="ht-name-desktop">{{ ambassador.consolidatedFirstName }}</span>

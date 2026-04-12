@@ -14,7 +14,7 @@
             <th class="ht-avatar-col no-export"></th>
             <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Group</th>
             <th class="ht-mobile-hide">Cell Phone</th><th class="ht-mobile-hide">School</th>
-            <th>Junior</th><th>Forms</th><th>Disposition</th><th>Notes</th>
+            <th class="ht-mobile-hide">Junior</th><th>Forms</th><th>Disposition</th><th>Notes</th>
             <th class="no-export ht-chevron-col"></th>
         </tr></thead>
         <tbody>
@@ -33,7 +33,7 @@
                     <td data-label="Group" class="center ht-mobile-hide">{% if ambassador.letterGroup %}<span class="ht-group-badge ht-group-{{ ambassador.letterGroup.color }}">{{ ambassador.letterGroup.letter }}</span>{% else %}<span class="ht-empty">—</span>{% endif %}</td>
                     <td data-label="Cell" class="ht-mobile-hide">{{ ambassador.cellPhone }}</td>
                     <td data-label="School" class="ht-mobile-hide">{{ ambassador.school }}</td>
-                    <td data-label="Junior" class="center">
+                    <td data-label="Junior" class="center ht-mobile-hide">
                         {% if ambassador.letterGroup %}
                             {% for junior in ambassador.letterGroup.getJuniorFacilitators %}{{ junior.firstName }} {{ junior.lastName }}<br>{% endfor %}
                         {% else %}<span class="ht-empty">—</span>{% endif %}

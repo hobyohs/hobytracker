@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Repository\AmbassadorRepository;
 use App\Repository\StaffAssignmentRepository;
 use App\Service\SeminarYearService;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/lists')]
 class CombinedController extends AbstractController
@@ -27,6 +27,7 @@ class CombinedController extends AbstractController
                 'id' => $ambassador->getId(),
                 'lastName' => $ambassador->getLastName(),
                 'firstName' => $ambassador->getConsolidatedFirstName(),
+                'photo' => $ambassador->getPhoto(),
                 'school' => $ambassador->getSchool(),
                 'role' => 'Ambassador',
                 'group' => $ambassador->getLetterGroup(),
@@ -42,6 +43,7 @@ class CombinedController extends AbstractController
                     'id' => $sa->getUserId(),
                     'lastName' => $sa->getLastName(),
                     'firstName' => $sa->getConsolidatedFirstName(),
+                    'photo' => $sa->getPhoto(),
                     'group' => $sa->getLetterGroup(),
                     'school' => '',
                     'role' => $sa->getPosition(),
@@ -71,6 +73,7 @@ class CombinedController extends AbstractController
                 'id' => $ambassador->getId(),
                 'lastName' => $ambassador->getLastName(),
                 'firstName' => $ambassador->getConsolidatedFirstName(),
+                'photo' => $ambassador->getPhoto(),
                 'prefName' => $ambassador->getPrefName(),
                 'group' => $ambassador->getLetterGroup(),
                 'ecFirstName' => $ambassador->getEcFirstName(),
@@ -88,6 +91,7 @@ class CombinedController extends AbstractController
                 'id' => $sa->getUserId(),
                 'lastName' => $sa->getLastName(),
                 'firstName' => $sa->getConsolidatedFirstName(),
+                'photo' => $sa->getPhoto(),
                 'prefName' => $sa->getPrefName(),
                 'group' => 'Staff',
                 'ecFirstName' => $sa->getEcFirstName(),
@@ -120,6 +124,7 @@ class CombinedController extends AbstractController
                     'id' => $ambassador->getId(),
                     'lastName' => $ambassador->getLastName(),
                     'firstName' => $ambassador->getConsolidatedFirstName(),
+                    'photo' => $ambassador->getPhoto(),
                     'group' => $ambassador->getLetterGroup(),
                     'shirtSize' => $ambassador->getShirtSize(),
                     'dormRoom' => $ambassador->getDormRoom(),
@@ -137,6 +142,7 @@ class CombinedController extends AbstractController
                     'id' => $sa->getUserId(),
                     'lastName' => $sa->getLastName(),
                     'firstName' => $sa->getConsolidatedFirstName(),
+                    'photo' => $sa->getPhoto(),
                     'shirtSize' => $sa->getShirtSize(),
                     'dormRoom' => $sa->getDormRoom(),
                     'group' => 'Staff',
@@ -178,6 +184,7 @@ class CombinedController extends AbstractController
                     'id' => $ambassador->getId(),
                     'lastName' => $ambassador->getLastName(),
                     'firstName' => $ambassador->getConsolidatedFirstName(),
+                    'photo' => $ambassador->getPhoto(),
                     'group' => $ambassador->getLetterGroup(),
                     'dietRestrictions' => $restrictions,
                     'dietInfo' => $ambassador->getDietInfo(),
@@ -195,6 +202,7 @@ class CombinedController extends AbstractController
                     'id' => $sa->getUserId(),
                     'lastName' => $sa->getLastName(),
                     'firstName' => $sa->getConsolidatedFirstName(),
+                    'photo' => $sa->getPhoto(),
                     'group' => 'Staff',
                     'dietRestrictions' => $restrictions,
                     'dietInfo' => $sa->getDietInfo(),
@@ -224,6 +232,7 @@ class CombinedController extends AbstractController
                 'id' => $ambassador->getId(),
                 'lastName' => $ambassador->getLastName(),
                 'firstName' => $ambassador->getConsolidatedFirstName(),
+                'photo' => $ambassador->getPhoto(),
                 'group' => $ambassador->getLetterGroup(),
                 'currentConditions' => $ambassador->getCurrentConditions(),
                 'exerciseLimits' => $ambassador->getExerciseLimits(),
@@ -240,6 +249,7 @@ class CombinedController extends AbstractController
                 'id' => $sa->getUserId(),
                 'lastName' => $sa->getLastName(),
                 'firstName' => $sa->getConsolidatedFirstName(),
+                'photo' => $sa->getPhoto(),
                 'group' => 'Staff',
                 'currentConditions' => $sa->getCurrentConditions(),
                 'exerciseLimits' => $sa->getExerciseLimits(),

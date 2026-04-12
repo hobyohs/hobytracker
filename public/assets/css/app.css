@@ -175,12 +175,17 @@ body {
 .sidebar-sub-link {
   display: flex;
   align-items: center;
-  padding: 9px 20px 9px 50px;
-  color: rgba(255,255,255,0.6);
+  padding: 8px 20px 8px 46px;
+  color: rgba(255,255,255,0.55);
   text-decoration: none !important;
   border-bottom: none !important;
-  font-size: 14px;
+  font-size: 13.5px;
   transition: background 0.12s;
+}
+.sidebar-section-label--sub {
+  font-size: 9px;
+  padding: 10px 20px 3px 44px;
+  letter-spacing: 0.8px;
 }
 .sidebar-sub-link:hover {
   background: rgba(255,255,255,0.06);
@@ -834,7 +839,13 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 }
 @media (min-width: 768px) { .ht-dt-card { margin: 4px 0 28px; } }
 .ht-dt-card .dataTables_wrapper { padding-top: 12px; }
-.ht-dt-card .dataTables_filter label { font-size: 14px; color: var(--ht-sub); }
+.ht-dt-card .dataTables_info {
+  font-size: 11px;
+  color: #bbb;
+  padding-top: 8px;
+}
+
+.ht-dt-card .dataTables_filter input { font-size: 14px; }
 .ht-dt-card .dataTables_filter input {
   border: 1px solid #e0e0e0; border-radius: 8px;
   padding: 8px 12px; font-size: 14px; font-family: inherit; outline: none; margin-left: 6px;
@@ -1329,6 +1340,23 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   }
   .ht-card-name-badge { flex-shrink: 0; }
   .ht-name-td::before { display: none !important; }
+  /* Name+sub column wrapper inside ht-name-mobile-header */
+  .ht-name-mobile-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .ht-name-mobile-text .ht-card-name {
+    flex: none; /* override flex:1 from standalone usage */
+  }
+  .ht-name-mobile-text .ht-card-sub {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   /* Regular data cells: label stacked above value, left-aligned */
   .ht-responsive-table table.dataTable tbody td {
@@ -1358,6 +1386,16 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 
   /* Chevron hidden on mobile */
   .ht-responsive-table table.dataTable tbody td.ht-chevron-col { display: none !important; }
+
+  /* Gridblock cells in card layout: use text color only, no solid background */
+  .ht-responsive-table table.dataTable tbody td.gridblock {
+    background: transparent !important;
+  }
+  .ht-responsive-table table.dataTable tbody td.gridblock.yay   { color: #27863a !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.nay   { color: #c0392b !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.pray  { color: #9a7b15 !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.okay  { color: #aaa !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.oyvey { color: var(--ht-sub) !important; }
 }
 
 /* Edit pencil action column (used on C&G index) */

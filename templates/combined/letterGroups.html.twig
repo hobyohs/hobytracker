@@ -24,14 +24,21 @@
                         <span class="ht-name-desktop">{{ person.firstName }}</span>
                         <span class="ht-name-mobile-header">
                             {{ avatar.render(person, 36) }}
-                            <span class="ht-card-name">{{ person.firstName }} {{ person.lastName }}</span>
+                            <span class="ht-name-mobile-text">
+                                <span class="ht-card-name">{{ person.firstName }} {{ person.lastName }}</span>
+                                {% if person.type == 'user' and person.role %}
+                                    <span class="ht-card-sub">{{ person.role }}</span>
+                                {% elseif person.type == 'ambassador' and person.school %}
+                                    <span class="ht-card-sub">{{ person.school }}</span>
+                                {% endif %}
+                            </span>
                             {% if person.group == "Staff" %}<span class="ht-group-badge ht-card-name-badge" style="background:#eef1f4;color:#555">Staff</span>
                             {% elseif person.group is not empty %}<span class="ht-group-badge ht-group-{{ person.group.color }} ht-card-name-badge">{{ person.group.letter }}</span>{% endif %}
                         </span>
                     </td>
                     <td data-label="Last" class="ht-mobile-hide">{{ person.lastName }}</td>
-                    <td data-label="Role">{{ person.role }}</td>
-                    <td data-label="School">{{ person.school }}</td>
+                    <td data-label="Role" class="ht-mobile-hide">{{ person.role }}</td>
+                    <td data-label="School" class="ht-mobile-hide">{{ person.school }}</td>
                     <td class="hidden">{{ person.sort }}</td>
                     <td class="no-export ht-chevron-col"><a href="{{ path(person.showpath, { 'id': person.id }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                 </tr>

@@ -48,6 +48,13 @@
             <a href="{{ path('app_comings_and_goings_index') }}" class="sidebar-nav-link">
                 <i class="fa fa-arrows-left-right"></i> Comings &amp; Goings
             </a>
+            {% if is_granted('ROLE_BOARD') %}
+                <div class="sidebar-section-label sidebar-section-label--sub">Duty Assignments</div>
+                <a href="{{ path('app_user_checkin_assignments') }}" class="sidebar-sub-link">Check-In Duties</a>
+                <a href="{{ path('app_user_checkout_assignments') }}" class="sidebar-sub-link">Check-Out Duties</a>
+                <a href="{{ path('app_user_cc_assignments') }}" class="sidebar-sub-link">Closing Ceremony Duties</a>
+                {# TODO: Bed Check Assignments — needs new data model + admin UI #}
+            {% endif %}
         {% endif %}
 
         {# ── People ───────────────────────────────────────── #}
@@ -113,11 +120,6 @@
         <a href="{{ path('app_user_my_assignments') }}" class="sidebar-nav-link">
             <i class="fa fa-clipboard-check"></i> My Assignments
         </a>
-        {% if is_granted('ROLE_BOARD') %}
-            <a href="{{ path('app_user_checkin_assignments') }}" class="sidebar-sub-link">Check-In Duties</a>
-            <a href="{{ path('app_user_cc_assignments') }}" class="sidebar-sub-link">Closing Ceremony Duties</a>
-            <a href="{{ path('app_user_checkout_assignments') }}" class="sidebar-sub-link">Check-Out Duties</a>
-        {% endif %}
 
         {# ── Staff Applications ───────────────────────────── #}
         {% if is_granted('ROLE_DOF') %}
