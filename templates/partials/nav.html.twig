@@ -80,9 +80,18 @@
                 <a href="{{ path('app_ambassador_psm') }}" class="sidebar-nav-link">
                     <i class="fa fa-file-lines"></i> Pre-Seminar Materials
                 </a>
-                <a href="{{ path('app_ambassador_calls') }}" class="sidebar-sub-link">Pre-Seminar Calls</a>
-                <a href="{{ path('app_ambassador_noshows') }}" class="sidebar-sub-link">No Shows</a>
-                <a href="{{ path('app_ambassador_thankyous') }}" class="sidebar-sub-link">Thank You Assignments</a>
+                <a href="{{ path('app_ambassador_calls') }}" class="sidebar-nav-link">
+                    <i class="fa fa-phone"></i> Pre-Seminar Calls
+                </a>
+                <a href="{{ path('app_ambassador_noshows') }}" class="sidebar-nav-link">
+                    <i class="fa fa-person-circle-xmark"></i> No Shows
+                </a>
+                <a href="{{ path('app_ambassador_thankyous') }}" class="sidebar-nav-link">
+                    <i class="fa fa-envelope-open-text"></i> Thank You Assignments
+                </a>
+                <a href="{{ path('app_ambassador_keydeposits') }}" class="sidebar-nav-link">
+                    <i class="fa fa-key"></i> Key Deposits
+                </a>
             {% endif %}
             {% if app.user.controlledAge >= 21 %}
                 <a href="{{ path('app_ambassador_bus') }}" class="sidebar-nav-link">

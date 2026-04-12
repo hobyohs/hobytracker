@@ -845,6 +845,10 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   padding-top: 8px;
 }
 
+/* Hide "Search:" text from ALL DataTables filter labels globally */
+.dataTables_filter label { font-size: 0 !important; }
+.dataTables_filter input { font-size: 14px !important; margin-left: 0 !important; }
+
 .ht-dt-card .dataTables_filter input { font-size: 14px; }
 .ht-dt-card .dataTables_filter input {
   border: 1px solid #e0e0e0; border-radius: 8px;

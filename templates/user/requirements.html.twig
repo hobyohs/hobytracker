@@ -16,7 +16,7 @@
         </tr></thead>
         <tbody>
             {% for user in users %}
-                <tr data-href="{{ path('app_user_show', { 'id': user.id }) }}">
+                <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
                     <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
                     <td data-label="First" class="ht-name-td">
                         <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
@@ -46,7 +46,7 @@
                     {% if user.isFundraisingComplete %}<td data-label="Fundraising" class="gridblock yay"><span class="fa fa-check"><span class="hidden">TRUE</span></span></td>
                     {% else %}<td data-label="Fundraising" class="gridblock nay"><span class="fa fa-times"><span class="hidden">FALSE</span></span></td>{% endif %}
                     <td data-label="Notes">{{ user.requirementNotes }}</td>
-                    <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.id }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
+                    <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>
