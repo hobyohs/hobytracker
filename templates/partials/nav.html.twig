@@ -49,10 +49,9 @@
                 <i class="fa fa-arrows-left-right"></i> Comings &amp; Goings
             </a>
             {% if is_granted('ROLE_BOARD') %}
-                <div class="sidebar-section-label sidebar-section-label--sub">Duty Assignments</div>
-                <a href="{{ path('app_user_checkin_assignments') }}" class="sidebar-sub-link">Check-In Duties</a>
-                <a href="{{ path('app_user_checkout_assignments') }}" class="sidebar-sub-link">Check-Out Duties</a>
-                <a href="{{ path('app_user_cc_assignments') }}" class="sidebar-sub-link">Closing Ceremony Duties</a>
+                <a href="{{ path('app_user_duty_assignments') }}" class="sidebar-nav-link">
+                    <i class="fa fa-clipboard-check"></i> Duty Assignments
+                </a>
                 {# TODO: Bed Check Assignments — needs new data model + admin UI #}
             {% endif %}
         {% endif %}
@@ -221,9 +220,7 @@ window.HT_PAGES = [
     { name: 'Emergency Contacts',    icon: 'fa-phone-volume',         desc: 'Ambassador EC information',    url: '{{ path('emergency_contacts') }}' },
     { name: 'Dietary Needs',         icon: 'fa-utensils',             desc: 'Food restrictions & info',     url: '{{ path('dietary') }}' },
     { name: 'Staff Requirements',    icon: 'fa-clipboard-list',       desc: 'Paperwork, BG checks, hours',  url: '{{ path('app_user_requirements') }}' },
-    { name: 'Check-In Duties',       icon: 'fa-clipboard-check',      desc: 'Staff check-in assignments',   url: '{{ path('app_user_checkin_assignments') }}' },
-    { name: 'Check-Out Duties',      icon: 'fa-clipboard-check',      desc: 'Staff check-out assignments',  url: '{{ path('app_user_cc_assignments') }}' },
-    { name: 'Closing Ceremony Duties', icon: 'fa-clipboard-check',    desc: 'Staff CC assignments',         url: '{{ path('app_user_checkout_assignments') }}' },
+    { name: 'Duty Assignments',       icon: 'fa-clipboard-check',      desc: 'Check-in, check-out, closing ceremony', url: '{{ path('app_user_duty_assignments') }}' },
     {% endif %}
     {% if is_granted('ROLE_NURSE') %}
     { name: 'Medical Report',        icon: 'fa-kit-medical',          desc: 'Medications, conditions, allergies', url: '{{ path('medical') }}' },

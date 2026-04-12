@@ -263,6 +263,11 @@ $(document).ready(function() {
   ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
 
   // staff duty assignments: Av(0) First(1) Last(2) Position(3) Assignment(4) Notes(5) Chev(6)
+  // Combined duty assignments page: Av(0) First(1) Last(2) Position(3) Assignment(4) Notes(5) Chev(6)
+  $('table#duty-table').DataTable({ order:[[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
+
   $('table#staff-duty-assignments-table').DataTable({ order:[[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
     { targets: [0,6], orderable: false }, { targets: 0, searchable: false }
   ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});

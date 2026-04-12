@@ -12,7 +12,7 @@ use App\Service\SeminarYearService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/staff')]
@@ -87,6 +87,21 @@ class UserController extends AbstractController
     {
         return $this->render('user/checkout_assignments.html.twig', [
             'users' => $saRepo->findActiveByYear($yearService->getActiveSeminarYear()),
+        ]);
+    }
+
+    #[Route('/assignments', name: 'app_user_duty_assignments', methods: ['GET'])]
+    #[IsGranted('ROLE_BOARD')]
+    public function dutyAssignmentsAction(Request $request, StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
+    {
+        $users = $saRepo->findActiveByYear($yearService->getActiveSeminarYear());
+        $tab = $request->query->get('tab', 'checkin');
+        if (!in_array($tab, ['checkin', 'checkout', 'cc'])) {
+            $tab = 'checkin';
+        }
+        return $this->render('user/duty_assignments.html.twig', [
+            'users' => $users,
+            'tab'   => $tab,
         ]);
     }
 

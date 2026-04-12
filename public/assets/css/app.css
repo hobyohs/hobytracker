@@ -175,7 +175,7 @@ body {
 .sidebar-sub-link {
   display: flex;
   align-items: center;
-  padding: 8px 20px 8px 46px;
+  padding: 8px 20px 8px 56px;
   color: rgba(255,255,255,0.55);
   text-decoration: none !important;
   border-bottom: none !important;
@@ -184,7 +184,7 @@ body {
 }
 .sidebar-section-label--sub {
   font-size: 9px;
-  padding: 10px 20px 3px 44px;
+  padding: 10px 20px 3px 56px;
   letter-spacing: 0.8px;
 }
 .sidebar-sub-link:hover {
@@ -1387,15 +1387,21 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   /* Chevron hidden on mobile */
   .ht-responsive-table table.dataTable tbody td.ht-chevron-col { display: none !important; }
 
-  /* Gridblock cells in card layout: use text color only, no solid background */
+  /* Gridblock cells in card layout: display:block so icon+text render inline.
+     Restore soft backgrounds, left-align, override the base text-align:center. */
   .ht-responsive-table table.dataTable tbody td.gridblock {
-    background: transparent !important;
+    display: block !important;
+    text-align: left !important;
   }
-  .ht-responsive-table table.dataTable tbody td.gridblock.yay   { color: #27863a !important; }
-  .ht-responsive-table table.dataTable tbody td.gridblock.nay   { color: #c0392b !important; }
-  .ht-responsive-table table.dataTable tbody td.gridblock.pray  { color: #9a7b15 !important; }
-  .ht-responsive-table table.dataTable tbody td.gridblock.okay  { color: #aaa !important; }
-  .ht-responsive-table table.dataTable tbody td.gridblock.oyvey { color: var(--ht-sub) !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock[data-label]::before {
+    display: block;
+    margin-bottom: 4px;
+  }
+  .ht-responsive-table table.dataTable tbody td.gridblock.yay   { background: #eaf7ed !important; color: #27863a !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.nay   { background: #fef0f0 !important; color: #c0392b !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.pray  { background: #fdf6e3 !important; color: #9a7b15 !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.okay  { background: var(--ht-section-bg) !important; color: #aaa !important; }
+  .ht-responsive-table table.dataTable tbody td.gridblock.oyvey { background: #f0f0f0 !important; color: #666 !important; }
 }
 
 /* Edit pencil action column (used on C&G index) */
@@ -2901,4 +2907,36 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   text-align: center;
   font-size: 14px;
   color: var(--ht-sub);
+}
+
+/* ── Tab bar (Duty Assignments page + future tabbed pages) ── */
+.ht-tab-bar {
+  display: flex;
+  gap: 0;
+  padding: 0 16px 16px;
+  border-bottom: 2px solid var(--ht-border);
+  margin-bottom: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.ht-tab-bar::-webkit-scrollbar { display: none; }
+@media (min-width: 768px) { .ht-tab-bar { padding: 0 0 16px; } }
+
+.ht-tab {
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ht-sub);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  white-space: nowrap;
+  text-decoration: none !important;
+  border-top: none !important;
+  transition: color 0.15s, border-color 0.15s;
+}
+.ht-tab:hover { color: var(--ht-navy); text-shadow: none !important; }
+.ht-tab.is-active {
+  color: var(--ht-navy);
+  border-bottom-color: var(--ht-navy);
+  font-weight: 600;
 }

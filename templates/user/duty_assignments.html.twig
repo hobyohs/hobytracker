@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+{% block maintag %}<main class="wide">{% endblock %}
+
+{% block body %}
+
+<a href="{{ path('homepage') }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Home
+</a>
+
+<div class="ht-page-header">
+    <h1>Duty Assignments</h1>
+</div>
+
+{# ── Tab bar ─────────────────────────────────────────────── #}
+<div class="ht-tab-bar">
+    <a href="{{ path('app_user_duty_assignments', {'tab': 'checkin'}) }}"
+       class="ht-tab {{ tab == 'checkin' ? 'is-active' : '' }}">Check-In</a>
+    <a href="{{ path('app_user_duty_assignments', {'tab': 'checkout'}) }}"
+       class="ht-tab {{ tab == 'checkout' ? 'is-active' : '' }}">Check-Out</a>
+    <a href="{{ path('app_user_duty_assignments', {'tab': 'cc'}) }}"
+       class="ht-tab {{ tab == 'cc' ? 'is-active' : '' }}">Closing Ceremony</a>
+    {# TODO: Bed Checks tab — needs data model + admin UI #}
+</div>
+
+{# ── Check-In Assignments ─────────────────────────────────── #}
+{% if tab == 'checkin' %}
+<div class="ht-dt-card ht-responsive-table">
+    <table class="table" id="duty-table">
+        <thead><tr>
+            <th class="ht-avatar-col no-export"></th>
+            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
+            <th>Assignment</th><th>Notes</th>
+            <th class="no-export ht-chevron-col"></th>
+        </tr></thead>
+        <tbody>
+            {% for user in users %}
+                {% if user.assignmentCheckIn is not null or user.assignmentCheckInNotes is not null %}
+                    <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
+                        <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
+                        <td data-label="First" class="ht-name-td">
+                            <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
+                            <span class="ht-name-mobile-header">
+                                {{ avatar.render(user, 36) }}
+                                <span class="ht-name-mobile-text">
+                                    <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
+                                    {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
+                                </span>
+                            </span>
+                        </td>
+                        <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
+                        <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
+                        <td data-label="Assignment">{{ user.assignmentCheckIn }}</td>
+                        <td data-label="Notes">{{ user.assignmentCheckInNotes }}</td>
+                        <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# ── Check-Out Assignments ────────────────────────────────── #}
+{% elseif tab == 'checkout' %}
+<div class="ht-dt-card ht-responsive-table">
+    <table class="table" id="duty-table">
+        <thead><tr>
+            <th class="ht-avatar-col no-export"></th>
+            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
+            <th>Assignment</th><th>Notes</th>
+            <th class="no-export ht-chevron-col"></th>
+        </tr></thead>
+        <tbody>
+            {% for user in users %}
+                {% if user.assignmentCheckOut is not null or user.assignmentCheckOutNotes is not null %}
+                    <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
+                        <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
+                        <td data-label="First" class="ht-name-td">
+                            <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
+                            <span class="ht-name-mobile-header">
+                                {{ avatar.render(user, 36) }}
+                                <span class="ht-name-mobile-text">
+                                    <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
+                                    {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
+                                </span>
+                            </span>
+                        </td>
+                        <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
+                        <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
+                        <td data-label="Assignment">{{ user.assignmentCheckOut }}</td>
+                        <td data-label="Notes">{{ user.assignmentCheckOutNotes }}</td>
+                        <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# ── Closing Ceremony Assignments ─────────────────────────── #}
+{% elseif tab == 'cc' %}
+<div class="ht-dt-card ht-responsive-table">
+    <table class="table" id="duty-table">
+        <thead><tr>
+            <th class="ht-avatar-col no-export"></th>
+            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
+            <th>Assignment</th><th>Notes</th>
+            <th class="no-export ht-chevron-col"></th>
+        </tr></thead>
+        <tbody>
+            {% for user in users %}
+                {% if user.assignmentCc is not null or user.assignmentCcNotes is not null %}
+                    <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
+                        <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
+                        <td data-label="First" class="ht-name-td">
+                            <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
+                            <span class="ht-name-mobile-header">
+                                {{ avatar.render(user, 36) }}
+                                <span class="ht-name-mobile-text">
+                                    <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
+                                    {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
+                                </span>
+                            </span>
+                        </td>
+                        <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
+                        <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
+                        <td data-label="Assignment">{{ user.assignmentCc }}</td>
+                        <td data-label="Notes">{{ user.assignmentCcNotes }}</td>
+                        <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}
