@@ -87,7 +87,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/evaluations/{letter}', name: 'staffeval_index', methods: ['GET'])]
+    #[Route('/evaluations/{letter}', name: 'staffeval_index_legacy', methods: ['GET'])]
     public function staffEvalIndex(LetterGroup $letterGroup): Response
     {
         if ($this->getUser()->getLetterGroup() == $letterGroup) {
@@ -100,7 +100,7 @@ class UserController extends AbstractController
         }
     }
 
-    #[Route('/evaluations/{id}/do', name: 'staffeval_edit', methods: ['GET', 'POST'])]
+    #[Route('/evaluations/{id}/do', name: 'staffeval_edit_legacy', methods: ['GET', 'POST'])]
     public function staffEvalEditAction(Request $request, StaffAssignment $staffAssignment, StaffAssignmentRepository $saRepo): Response
     {
         if ($this->getUser()->getLetterGroup() == $staffAssignment->getLetterGroup()) {
@@ -110,7 +110,7 @@ class UserController extends AbstractController
             if ($editForm->isSubmitted() && $editForm->isValid()) {
                 $staffAssignment->setEvalStatus(true);
                 $saRepo->save($staffAssignment, true);
-                return $this->redirectToRoute('staffeval_index', ['letter' => $this->getUser()->getLetterGroup()->getLetter()]);
+                return $this->redirectToRoute('staffeval_index_legacy', ['letter' => $this->getUser()->getLetterGroup()->getLetter()]);
             }
 
             return $this->render('evaluations/edit_staff.html.twig', [

@@ -30,6 +30,7 @@
             <a href="{{ path('app_letter_group_show_thankyous', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Thank Yous</a>
             <a href="{{ path('ambeval_index', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Amb. Evaluations</a>
             <a href="{{ path('staffeval_index', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Co-Fac. Evaluations</a>
+
         {% endif %}
 
         {# ── Seminar Ops (21+) ────────────────────────────── #}
@@ -122,7 +123,7 @@
             {% endif %}
         {% endif %}
 
-        {# ── My Stuff ─────────────────────────────────────── #}
+        {# ── My Assignments ───────────────────────────────── #}
         <div class="sidebar-divider"></div>
         <a href="{{ path('app_user_my_assignments') }}" class="sidebar-nav-link">
             <i class="fa fa-clipboard-check"></i> My Assignments

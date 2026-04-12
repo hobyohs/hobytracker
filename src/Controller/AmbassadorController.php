@@ -418,7 +418,7 @@ class AmbassadorController extends AbstractController
         };
     }
 
-    #[Route('/evaluations/{letter}', name: 'ambeval_index', methods: ['GET'])]
+    #[Route('/evaluations/{letter}', name: 'ambeval_index_legacy', methods: ['GET'])]
     public function ambassadorEvalIndex(LetterGroup $letterGroup): Response
     {
         if ($this->getUser()->getLetterGroup() == $letterGroup) {
@@ -436,7 +436,7 @@ class AmbassadorController extends AbstractController
         }
     }
     
-    #[Route('/evaluations/{id}/do', name: 'ambeval_edit', methods: ['GET', 'POST'])]
+    #[Route('/evaluations/{id}/do', name: 'ambeval_edit_legacy', methods: ['GET', 'POST'])]
     public function ambassadorEvalEditAction(Request $request, Ambassador $ambassador, AmbassadorRepository $ambassadorRepository): Response
     {
         if ($this->getUser()->getLetterGroup() == $ambassador->getLetterGroup()) {
@@ -446,7 +446,7 @@ class AmbassadorController extends AbstractController
             if ($editForm->isSubmitted() && $editForm->isValid()) {
                 $ambassadorRepository->save($ambassador, true);
     
-                return $this->redirectToRoute('ambeval_index', array('letter' => $this->getUser()->getLetterGroup()->getLetter()));
+                return $this->redirectToRoute('ambeval_index_legacy', array('letter' => $this->getUser()->getLetterGroup()->getLetter()));
             }
     
             return $this->render('evaluations/edit_ambassador.html.twig', array(
