@@ -2706,7 +2706,6 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   color: var(--ht-sub);
   padding-left: 2px;
 }
-.ht-weather-meta-item { }
 .ht-weather-meta-sep  { color: #ddd; }
 
 /* Hourly carousel — scroll-snap, no JS needed */
