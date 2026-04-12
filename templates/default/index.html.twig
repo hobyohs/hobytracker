@@ -189,16 +189,20 @@
             // Current hour index in hourly array
             var nowIdx = new Date().getHours(); // API starts at 0:00 today
 
-            // Next 3/6/9/12 hour slots
-            var slots = [3, 6, 9, 12].map(function(offset) {
-                var idx = nowIdx + offset;
-                return {
-                    label: fmtHour(hrly.time[idx]),
-                    temp:  Math.round(hrly.temperature_2m[idx]),
-                    code:  hrly.weather_code[idx],
-                    precip: hrly.precipitation_probability[idx]
-                };
-            });
+            // Build 24 hourly slots starting from current hour
+            var slots = [];
+            for (var s = 0; s < 24; s++) {
+                var idx = nowIdx + s;
+                if (idx >= hrly.time.length) break;
+                slots.push({
+                    idx:    idx,
+                    label:  s === 0 ? 'Now' : fmtHour(hrly.time[idx]),
+                    temp:   Math.round(hrly.temperature_2m[idx]),
+                    code:   hrly.weather_code[idx],
+                    precip: hrly.precipitation_probability[idx],
+                    isNow:  s === 0
+                });
+            }
 
             // ── Alert logic: scan next 12 hours ─────────────
             var alerts = [];
@@ -235,11 +239,11 @@
                 '</div>' +
                 '</div>';
 
-            // Hourly strip
+            // 24-hour scroll-snap carousel
             html += '<div class="ht-weather-hourly">';
             slots.forEach(function(s) {
                 var si = wmoInfo(s.code);
-                html += '<div class="ht-weather-slot">' +
+                html += '<div class="ht-weather-slot' + (s.isNow ? ' is-now' : '') + '">' +
                     '<div class="ht-weather-slot-time">' + s.label + '</div>' +
                     '<div class="ht-weather-slot-icon"><i class="fa-solid ' + si.icon + '"></i></div>' +
                     '<div class="ht-weather-slot-temp">' + s.temp + '°</div>' +

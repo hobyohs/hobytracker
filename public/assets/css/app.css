@@ -2661,19 +2661,42 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 .ht-weather-meta-item { }
 .ht-weather-meta-sep  { color: #ddd; }
 
-/* Hourly strip */
+/* Hourly carousel — scroll-snap, no JS needed */
 .ht-weather-hourly {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 4px;
   margin-bottom: 12px;
+  /* negative margin trick so cards bleed to card edge on mobile */
+  margin-left: -2px;
+  margin-right: -2px;
+  padding-left: 2px;
+  padding-right: 2px;
 }
+.ht-weather-hourly::-webkit-scrollbar { display: none; }
+
 .ht-weather-slot {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 72px;
   background: var(--ht-section-bg);
   border-radius: 10px;
   padding: 10px 6px;
   text-align: center;
+  transition: background 0.15s;
 }
+.ht-weather-slot.is-now {
+  background: var(--ht-navy);
+}
+.ht-weather-slot.is-now .ht-weather-slot-time,
+.ht-weather-slot.is-now .ht-weather-slot-icon,
+.ht-weather-slot.is-now .ht-weather-slot-temp,
+.ht-weather-slot.is-now .ht-weather-slot-label { color: rgba(255,255,255,0.9) !important; opacity: 1; }
+.ht-weather-slot.is-now .ht-weather-slot-precip { color: #7dd3fc !important; }
 .ht-weather-slot-time  { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--ht-sub); margin-bottom: 6px; }
 .ht-weather-slot-icon  { font-size: 16px; color: var(--ht-navy); opacity: 0.7; margin-bottom: 6px; }
 .ht-weather-slot-temp  { font-size: 15px; font-weight: 600; color: var(--ht-text); margin-bottom: 3px; }
