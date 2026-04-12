@@ -14,13 +14,15 @@
 
 {# ── Tab bar ─────────────────────────────────────────────── #}
 <div class="ht-tab-bar">
-    <a href="{{ path('app_user_duty_assignments', {'tab': 'checkin'}) }}"
-       class="ht-tab {{ tab == 'checkin' ? 'is-active' : '' }}">Check-In</a>
-    <a href="{{ path('app_user_duty_assignments', {'tab': 'checkout'}) }}"
-       class="ht-tab {{ tab == 'checkout' ? 'is-active' : '' }}">Check-Out</a>
-    <a href="{{ path('app_user_duty_assignments', {'tab': 'cc'}) }}"
-       class="ht-tab {{ tab == 'cc' ? 'is-active' : '' }}">Closing Ceremony</a>
-    {# TODO: Bed Checks tab — needs data model + admin UI #}
+    <div class="ht-tab-bar-inner">
+        <a href="{{ path('app_user_duty_assignments', {'tab': 'checkin'}) }}"
+           class="ht-tab {{ tab == 'checkin' ? 'is-active' : '' }}">Check-In</a>
+        <a href="{{ path('app_user_duty_assignments', {'tab': 'checkout'}) }}"
+           class="ht-tab {{ tab == 'checkout' ? 'is-active' : '' }}">Check-Out</a>
+        <a href="{{ path('app_user_duty_assignments', {'tab': 'cc'}) }}"
+           class="ht-tab {{ tab == 'cc' ? 'is-active' : '' }}">Closing Ceremony</a>
+        {# TODO: Bed Checks tab #}
+    </div>
 </div>
 
 {# ── Check-In Assignments ─────────────────────────────────── #}
@@ -51,7 +53,7 @@
                         <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
                         <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
                         <td data-label="Assignment">{{ user.assignmentCheckIn }}</td>
-                        <td data-label="Notes">{{ user.assignmentCheckInNotes }}</td>
+                        <td data-label="Notes" class="{{ not user.assignmentCheckInNotes ? 'ht-mobile-hide' : '' }}">{{ user.assignmentCheckInNotes }}</td>
                         <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                     </tr>
                 {% endif %}
@@ -88,7 +90,7 @@
                         <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
                         <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
                         <td data-label="Assignment">{{ user.assignmentCheckOut }}</td>
-                        <td data-label="Notes">{{ user.assignmentCheckOutNotes }}</td>
+                        <td data-label="Notes" class="{{ not user.assignmentCheckOutNotes ? 'ht-mobile-hide' : '' }}">{{ user.assignmentCheckOutNotes }}</td>
                         <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                     </tr>
                 {% endif %}
@@ -109,7 +111,7 @@
         </tr></thead>
         <tbody>
             {% for user in users %}
-                {% if user.assignmentCc is not null or user.assignmentCcNotes is not null %}
+                {% if user.assignmentClosingCeremonies is not null or user.assignmentClosingCeremoniesNotes is not null %}
                     <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
                         <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
                         <td data-label="First" class="ht-name-td">
@@ -124,8 +126,8 @@
                         </td>
                         <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
                         <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
-                        <td data-label="Assignment">{{ user.assignmentCc }}</td>
-                        <td data-label="Notes">{{ user.assignmentCcNotes }}</td>
+                        <td data-label="Assignment">{{ user.assignmentClosingCeremonies }}</td>
+                        <td data-label="Notes" class="{{ not user.assignmentClosingCeremoniesNotes ? 'ht-mobile-hide' : '' }}">{{ user.assignmentClosingCeremoniesNotes }}</td>
                         <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
                     </tr>
                 {% endif %}

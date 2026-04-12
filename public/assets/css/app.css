@@ -2909,34 +2909,40 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   color: var(--ht-sub);
 }
 
-/* ── Tab bar (Duty Assignments page + future tabbed pages) ── */
+/* ── Segmented tab control (Duty Assignments + future tabbed pages) ── */
 .ht-tab-bar {
   display: flex;
-  gap: 0;
+  gap: 4px;
   padding: 0 16px 16px;
-  border-bottom: 2px solid var(--ht-border);
-  margin-bottom: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
 }
-.ht-tab-bar::-webkit-scrollbar { display: none; }
 @media (min-width: 768px) { .ht-tab-bar { padding: 0 0 16px; } }
 
+.ht-tab-bar-inner {
+  display: flex;
+  gap: 3px;
+  background: #eef1f4;
+  border-radius: 11px;
+  padding: 3px;
+  width: 100%;
+}
+
 .ht-tab {
-  padding: 8px 18px;
-  font-size: 14px;
+  flex: 1;
+  text-align: center;
+  padding: 9px 8px;
+  border-radius: 8px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--ht-sub);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
   white-space: nowrap;
   text-decoration: none !important;
-  border-top: none !important;
-  transition: color 0.15s, border-color 0.15s;
+  border: none !important;
+  transition: color 0.15s;
 }
 .ht-tab:hover { color: var(--ht-navy); text-shadow: none !important; }
 .ht-tab.is-active {
+  background: var(--ht-white);
   color: var(--ht-navy);
-  border-bottom-color: var(--ht-navy);
   font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.05);
 }
