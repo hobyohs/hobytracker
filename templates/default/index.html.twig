@@ -269,6 +269,29 @@
         .catch(function() {
             document.getElementById('ht-weather').innerHTML = '';
         });
+
+    // ── Desktop drag-to-scroll on carousel ──────────────────
+    document.getElementById('ht-weather').addEventListener('mousedown', function(e) {
+        var carousel = e.target.closest('.ht-weather-hourly');
+        if (!carousel) return;
+        var startX     = e.pageX - carousel.offsetLeft;
+        var scrollLeft = carousel.scrollLeft;
+        carousel.style.cursor = 'grabbing';
+        carousel.style.userSelect = 'none';
+
+        function onMove(e) {
+            var x = e.pageX - carousel.offsetLeft;
+            carousel.scrollLeft = scrollLeft - (x - startX);
+        }
+        function onUp() {
+            carousel.style.cursor = '';
+            carousel.style.userSelect = '';
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    });
 })();
 </script>
 {% endblock %}

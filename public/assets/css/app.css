@@ -2666,17 +2666,17 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   padding-bottom: 4px;
   margin-bottom: 12px;
-  /* negative margin trick so cards bleed to card edge on mobile */
   margin-left: -2px;
   margin-right: -2px;
   padding-left: 2px;
   padding-right: 2px;
+  cursor: grab;
 }
+.ht-weather-hourly:active { cursor: grabbing; }
 .ht-weather-hourly::-webkit-scrollbar { display: none; }
 
 .ht-weather-slot {
