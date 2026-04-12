@@ -14,7 +14,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Ambassador;
+use App\Entity\AmbassadorEvaluation;
 use App\Entity\StaffAssignment;
+use App\Entity\StaffEvaluation;
 use App\Entity\User;
 use App\Entity\ComingsAndGoings;
 use App\Entity\LetterGroup;
@@ -60,7 +62,10 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToRoute('Groups Demographics', 'fas fa-chart-pie', 'admin_group_demo_report'),
             MenuItem::linkToRoute('Shirt Sizes', 'fas fa-shirt', 'admin_shirt_size_report'),
             MenuItem::linkToCrud('Staff Applications', 'fas fa-clipboard-question', Applicant::class),
-            MenuItem::linkToRoute('Evaluations', 'fas fa-gavel', 'admin_evaluations'),
+            MenuItem::section('Evaluations'),
+            MenuItem::linkToCrud('Ambassador Evaluations', 'fas fa-star', AmbassadorEvaluation::class),
+            MenuItem::linkToCrud('Staff Evaluations', 'fas fa-gavel', StaffEvaluation::class),
+            MenuItem::linkToRoute('Evaluations Report', 'fas fa-chart-bar', 'admin_evaluations'),
         ];
     }
 
