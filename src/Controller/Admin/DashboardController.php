@@ -110,14 +110,15 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin/evaluations', name: 'admin_evaluations')]
-    public function evaluationsAction(StaffAssignmentRepository $saRepo, AmbassadorRepository $ambassadorRepository): Response
-    {
+    public function evaluationsAction(
+        \App\Repository\AmbassadorEvaluationRepository $ambEvalRepo,
+        \App\Repository\StaffEvaluationRepository $staffEvalRepo,
+    ): Response {
         $year = $this->seminarYearService->getActiveSeminarYear();
         return $this->render('bundles/EasyAdminBundle/evaluations.html.twig', [
-            'ambassador_evaluations' => $ambassadorRepository->findAllWithEvaluations(),
-            'user_evaluations' => $saRepo->findAllWithEvaluations($year),
-            'ambassador_nulls' => $ambassadorRepository->nullEvaluations(),
-            'user_nulls' => $saRepo->nullEvaluations($year),
+            'ambassador_evaluations' => $ambEvalRepo->findSubmittedByYear($year),
+            'user_evaluations'       => $staffEvalRepo->findSubmittedByYear($year),
+            'year'                   => $year,
         ]);
     }
 }

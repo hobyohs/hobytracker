@@ -211,24 +211,6 @@ class Ambassador
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $busFromPhone = null;
 
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $eval_engaged = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $eval_service = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $eval_pros = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $eval_cons = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $eval_recommendation = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $eval_comments = null;
-
     #[ORM\Column]
     private ?bool $juniorCallMade = FALSE;
 
@@ -1092,78 +1074,6 @@ class Ambassador
     public function setBusFromPhone(?string $busFromPhone): self
     {
         $this->busFromPhone = $busFromPhone;
-
-        return $this;
-    }
-
-    public function getEvalEngaged(): ?string
-    {
-        return $this->eval_engaged;
-    }
-
-    public function setEvalEngaged(?string $eval_engaged): self
-    {
-        $this->eval_engaged = $eval_engaged;
-
-        return $this;
-    }
-
-    public function getEvalService(): ?string
-    {
-        return $this->eval_service;
-    }
-
-    public function setEvalService(?string $eval_service): self
-    {
-        $this->eval_service = $eval_service;
-
-        return $this;
-    }
-
-    public function getEvalPros(): ?string
-    {
-        return $this->eval_pros;
-    }
-
-    public function setEvalPros(?string $eval_pros): self
-    {
-        $this->eval_pros = $eval_pros;
-
-        return $this;
-    }
-
-    public function getEvalCons(): ?string
-    {
-        return $this->eval_cons;
-    }
-
-    public function setEvalCons(?string $eval_cons): self
-    {
-        $this->eval_cons = $eval_cons;
-
-        return $this;
-    }
-
-    public function getEvalRecommendation(): ?string
-    {
-        return $this->eval_recommendation;
-    }
-
-    public function setEvalRecommendation(?string $eval_recommendation): self
-    {
-        $this->eval_recommendation = $eval_recommendation;
-
-        return $this;
-    }
-
-    public function getEvalComments(): ?string
-    {
-        return $this->eval_comments;
-    }
-
-    public function setEvalComments(?string $eval_comments): self
-    {
-        $this->eval_comments = $eval_comments;
 
         return $this;
     }

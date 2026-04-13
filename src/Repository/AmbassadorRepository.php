@@ -256,30 +256,11 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
     
-    public function findAllWithEvaluations()
-    {
-        return $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('a', 'g')
-            ->from('App\Entity\Ambassador', 'a')
-            ->leftJoin('a.letterGroup', 'g')
-            ->where('a.eval_recommendation IS NOT NULL')
-            ->orderBy('a.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();   
-    }
-    
-    public function nullEvaluations()
-    {
-        $qb = $this->getEntityManager()
-            ->createQueryBuilder();
-        return $qb    
-            ->select('COUNT(a.id)')
-            ->from('App\Entity\Ambassador', 'a')
-            ->where('a.eval_recommendation IS NULL')
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
+    /** @deprecated Use AmbassadorEvaluationRepository::findSubmittedByYear() */
+    public function findAllWithEvaluations(): array { return []; }
+
+    /** @deprecated Use AmbassadorEvaluationRepository::findSubmittedByYear() */
+    public function nullEvaluations(): int { return 0; }
 
     public function searchByName(string $query, int $limit = 8): array
     {
