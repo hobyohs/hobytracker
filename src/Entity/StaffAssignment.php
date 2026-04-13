@@ -41,25 +41,46 @@ class StaffAssignment
     ];
 
     /**
-     * Default role group mapping from free-text `position` strings. Applied automatically
-     * on persist/update when roleGroup is null. Admins can override via the CRUD, and
-     * their explicit value will not be stomped on subsequent saves. Extend this list as
-     * new position strings come into use.
+     * Canonical list of staff positions, ordered by rough frequency of use. This constant
+     * is the single source of truth: `getPositionChoices()` returns the keys in order for
+     * the admin picker, and this same map classifies each position into a role group for
+     * the computed Seminar Ops access check. Adding a new position means adding one line
+     * here — the picker and the classifier both pick it up for free.
+     *
+     * Custom / novel position strings (anything an admin types that isn't in this list)
+     * fall through to null roleGroup, which fails closed on Seminar Ops access. If you
+     * add a commonly-used custom position, add it here.
      */
     public const POSITION_TO_ROLE_GROUP = [
-        'Senior Facilitator'                   => self::ROLE_SENIOR_FACILITATOR,
-        'Junior Facilitator'                   => self::ROLE_JUNIOR_FACILITATOR,
-        'J-Crew'                               => self::ROLE_JCREW,
-        'DOF'                                  => self::ROLE_TEAM_HQ,
-        'Director of Facilitators'             => self::ROLE_TEAM_HQ,
-        'ADOF'                                 => self::ROLE_TEAM_HQ,
-        'Assistant Director of Facilitators'   => self::ROLE_TEAM_HQ,
-        'Program Director'                     => self::ROLE_TEAM_HQ,
-        'Seminar Chair'                        => self::ROLE_TEAM_HQ,
-        'Board Member'                         => self::ROLE_TEAM_HQ,
-        'Nurse'                                => self::ROLE_MEDICAL,
-        'EMT'                                  => self::ROLE_MEDICAL,
+        'Senior Facilitator'       => self::ROLE_SENIOR_FACILITATOR,
+        'Junior Facilitator'       => self::ROLE_JUNIOR_FACILITATOR,
+        'J-Crew'                   => self::ROLE_JCREW,
+        'Team HQ'                  => self::ROLE_TEAM_HQ,
+        'Nurse'                    => self::ROLE_MEDICAL,
+        'Counselor'                => self::ROLE_MEDICAL,
+        'Leadership Seminar Chair' => self::ROLE_TEAM_HQ,
+        'Director of Facilitators' => self::ROLE_TEAM_HQ,
+        'Director of Program'      => self::ROLE_TEAM_HQ,
+        'Director of Operations'   => self::ROLE_TEAM_HQ,
+        'Director of Fundraising'  => self::ROLE_TEAM_HQ,
+        'Director of Media'        => self::ROLE_TEAM_HQ,
+        'J-Crew Lead'              => self::ROLE_TEAM_HQ,
+        'Board President'          => self::ROLE_TEAM_HQ,
+        'Board Vice President'     => self::ROLE_TEAM_HQ,
+        'Board Secretary'          => self::ROLE_TEAM_HQ,
+        'Board Treasurer'          => self::ROLE_TEAM_HQ,
+        'Board Member'             => self::ROLE_TEAM_HQ,
     ];
+
+    /**
+     * Returns the canonical position list in display order, for use as datalist options
+     * on the admin position picker. Derived from POSITION_TO_ROLE_GROUP keys so the
+     * ordering is guaranteed consistent with the classifier.
+     */
+    public static function getPositionChoices(): array
+    {
+        return array_keys(self::POSITION_TO_ROLE_GROUP);
+    }
 
     public function __toString(): string
     {
@@ -374,21 +395,18 @@ class StaffAssignment
     }
 
     /**
-     * On persist and update, if roleGroup is null and position has a known mapping,
-     * populate roleGroup from the default mapping. If roleGroup is already set (either
-     * by an admin override in the CRUD or carried over from a previous save), it is
-     * left alone. To re-derive from position, admins clear roleGroup and save.
+     * Always recompute roleGroup from position on save. roleGroup is not user-editable —
+     * it's a purely derived backend attribute used for Seminar Ops access checks. If a
+     * position string isn't in POSITION_TO_ROLE_GROUP (custom/novel value), roleGroup
+     * becomes null, which fails closed on Seminar Ops.
      */
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
-    public function populateDefaultRoleGroup(): void
+    public function populateRoleGroupFromPosition(): void
     {
-        if ($this->roleGroup !== null) {
-            return;
-        }
-        if ($this->position !== null && isset(self::POSITION_TO_ROLE_GROUP[$this->position])) {
-            $this->roleGroup = self::POSITION_TO_ROLE_GROUP[$this->position];
-        }
+        $this->roleGroup = ($this->position !== null && isset(self::POSITION_TO_ROLE_GROUP[$this->position]))
+            ? self::POSITION_TO_ROLE_GROUP[$this->position]
+            : null;
     }
 
     public function getShirtSize(): ?string

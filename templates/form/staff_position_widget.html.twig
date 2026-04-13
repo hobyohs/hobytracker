@@ -1,0 +1,18 @@
+{#
+    Form theme for StaffPositionType. Renders a standard text input (reusing the parent
+    form_widget_simple block) followed by a <datalist> populated from the canonical
+    position list on the StaffAssignment entity. The input is linked to the datalist via
+    its `list` attribute, set in StaffPositionType::buildView().
+
+    Only one <datalist> is emitted per page even if multiple StaffPositionType fields
+    render, because they all share the same id. That's fine — duplicate <datalist>
+    elements with the same id are harmless (the first wins).
+#}
+{% block staff_position_widget %}
+    {{ block('form_widget_simple') }}
+    <datalist id="staff-position-options">
+        {% for choice in position_choices %}
+            <option value="{{ choice }}">
+        {% endfor %}
+    </datalist>
+{% endblock %}

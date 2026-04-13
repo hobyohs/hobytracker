@@ -72,6 +72,7 @@ class StaffAssignmentCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Staff Assignments')
             ->setPaginatorPageSize(250)
             ->setDefaultSort(['user.lastName' => 'ASC'])
+            ->addFormTheme('form/staff_position_widget.html.twig')
         ;
     }
 
@@ -86,11 +87,10 @@ class StaffAssignmentCrudController extends AbstractCrudController
             'Active' => 'active',
             'Dropped' => 'dropped',
         ]);
-        yield Field::new('position')->setColumns(6);
-        yield ChoiceField::new('roleGroup', 'Role Group')->setColumns(6)->setChoices(array_combine(
-            \App\Entity\StaffAssignment::ROLE_GROUPS,
-            \App\Entity\StaffAssignment::ROLE_GROUPS,
-        ))->setHelp('Auto-populated from Position on save if blank. Senior Facilitator, Team HQ, and Medical are treated as 21+ and get Seminar Ops access.')->setRequired(false);
+        yield Field::new('position')
+            ->setColumns(6)
+            ->setFormType(\App\Form\StaffPositionType::class)
+            ->setHelp('Pick from common positions or type a custom title. Role-based access (check-in, bed checks, C&G) is auto-derived from this.');
         yield Field::new('age')->hideOnIndex()->setColumns(6)->setHelp('Age as of the seminar. Used to determine permissions.');
         yield AvatarField::new('photo')->hideOnIndex()->setColumns(6);
         yield ChoiceField::new('shirtSize')->hideOnIndex()->setChoices([
