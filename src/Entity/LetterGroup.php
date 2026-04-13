@@ -166,7 +166,7 @@ class LetterGroup
     {
         $result = new ArrayCollection();
         foreach ($this->staffAssignments as $sa) {
-            if ($sa->getPosition() == 'Junior Facilitator') {
+            if ($sa->getRoleGroup() === StaffAssignment::ROLE_JUNIOR_FACILITATOR) {
                 $result[] = $sa;
             }
         }

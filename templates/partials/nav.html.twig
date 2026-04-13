@@ -33,7 +33,7 @@
         {% endif %}
 
         {# ── Seminar Ops (21+) ────────────────────────────── #}
-        {% if app.user.controlledAge >= 21 %}
+        {% if app.user.isSeniorOps %}
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Seminar Ops</div>
             <a href="{{ path('app_ambassador_checkin') }}" class="sidebar-nav-link">
@@ -72,7 +72,7 @@
         <a href="{{ path('app_letter_group_index') }}" class="sidebar-sub-link">Homerooms</a>
 
         {# ── Reports ──────────────────────────────────────── #}
-        {% if app.user.controlledAge >= 21 or is_granted('ROLE_BOARD') or is_granted('ROLE_NURSE') %}
+        {% if app.user.isSeniorOps or is_granted('ROLE_BOARD') or is_granted('ROLE_NURSE') %}
             <div class="sidebar-divider"></div>
             <div class="sidebar-section-label">Reports</div>
             {% if is_granted('ROLE_BOARD') %}
@@ -92,7 +92,7 @@
                     <i class="fa fa-key"></i> Key Deposits
                 </a>
             {% endif %}
-            {% if app.user.controlledAge >= 21 %}
+            {% if app.user.isSeniorOps %}
                 <a href="{{ path('app_ambassador_bus') }}" class="sidebar-nav-link">
                     <i class="fa fa-bus"></i> Bus List
                 </a>
@@ -215,7 +215,7 @@ window.HT_PAGES = [
     { name: 'Homerooms',             icon: 'fa-door-open',            desc: 'Letter group index',           url: '{{ path('app_letter_group_index') }}' },
     { name: 'Interview Assignments', icon: 'fa-handshake',            desc: 'Group interview schedule',     url: '{{ path('app_letter_group_interviews') }}' },
     { name: 'My Assignments',        icon: 'fa-clipboard-check',      desc: 'My seminar duties',            url: '{{ path('app_user_my_assignments') }}' },
-    {% if app.user.controlledAge >= 21 %}
+    {% if app.user.isSeniorOps %}
     { name: 'Check In',              icon: 'fa-right-to-bracket',     desc: 'Ambassador arrivals',          url: '{{ path('app_ambassador_checkin') }}' },
     { name: 'Check Out',             icon: 'fa-right-from-bracket',   desc: 'Ambassador departures',        url: '{{ path('app_ambassador_checkout') }}' },
     { name: 'Bed Checks',            icon: 'fa-moon',                 desc: 'Nightly room checks',          url: '{{ path('app_ambassador_bedchecks') }}' },

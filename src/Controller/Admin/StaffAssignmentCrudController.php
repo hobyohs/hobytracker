@@ -72,6 +72,7 @@ class StaffAssignmentCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Staff Assignments')
             ->setPaginatorPageSize(250)
             ->setDefaultSort(['user.lastName' => 'ASC'])
+            ->addFormTheme('form/staff_position_widget.html.twig')
         ;
     }
 
@@ -86,7 +87,10 @@ class StaffAssignmentCrudController extends AbstractCrudController
             'Active' => 'active',
             'Dropped' => 'dropped',
         ]);
-        yield Field::new('position')->setColumns(6);
+        yield Field::new('position')
+            ->setColumns(6)
+            ->setFormType(\App\Form\StaffPositionType::class)
+            ->setHelp('Pick from common positions or type a custom title. Role-based access (check-in, bed checks, C&G) is auto-derived from this.');
         yield Field::new('age')->hideOnIndex()->setColumns(6)->setHelp('Age as of the seminar. Used to determine permissions.');
         yield AvatarField::new('photo')->hideOnIndex()->setColumns(6);
         yield ChoiceField::new('shirtSize')->hideOnIndex()->setChoices([

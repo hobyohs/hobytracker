@@ -9,8 +9,79 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StaffAssignmentRepository::class)]
 #[ORM\UniqueConstraint(name: 'user_year_unique', columns: ['user_id', 'seminar_year'])]
+#[ORM\HasLifecycleCallbacks]
 class StaffAssignment
 {
+    // ========== Role group taxonomy ==========
+    public const ROLE_SENIOR_FACILITATOR = 'Senior Facilitator';
+    public const ROLE_JUNIOR_FACILITATOR = 'Junior Facilitator';
+    public const ROLE_TEAM_HQ            = 'Team HQ';
+    public const ROLE_JCREW              = 'J-Crew';
+    public const ROLE_MEDICAL            = 'Medical';
+
+    public const ROLE_GROUPS = [
+        self::ROLE_SENIOR_FACILITATOR,
+        self::ROLE_JUNIOR_FACILITATOR,
+        self::ROLE_TEAM_HQ,
+        self::ROLE_JCREW,
+        self::ROLE_MEDICAL,
+    ];
+
+    /** Role groups treated as <21 young staff — no Seminar Ops access, age defaults to 0. */
+    public const YOUNG_STAFF_GROUPS = [
+        self::ROLE_JUNIOR_FACILITATOR,
+        self::ROLE_JCREW,
+    ];
+
+    /** Role groups treated as 21+ senior staff — Seminar Ops access allowed. */
+    public const SENIOR_OPS_GROUPS = [
+        self::ROLE_SENIOR_FACILITATOR,
+        self::ROLE_TEAM_HQ,
+        self::ROLE_MEDICAL,
+    ];
+
+    /**
+     * Canonical list of staff positions, ordered by rough frequency of use. This constant
+     * is the single source of truth: `getPositionChoices()` returns the keys in order for
+     * the admin picker, and this same map classifies each position into a role group for
+     * the computed Seminar Ops access check. Adding a new position means adding one line
+     * here — the picker and the classifier both pick it up for free.
+     *
+     * Custom / novel position strings (anything an admin types that isn't in this list)
+     * fall through to null roleGroup, which fails closed on Seminar Ops access. If you
+     * add a commonly-used custom position, add it here.
+     */
+    public const POSITION_TO_ROLE_GROUP = [
+        'Senior Facilitator'       => self::ROLE_SENIOR_FACILITATOR,
+        'Junior Facilitator'       => self::ROLE_JUNIOR_FACILITATOR,
+        'J-Crew'                   => self::ROLE_JCREW,
+        'Team HQ'                  => self::ROLE_TEAM_HQ,
+        'Nurse'                    => self::ROLE_MEDICAL,
+        'Counselor'                => self::ROLE_MEDICAL,
+        'Leadership Seminar Chair' => self::ROLE_TEAM_HQ,
+        'Director of Facilitators' => self::ROLE_TEAM_HQ,
+        'Director of Program'      => self::ROLE_TEAM_HQ,
+        'Director of Operations'   => self::ROLE_TEAM_HQ,
+        'Director of Fundraising'  => self::ROLE_TEAM_HQ,
+        'Director of Media'        => self::ROLE_TEAM_HQ,
+        'J-Crew Lead'              => self::ROLE_TEAM_HQ,
+        'Board President'          => self::ROLE_TEAM_HQ,
+        'Board Vice President'     => self::ROLE_TEAM_HQ,
+        'Board Secretary'          => self::ROLE_TEAM_HQ,
+        'Board Treasurer'          => self::ROLE_TEAM_HQ,
+        'Board Member'             => self::ROLE_TEAM_HQ,
+    ];
+
+    /**
+     * Returns the canonical position list in display order, for use as datalist options
+     * on the admin position picker. Derived from POSITION_TO_ROLE_GROUP keys so the
+     * ordering is guaranteed consistent with the classifier.
+     */
+    public static function getPositionChoices(): array
+    {
+        return array_keys(self::POSITION_TO_ROLE_GROUP);
+    }
+
     public function __toString(): string
     {
         return $this->getFullName() . ' (' . $this->seminarYear . ')';
@@ -36,6 +107,9 @@ class StaffAssignment
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $position = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $roleGroup = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $shirtSize = null;
@@ -194,20 +268,38 @@ class StaffAssignment
 
     public function getSortRank(): ?int
     {
-        if ($this->position == 'Senior Facilitator') return 1;
-        elseif ($this->position == 'Junior Facilitator') return 2;
-        elseif ($this->position == 'J-Crew') return 3;
-        else return 0;
+        return match ($this->roleGroup) {
+            self::ROLE_SENIOR_FACILITATOR => 1,
+            self::ROLE_JUNIOR_FACILITATOR => 2,
+            self::ROLE_JCREW              => 3,
+            default                       => 0,
+        };
+    }
+
+    /**
+     * Returns true if this assignment is a <21 young staff role (Junior Facilitator
+     * or J-Crew). Null roleGroup returns false — unknown is NOT treated as young.
+     */
+    public function isYoungStaff(): bool
+    {
+        return in_array($this->roleGroup, self::YOUNG_STAFF_GROUPS, true);
+    }
+
+    /**
+     * Returns true if this assignment is a 21+ senior ops role (Senior Facilitator,
+     * Team HQ, or Medical) with access to check-in, check-out, bed checks, and C&G.
+     * Null roleGroup returns false — unknown fails closed, locking out until an
+     * admin classifies the assignment.
+     */
+    public function isSeniorOps(): bool
+    {
+        return in_array($this->roleGroup, self::SENIOR_OPS_GROUPS, true);
     }
 
     public function getControlledAge(): ?int
     {
         if (is_null($this->age)) {
-            if (in_array($this->position, ['J-Crew', 'Junior Facilitator'])) {
-                return 0;
-            } else {
-                return 100;
-            }
+            return $this->isYoungStaff() ? 0 : 100;
         }
         return $this->age;
     }
@@ -289,6 +381,32 @@ class StaffAssignment
     {
         $this->position = $position;
         return $this;
+    }
+
+    public function getRoleGroup(): ?string
+    {
+        return $this->roleGroup;
+    }
+
+    public function setRoleGroup(?string $roleGroup): self
+    {
+        $this->roleGroup = $roleGroup;
+        return $this;
+    }
+
+    /**
+     * Always recompute roleGroup from position on save. roleGroup is not user-editable —
+     * it's a purely derived backend attribute used for Seminar Ops access checks. If a
+     * position string isn't in POSITION_TO_ROLE_GROUP (custom/novel value), roleGroup
+     * becomes null, which fails closed on Seminar Ops.
+     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function populateRoleGroupFromPosition(): void
+    {
+        $this->roleGroup = ($this->position !== null && isset(self::POSITION_TO_ROLE_GROUP[$this->position]))
+            ? self::POSITION_TO_ROLE_GROUP[$this->position]
+            : null;
     }
 
     public function getShirtSize(): ?string
