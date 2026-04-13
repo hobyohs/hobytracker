@@ -256,12 +256,6 @@ class AmbassadorRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
     
-    /** @deprecated Use AmbassadorEvaluationRepository::findSubmittedByYear() */
-    public function findAllWithEvaluations(): array { return []; }
-
-    /** @deprecated Use AmbassadorEvaluationRepository::findSubmittedByYear() */
-    public function nullEvaluations(): int { return 0; }
-
     public function searchByName(string $query, int $limit = 8): array
     {
         return $this->createQueryBuilder('a')

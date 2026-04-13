@@ -99,12 +99,6 @@ class StaffAssignmentRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    /** @deprecated Use StaffEvaluationRepository::findSubmittedByYear() */
-    public function findAllWithEvaluations(int $year): array { return []; }
-
-    /** @deprecated Use StaffEvaluationRepository::findSubmittedByYear() */
-    public function nullEvaluations(int $year): int { return 0; }
-
     public function getPsmsLastUpdated(int $year): string
     {
         $result = $this->createQueryBuilder('sa')
