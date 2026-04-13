@@ -296,6 +296,15 @@ $(document).ready(function() {
     {responsivePriority:5,targets:0}
   ]});
 
+  // eval report: Av(0) Name(1) Group(2) Recommend(3) ...written(6-9)
+  $('table#amb-report-table').DataTable({ order:[[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6,7,8,9], orderable: false }, { targets: 0, searchable: false }
+  ]});
+  // eval report staff: Av(0) Name(1) Position(2) Group(3) ...written(15)
+  $('table#staff-report-table').DataTable({ order:[[3,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,15], orderable: false }, { targets: 0, searchable: false }
+  ]});
+
   // ── Responsive table: search clear button ─────────────────────
   // Works for both DataTables filter inputs (.dataTables_filter input)
   // and custom card-filter inputs (.ht-search-input).

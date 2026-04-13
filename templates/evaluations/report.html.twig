@@ -179,29 +179,4 @@
     </table>
 </div>
 {% endif %}
-
-<script>
-$(document).ready(function() {
-    $('#amb-report-table').DataTable({
-        responsive: false,
-        paging: false,
-        info: false,
-        order: [[2, 'asc'], [1, 'asc']],
-        columnDefs: [
-            { orderable: false, targets: [0, 6, 7, 8, 9] },
-        ]
-    });
-
-    $('#staff-report-table').DataTable({
-        responsive: false,
-        paging: false,
-        info: false,
-        order: [[3, 'asc'], [1, 'asc']],
-        columnDefs: [
-            { orderable: false, targets: [0, 15] },
-        ]
-    });
-});
-</script>
-
 {% endblock %}
