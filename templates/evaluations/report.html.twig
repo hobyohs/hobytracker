@@ -90,6 +90,36 @@
 {% if staffAgg is empty %}
     <div class="ht-dt-card" style="padding:24px; color:var(--ht-text-muted);">No submitted staff evaluations for {{ year }}.</div>
 {% else %}
+
+{# Hidden written-response content blocks, keyed by staff ID, used by DataTables child rows #}
+{% for data in staffAgg %}
+{% set s = data.subject %}
+<div id="written-data-{{ s.id }}" class="d-none">
+    <div style="padding:16px 20px; background:var(--ht-section-bg);">
+        {% for eval in data.evals %}
+        <div style="margin-bottom:{{ not loop.last ? '20px' : '0' }}; padding-bottom:{{ not loop.last ? '20px' : '0' }}; border-bottom:{{ not loop.last ? '1px solid #e0e0e0' : 'none' }};">
+            <div style="font-size:13px; color:var(--ht-text-muted); margin-bottom:8px;">
+                Evaluated by <strong>{{ eval.evaluator ? eval.evaluator.consolidatedFirstName ~ ' ' ~ eval.evaluator.lastName : 'Unknown' }}</strong>
+                {% if eval.submittedAt %} on {{ eval.submittedAt|date('M j, Y') }}{% endif %}
+            </div>
+            {% if eval.evalPros %}
+            <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Strengths</span><br>{{ eval.evalPros }}</div>
+            {% endif %}
+            {% if eval.evalCons %}
+            <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Areas for Growth</span><br>{{ eval.evalCons }}</div>
+            {% endif %}
+            {% if eval.evalWhynot %}
+            <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:#c0392b; letter-spacing:.04em;">Reason Not to Return</span><br>{{ eval.evalWhynot }}</div>
+            {% endif %}
+            {% if eval.evalComments %}
+            <div><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Other Comments</span><br>{{ eval.evalComments }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
 <div class="ht-dt-card">
     <table class="table table-sm" id="staff-report-table">
         <thead><tr>
@@ -108,12 +138,12 @@
             <th>Inclusive</th>
             <th>Professional</th>
             <th>Punctual</th>
-            <th class="no-export">Written Responses</th>
+            <th class="no-export">Written</th>
         </tr></thead>
         <tbody>
             {% for data in staffAgg %}
             {% set s = data.subject %}
-            <tr>
+            <tr data-staff-id="{{ s.id }}">
                 <td>{{ avatar.render(s, 32) }}</td>
                 <td>
                     <a href="{{ path('app_user_show', {'id': s.userId}) }}">
@@ -140,38 +170,9 @@
                 </td>
                 {% endfor %}
                 <td class="no-export">
-                    <button class="btn btn-sm btn-outline-secondary"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#written-{{ s.id }}"
-                            aria-expanded="false">
+                    <button class="btn btn-sm btn-outline-secondary btn-view-written" type="button">
                         <i class="fa fa-comment"></i> View
                     </button>
-                </td>
-            </tr>
-            {# Collapsible written responses row #}
-            <tr class="collapse" id="written-{{ s.id }}">
-                <td colspan="16" style="background:var(--ht-section-bg); padding:16px 20px;">
-                    {% for eval in data.evals %}
-                    <div style="margin-bottom:{{ not loop.last ? '20px' : '0' }}; padding-bottom:{{ not loop.last ? '20px' : '0' }}; border-bottom:{{ not loop.last ? '1px solid #e0e0e0' : 'none' }};">
-                        <div style="font-size:13px; color:var(--ht-text-muted); margin-bottom:8px;">
-                            Evaluated by <strong>{{ eval.evaluator ? eval.evaluator.consolidatedFirstName ~ ' ' ~ eval.evaluator.lastName : 'Unknown' }}</strong>
-                            {% if eval.submittedAt %} on {{ eval.submittedAt|date('M j, Y') }}{% endif %}
-                        </div>
-                        {% if eval.evalPros %}
-                        <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Strengths</span><br>{{ eval.evalPros }}</div>
-                        {% endif %}
-                        {% if eval.evalCons %}
-                        <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Areas for Growth</span><br>{{ eval.evalCons }}</div>
-                        {% endif %}
-                        {% if eval.evalWhynot %}
-                        <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:#c0392b; letter-spacing:.04em;">Reason Not to Return</span><br>{{ eval.evalWhynot }}</div>
-                        {% endif %}
-                        {% if eval.evalComments %}
-                        <div><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Other Comments</span><br>{{ eval.evalComments }}</div>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
                 </td>
             </tr>
             {% endfor %}
@@ -179,4 +180,5 @@
     </table>
 </div>
 {% endif %}
+
 {% endblock %}
