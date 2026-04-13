@@ -189,9 +189,7 @@ $(document).ready(function() {
         order: [[2, 'asc'], [1, 'asc']],
         columnDefs: [
             { orderable: false, targets: [0, 6, 7, 8, 9] },
-        ],
-        dom: 'Bfrtip',
-        buttons: [{ extend: 'excelHtml5', exportOptions: { columns: ':not(.no-export)' }, title: 'Ambassador Evaluations {{ year }}' }]
+        ]
     });
 
     $('#staff-report-table').DataTable({
@@ -201,9 +199,7 @@ $(document).ready(function() {
         order: [[3, 'asc'], [1, 'asc']],
         columnDefs: [
             { orderable: false, targets: [0, 15] },
-        ],
-        dom: 'Bfrtip',
-        buttons: [{ extend: 'excelHtml5', exportOptions: { columns: ':not(.no-export)' }, title: 'Staff Evaluations {{ year }}' }]
+        ]
     });
 });
 </script>
