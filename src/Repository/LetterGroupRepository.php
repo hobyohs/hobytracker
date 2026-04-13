@@ -69,20 +69,7 @@ class LetterGroupRepository extends ServiceEntityRepository
                 ->setParameter('group', $group)
                 ->getQuery()
                 ->getSingleScalarResult();
-             
-            // $qb2 = $em->createQueryBuilder();   
-            // $boyAmb = $maleAmb+$qb2
-            //     ->select($qb2->expr()->count('a.id'))
-            //     ->from('App\Entity\LetterGroup', 'g')
-            //     ->leftJoin('g.ambassadors', 'a')
-            //     ->where('g = :group')
-            //     ->andWhere('a.gender = :sex')
-            //     ->setParameter('sex', 'Male')
-            //     ->setParameter('group', $group)
-            //     ->getQuery()
-            //     ->getSingleScalarResult();
-                           
-                
+
             $qb3 = $em->createQueryBuilder();
             $girlAmb = $qb3
                 ->select($qb3->expr()->count('a.id'))

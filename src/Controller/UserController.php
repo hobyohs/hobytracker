@@ -34,24 +34,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/requirements/{id}', name: 'app_user_edit_requirements', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_BOARD')]
-    public function requirementsEditAction(Request $request, StaffAssignment $staffAssignment, StaffAssignmentRepository $saRepo): Response
-    {
-        $form = $this->createForm('App\Form\UserRequirementsType', $staffAssignment);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $saRepo->save($staffAssignment, true);
-            return $this->redirectToRoute('app_user_requirements', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('user/edit_requirements.html.twig', [
-            'user' => $staffAssignment,
-            'form' => $form,
-        ]);
-    }
-
     #[Route('/requirements', name: 'app_user_requirements', methods: ['GET'])]
     #[IsGranted('ROLE_BOARD')]
     public function requirementsAction(StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response

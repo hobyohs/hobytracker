@@ -57,15 +57,6 @@ class ComingsAndGoingsController extends AbstractController
         
     }
 
-    #[Route('/{id}', name: 'app_comings_and_goings_show', methods: ['GET'])]
-    public function show(ComingsAndGoings $comingsAndGoing): Response
-    {
-        
-        return $this->render('comings_and_goings/show.html.twig', [
-            'comings_and_going' => $comingsAndGoing,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_comings_and_goings_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, ComingsAndGoings $comingsAndGoing, ComingsAndGoingsRepository $comingsAndGoingsRepository): Response
     {
