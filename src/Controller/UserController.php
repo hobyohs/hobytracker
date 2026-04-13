@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\StaffAssignment;
 use App\Entity\LetterGroup;
-use App\Form\UserType;
 use App\Repository\UserRepository;
 use App\Repository\StaffAssignmentRepository;
 use App\Service\SeminarYearService;

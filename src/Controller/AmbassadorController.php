@@ -5,7 +5,9 @@ namespace App\Controller;
 use App\Entity\Ambassador;
 use App\Entity\ComingsAndGoings;
 use App\Entity\User;
-use App\Form\AmbassadorType;
+use App\Form\CallType;
+use App\Form\CheckinType;
+use App\Form\CheckoutType;
 use App\Repository\AmbassadorRepository;
 use App\Repository\DormRoomRepository;
 use App\Entity\LetterGroup;
@@ -80,7 +82,7 @@ class AmbassadorController extends AbstractController
     #[Route('/calls/{id}', name: 'app_ambassador_call_form', methods: ['GET', 'POST'])]
     public function callsFormAction(Request $request, Ambassador $ambassador, EntityManagerInterface $entityManager): Response
     {
-        $editForm = $this->createForm('App\Form\CallType', $ambassador);
+        $editForm = $this->createForm(CallType::class, $ambassador);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -137,7 +139,7 @@ class AmbassadorController extends AbstractController
         $cgOverrideKey = "checkin_override_{$ambassador->getId()}_cg";
         $medsOverrideKey = "checkin_override_{$ambassador->getId()}_meds";
 
-        $editForm = $this->createForm('App\Form\CheckinType', $ambassador);
+        $editForm = $this->createForm(CheckinType::class, $ambassador);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -221,7 +223,7 @@ class AmbassadorController extends AbstractController
     #[Route('/checkout/{id}', name: 'app_ambassador_checkout_form', methods: ['GET', 'POST'])]
     public function checkoutFormAction(Request $request, Ambassador $ambassador, EntityManagerInterface $entityManager): Response
     {
-        $editForm = $this->createForm('App\Form\CheckoutType', $ambassador);
+        $editForm = $this->createForm(CheckoutType::class, $ambassador);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

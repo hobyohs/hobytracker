@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Applicant;
+use App\Form\ApplicantType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +25,7 @@ class ApplicantController extends AbstractController
     #[Route('/applicant/{id}/do', name: 'app_applicant_edit', methods: ['GET', 'POST'])]
     public function applicantEditAction(Request $request, Applicant $applicant, ApplicantRepository $applicantRepository): Response
     {
-        $editForm = $this->createForm('App\Form\ApplicantType', $applicant);
+        $editForm = $this->createForm(ApplicantType::class, $applicant);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
