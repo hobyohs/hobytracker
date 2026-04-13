@@ -1,79 +1,194 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+{% block maintag %}<main class="show ambassador">{% endblock %}
+
+{% macro likert_label(value) %}
+    {% if value == '1' %}Strongly Disagree
+    {% elseif value == '2' %}Disagree
+    {% elseif value == '3' %}Neutral
+    {% elseif value == '4' %}Agree
+    {% elseif value == '5' %}Strongly Agree
+    {% else %}—
+    {% endif %}
+{% endmacro %}
+
+{% macro likert_cards(field) %}
+    <div class="ht-radio-cards" data-radio-cards-for="{{ field.vars.id }}">
+        <div class="ht-radio-card" data-value="1"><div class="ht-radio-bullet"></div><div class="ht-radio-card-label">1 — Strongly Disagree</div></div>
+        <div class="ht-radio-card" data-value="2"><div class="ht-radio-bullet"></div><div class="ht-radio-card-label">2 — Disagree</div></div>
+        <div class="ht-radio-card" data-value="3"><div class="ht-radio-bullet"></div><div class="ht-radio-card-label">3 — Neutral</div></div>
+        <div class="ht-radio-card" data-value="4"><div class="ht-radio-bullet"></div><div class="ht-radio-card-label">4 — Agree</div></div>
+        <div class="ht-radio-card" data-value="5"><div class="ht-radio-bullet"></div><div class="ht-radio-card-label">5 — Strongly Agree</div></div>
+    </div>
+{% endmacro %}
 
 {% block body %}
-	<div class="form-page">
-		<h1>Evaluation: {{user.consolidatedFirstName}} {{user.lastName}}</h1>
-		<a href="{{ path('staffeval_index', {'letter': app.user.letterGroup.letter}) }}" class="red"><span class="fa fa-times"></span> Cancel</a><br><br>
-		{{ form_start(edit_form, {'attr': {'class': 'se-form'}}) }}
-			<div>
-				{{ form_label(edit_form.evalPros) }}
-				{{ form_errors(edit_form.evalPros) }}
-				{{ form_widget(edit_form.evalPros) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalCons) }}
-				{{ form_errors(edit_form.evalCons) }}
-				{{ form_widget(edit_form.evalCons) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalDiscussions) }}
-				{{ form_errors(edit_form.evalDiscussions) }}
-				{{ form_widget(edit_form.evalDiscussions) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalEnthusiastic) }}
-				{{ form_errors(edit_form.evalEnthusiastic) }}
-				{{ form_widget(edit_form.evalEnthusiastic) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalOrganized) }}
-				{{ form_errors(edit_form.evalOrganized) }}
-				{{ form_widget(edit_form.evalOrganized) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalEqually) }}
-				{{ form_errors(edit_form.evalEqually) }}
-				{{ form_widget(edit_form.evalEqually) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalResponsible) }}
-				{{ form_errors(edit_form.evalResponsible) }}
-				{{ form_widget(edit_form.evalResponsible) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalAttentive) }}
-				{{ form_errors(edit_form.evalAttentive) }}
-				{{ form_widget(edit_form.evalAttentive) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalInclude) }}
-				{{ form_errors(edit_form.evalInclude) }}
-				{{ form_widget(edit_form.evalInclude) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalProfessional) }}
-				{{ form_errors(edit_form.evalProfessional) }}
-				{{ form_widget(edit_form.evalProfessional) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalPunctual) }}
-				{{ form_errors(edit_form.evalPunctual) }}
-				{{ form_widget(edit_form.evalPunctual) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalWhynot) }}
-				{{ form_errors(edit_form.evalWhynot) }}
-				{{ form_widget(edit_form.evalWhynot) }}
-			</div>
-			<div>
-				{{ form_label(edit_form.evalComments) }}
-				{{ form_errors(edit_form.evalComments) }}
-				{{ form_widget(edit_form.evalComments) }}
-			</div>
-			<div>
-				<button class="col-12 btn btn-primary">Submit</button>
-			</div>
-		{{ form_end(edit_form) }}
-	</div>
+
+<a href="{{ path('staffeval_index', {'letter': subject.letterGroup.letter}) }}" class="ht-script-cancel">
+    <i class="fa fa-times" style="font-size:11px;"></i> Back to Group
+</a>
+
+{# ── Header ──────────────────────────────────────────────── #}
+<div class="ht-show-header">
+    {{ avatar.render(subject, 88) }}
+    <div class="ht-show-name">{{ subject.consolidatedFirstName }} {{ subject.lastName }}</div>
+    <div class="ht-show-subtitle">{{ subject.position }}</div>
+</div>
+
+{% if eval.isSubmitted() %}
+
+    {# ── READ-ONLY VIEW ───────────────────────────────────── #}
+    <div class="ht-script-body">
+        <div class="ht-script-info">
+            <h3>Evaluation Submitted</h3>
+            <p>Submitted{% if eval.submittedAt %} on {{ eval.submittedAt|date('M j, Y') }}{% endif %}.</p>
+        </div>
+
+        {# Written responses #}
+        <div class="ht-script-section">
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Written Responses</div>
+                <div class="ht-section-rows">
+                    <div class="ht-section-row">
+                        <div class="ht-section-label">Strengths</div>
+                        <div class="ht-section-value">{{ eval.evalPros ?: '—' }}</div>
+                    </div>
+                    <div class="ht-section-row">
+                        <div class="ht-section-label">Areas for Growth</div>
+                        <div class="ht-section-value">{{ eval.evalCons ?: '—' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Ratings #}
+        <div class="ht-script-section">
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Ratings</div>
+                <div class="ht-section-rows">
+                    {% set ratings = [
+                        ['Led Discussions',  eval.evalDiscussions],
+                        ['Enthusiastic',     eval.evalEnthusiastic],
+                        ['Organized',        eval.evalOrganized],
+                        ['Engaged Equally',  eval.evalEqually],
+                        ['Responsible',      eval.evalResponsible],
+                        ['Attentive',        eval.evalAttentive],
+                        ['Inclusive',        eval.evalInclude],
+                        ['Professional',     eval.evalProfessional],
+                        ['Punctual',         eval.evalPunctual],
+                    ] %}
+                    {% for row in ratings %}
+                        <div class="ht-section-row">
+                            <div class="ht-section-label">{{ row[0] }}</div>
+                            <div class="ht-section-value">{{ row[1] ? row[1] ~ '/5 — ' ~ _self.likert_label(row[1]) : '—' }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {# Why not / comments #}
+        {% if eval.evalWhynot or eval.evalComments %}
+        <div class="ht-script-section">
+            <div class="ht-script-content">
+                <div class="ht-section-rows">
+                    {% if eval.evalWhynot %}
+                    <div class="ht-section-row">
+                        <div class="ht-section-label">Reason Not to Return</div>
+                        <div class="ht-section-value">{{ eval.evalWhynot }}</div>
+                    </div>
+                    {% endif %}
+                    {% if eval.evalComments %}
+                    <div class="ht-section-row">
+                        <div class="ht-section-label">Additional Comments</div>
+                        <div class="ht-section-value">{{ eval.evalComments }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+{% else %}
+
+    {# ── EDITABLE FORM ────────────────────────────────────── #}
+    <div class="ht-script-body">
+        {{ form_start(form) }}
+
+        {# ── Written responses first ─────────────────────── #}
+        <div class="ht-script-section">
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Written Responses</div>
+                <h3>Strengths &amp; Challenges</h3>
+                <div class="ht-form-page" style="margin:0; padding:0; background:transparent; box-shadow:none;">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">{{ form.evalPros.vars.label }}</label>
+                        {{ form_widget(form.evalPros, {'attr': {'rows': 4, 'placeholder': "Describe this facilitator's greatest strengths…"}}) }}
+                    </div>
+                    <div>
+                        <label class="form-label fw-semibold">{{ form.evalCons.vars.label }}</label>
+                        {{ form_widget(form.evalCons, {'attr': {'rows': 4, 'placeholder': 'Describe challenges they faced and whether they grew…'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ── Ratings ─────────────────────────────────────── #}
+        {% set ratingFields = [
+            [form.evalDiscussions,  'This facilitator was effective in helping the group start discussions.'],
+            [form.evalEnthusiastic, 'This facilitator was enthusiastic and energetic throughout the seminar.'],
+            [form.evalOrganized,    'This facilitator was personally organized and helped keep the group on track.'],
+            [form.evalEqually,      "This facilitator treated each ambassador equally and didn't play favorites."],
+            [form.evalResponsible,  "This facilitator was responsible and effective in protecting the group's physical and emotional well-being."],
+            [form.evalAttentive,    'This facilitator was attentive during all speakers, panels, and activities — not on their phone or stepping out.'],
+            [form.evalInclude,      'This facilitator actively worked to include all ambassadors in group discussions and activities.'],
+            [form.evalProfessional, 'This facilitator acted professionally and maturely throughout the seminar.'],
+            [form.evalPunctual,     'This facilitator was punctual — the group never waited for them.'],
+        ] %}
+        {% for i, row in ratingFields %}
+            <div class="ht-script-section">
+                <div class="ht-script-content">
+                    <div class="ht-script-eyebrow">Rating {{ i + 1 }} of {{ ratingFields|length }}</div>
+                    <h3>{{ row[1] }}</h3>
+                    <div class="hidden">{{ form_widget(row[0]) }}</div>
+                    {{ _self.likert_cards(row[0]) }}
+                </div>
+            </div>
+        {% endfor %}
+
+        {# ── Return recommendation ────────────────────────── #}
+        <div class="ht-script-section">
+            <div class="ht-script-content">
+                <div class="ht-script-eyebrow">Return Recommendation</div>
+                <h3>Is there any reason this facilitator should not be invited back next year?</h3>
+                <div class="ht-form-page" style="margin:0; padding:0; background:transparent; box-shadow:none;">
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">{{ form.evalWhynot.vars.label }} <span class="text-muted fw-normal">(optional)</span></label>
+                        {{ form_widget(form.evalWhynot, {'attr': {'rows': 3, 'placeholder': 'If yes, explain why…'}}) }}
+                    </div>
+                    <div>
+                        <label class="form-label fw-semibold">{{ form.evalComments.vars.label }} <span class="text-muted fw-normal">(optional)</span></label>
+                        {{ form_widget(form.evalComments, {'attr': {'rows': 3, 'placeholder': 'Any other thoughts…'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# ── Submit actions ───────────────────────────────── #}
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">
+            <button type="submit" name="_submit_action" value="submit" class="ht-script-submit">
+                Submit Evaluation
+            </button>
+            <button type="submit" name="_submit_action" value="draft" class="btn btn-outline-secondary" style="border-radius:12px; padding:14px;">
+                <i class="fa fa-floppy-disk"></i> Save Draft
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+
+{% endif %}
 
 {% endblock %}

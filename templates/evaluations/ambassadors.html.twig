@@ -1,30 +1,78 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
+
 <a href="{{ path('app_letter_group_show', {'letter': group.letter}) }}" class="ht-back-link">
     <i class="fa fa-chevron-left" style="font-size:11px;"></i> Group {{ group.letter }}
 </a>
-<div class="ht-page-header"><h1>{{ group.printLetterGroup | raw }} &mdash; Ambassador Evaluations</h1></div>
+
+<div class="ht-page-header">
+    <h1>{{ group.printLetterGroup | raw }} — Ambassador Evaluations</h1>
+</div>
+
+{% if not evalOpen %}
+    <div class="alert alert-warning mx-3 mb-3">
+        Evaluations are not currently open. They open on the last day of seminar and close 7 days later.
+    </div>
+{% endif %}
+
 <div class="ht-dt-card">
-    <table class="table" id="my-group-ae-table">
+    <table class="table" id="amb-eval-table">
         <thead><tr>
-            <th>View</th><th>First Name</th><th>Last Name</th>
-            <th>Engagement</th><th>Service</th><th>Strengths</th>
-            <th>Challenges</th><th>Rec.</th><th>Comments</th>
+            <th class="no-export" style="width:40px;"></th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+            <th class="no-export"></th>
         </tr></thead>
         <tbody>
             {% for ambassador in group.ambassadors %}
+                {% set eval = evalMap[ambassador.id] ?? null %}
+                {% set status = eval ? eval.status : 'not_started' %}
                 <tr>
-                    <td class="edit-link view-link"><a href="{{ path('ambeval_edit', { 'id': ambassador.id }) }}"><span class="fa fa-pencil"></span></a></td>
-                    <td>{{ambassador.consolidatedFirstName}}</td><td>{{ambassador.lastName}}</td>
-                    <td>{{ (ambassador.evalengaged is not null ? ambassador.evalengaged ~ '/5') }}</td>
-                    <td>{{ (ambassador.evalservice is not null ? ambassador.evalservice ~ '/5') }}</td>
-                    <td>{{ambassador.evalpros}}</td><td>{{ambassador.evalcons}}</td>
-                    <td>{% if ambassador.evalrecommendation == 1 %}Yes{% elseif ambassador.evalrecommendation == 0 and ambassador.evalrecommendation is not null %}No{% endif %}</td>
-                    <td>{{ambassador.evalcomments}}</td>
+                    <td>{{ avatar.render(ambassador, 36) }}</td>
+                    <td>{{ ambassador.consolidatedFirstName }}</td>
+                    <td>{{ ambassador.lastName }}</td>
+                    <td>
+                        {% if status == 'submitted' %}
+                            <span class="badge bg-success">Submitted</span>
+                        {% elseif status == 'draft' %}
+                            <span class="badge bg-warning text-dark">Draft Saved</span>
+                        {% else %}
+                            <span class="badge bg-light text-secondary border">Not Started</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        {% if status == 'submitted' %}
+                            <a href="{{ path('ambeval_form', {'id': ambassador.id}) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fa fa-eye"></i> View
+                            </a>
+                        {% elseif evalOpen %}
+                            <a href="{{ path('ambeval_form', {'id': ambassador.id}) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fa fa-pencil"></i> {{ status == 'draft' ? 'Continue' : 'Start' }}
+                            </a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#amb-eval-table').DataTable({
+        responsive: false,
+        paging: false,
+        info: false,
+        searching: false,
+        order: [[2, 'asc']],
+        columnDefs: [
+            { orderable: false, targets: [0, 3, 4] }
+        ]
+    });
+});
+</script>
+
 {% endblock %}

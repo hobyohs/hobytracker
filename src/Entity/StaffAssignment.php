@@ -119,49 +119,6 @@ class StaffAssignment
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $psmsUploadedOn = null;
 
-    // Evaluations
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $evalPros = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $evalCons = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalDiscussions = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalEnthusiastic = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalOrganized = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalEqually = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalResponsible = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalAttentive = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalInclude = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalProfessional = null;
-
-    #[ORM\Column(length: 5, nullable: true)]
-    private ?string $evalPunctual = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $evalWhynot = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $evalComments = null;
-
-    #[ORM\Column(options: ['default' => false])]
-    private bool $evalStatus = false;
-
     // Assignments
     #[ORM\Column(length: 100, nullable: true)]
     private ?string $assignmentCheckIn = null;
@@ -443,48 +400,6 @@ class StaffAssignment
 
     public function getPsmsUploadedOn(): ?string { return $this->psmsUploadedOn; }
     public function setPsmsUploadedOn(?string $v): self { $this->psmsUploadedOn = $v; return $this; }
-
-    public function getEvalPros(): ?string { return $this->evalPros; }
-    public function setEvalPros(?string $v): self { $this->evalPros = $v; return $this; }
-
-    public function getEvalCons(): ?string { return $this->evalCons; }
-    public function setEvalCons(?string $v): self { $this->evalCons = $v; return $this; }
-
-    public function getEvalDiscussions(): ?string { return $this->evalDiscussions; }
-    public function setEvalDiscussions(?string $v): self { $this->evalDiscussions = $v; return $this; }
-
-    public function getEvalEnthusiastic(): ?string { return $this->evalEnthusiastic; }
-    public function setEvalEnthusiastic(?string $v): self { $this->evalEnthusiastic = $v; return $this; }
-
-    public function getEvalOrganized(): ?string { return $this->evalOrganized; }
-    public function setEvalOrganized(?string $v): self { $this->evalOrganized = $v; return $this; }
-
-    public function getEvalEqually(): ?string { return $this->evalEqually; }
-    public function setEvalEqually(?string $v): self { $this->evalEqually = $v; return $this; }
-
-    public function getEvalResponsible(): ?string { return $this->evalResponsible; }
-    public function setEvalResponsible(?string $v): self { $this->evalResponsible = $v; return $this; }
-
-    public function getEvalAttentive(): ?string { return $this->evalAttentive; }
-    public function setEvalAttentive(?string $v): self { $this->evalAttentive = $v; return $this; }
-
-    public function getEvalInclude(): ?string { return $this->evalInclude; }
-    public function setEvalInclude(?string $v): self { $this->evalInclude = $v; return $this; }
-
-    public function getEvalProfessional(): ?string { return $this->evalProfessional; }
-    public function setEvalProfessional(?string $v): self { $this->evalProfessional = $v; return $this; }
-
-    public function getEvalPunctual(): ?string { return $this->evalPunctual; }
-    public function setEvalPunctual(?string $v): self { $this->evalPunctual = $v; return $this; }
-
-    public function getEvalWhynot(): ?string { return $this->evalWhynot; }
-    public function setEvalWhynot(?string $v): self { $this->evalWhynot = $v; return $this; }
-
-    public function getEvalComments(): ?string { return $this->evalComments; }
-    public function setEvalComments(?string $v): self { $this->evalComments = $v; return $this; }
-
-    public function isEvalStatus(): bool { return $this->evalStatus; }
-    public function setEvalStatus(bool $v): self { $this->evalStatus = $v; return $this; }
 
     public function getAssignmentCheckIn(): ?string { return $this->assignmentCheckIn; }
     public function setAssignmentCheckIn(?string $v): self { $this->assignmentCheckIn = $v; return $this; }

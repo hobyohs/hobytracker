@@ -1,0 +1,184 @@
+{% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+{% block maintag %}<main class="wide">{% endblock %}
+
+{% block body %}
+
+<div class="ht-page-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <h1>Evaluations Report — {{ year }}</h1>
+    <form method="get" action="{{ path('eval_report') }}" style="display:flex; align-items:center; gap:8px;">
+        <label for="year-select" class="mb-0 text-muted" style="font-size:14px;">Year:</label>
+        <select id="year-select" name="year" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+            {% for y in range(currentYear, currentYear - 4, -1) %}
+                <option value="{{ y }}" {{ y == year ? 'selected' : '' }}>{{ y }}</option>
+            {% endfor %}
+        </select>
+    </form>
+</div>
+
+{# ── AMBASSADOR EVALUATIONS ────────────────────────────── #}
+<div class="ht-page-header" style="margin-top:8px;">
+    <h2 style="font-size:20px;">Ambassador Evaluations
+        <span class="badge bg-secondary ms-2" style="font-size:13px; font-weight:500;">{{ ambEvals|length }} submitted</span>
+    </h2>
+</div>
+
+{% if ambEvals is empty %}
+    <div class="ht-dt-card" style="padding:24px; color:var(--ht-text-muted);">No submitted ambassador evaluations for {{ year }}.</div>
+{% else %}
+<div class="ht-dt-card ht-dt-scrollable">
+    <table class="table table-sm" id="amb-report-table">
+        <thead><tr>
+            <th class="no-export" style="width:36px;"></th>
+            <th>Name</th>
+            <th>Group</th>
+            <th>Recommend</th>
+            <th>Engaged</th>
+            <th>Service</th>
+            <th>Strengths</th>
+            <th>Challenges</th>
+            <th>Comments</th>
+            <th>Submitted By</th>
+        </tr></thead>
+        <tbody>
+            {% for eval in ambEvals %}
+            <tr>
+                <td>{{ avatar.render(eval.ambassador, 32) }}</td>
+                <td>
+                    <a href="{{ path('app_ambassador_show', {'id': eval.ambassador.id}) }}">
+                        {{ eval.ambassador.consolidatedFirstName }} {{ eval.ambassador.lastName }}
+                    </a>
+                </td>
+                <td>
+                    {% if eval.ambassador.letterGroup %}
+                        <span class="ht-group-badge ht-group-{{ eval.ambassador.letterGroup.color }}">
+                            {{ eval.ambassador.letterGroup.letter }}
+                        </span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if eval.evalRecommendation == '1' %}
+                        <span class="badge bg-success">Yes</span>
+                    {% elseif eval.evalRecommendation == '0' %}
+                        <span class="badge bg-danger">No</span>
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
+                <td>{{ eval.evalEngaged ? eval.evalEngaged ~ '/5' : '—' }}</td>
+                <td>{{ eval.evalService ? eval.evalService ~ '/5' : '—' }}</td>
+                <td class="text-wrap" style="max-width:220px; font-size:13px;">{{ eval.evalPros ?: '—' }}</td>
+                <td class="text-wrap" style="max-width:220px; font-size:13px;">{{ eval.evalCons ?: '—' }}</td>
+                <td class="text-wrap" style="max-width:180px; font-size:13px;">{{ eval.evalComments ?: '' }}</td>
+                <td style="font-size:13px; white-space:nowrap;">
+                    {{ eval.submittedBy ? eval.submittedBy.consolidatedFirstName ~ ' ' ~ eval.submittedBy.lastName : '—' }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{# ── STAFF EVALUATIONS ─────────────────────────────────── #}
+<div class="ht-page-header" style="margin-top:32px;">
+    <h2 style="font-size:20px;">Staff Evaluations
+        <span class="badge bg-secondary ms-2" style="font-size:13px; font-weight:500;">{{ staffAgg|length }} staff evaluated</span>
+    </h2>
+</div>
+
+{% if staffAgg is empty %}
+    <div class="ht-dt-card" style="padding:24px; color:var(--ht-text-muted);">No submitted staff evaluations for {{ year }}.</div>
+{% else %}
+
+{# Hidden written-response content blocks, keyed by staff ID, used by DataTables child rows #}
+{% for data in staffAgg %}
+{% set s = data.subject %}
+<div id="written-data-{{ s.id }}" class="d-none">
+    <div style="padding:16px 20px; background:var(--ht-section-bg);">
+        {% for eval in data.evals %}
+        <div style="margin-bottom:{{ not loop.last ? '20px' : '0' }}; padding-bottom:{{ not loop.last ? '20px' : '0' }}; border-bottom:{{ not loop.last ? '1px solid #e0e0e0' : 'none' }};">
+            <div style="font-size:13px; color:var(--ht-text-muted); margin-bottom:8px;">
+                Evaluated by <strong>{{ eval.evaluator ? eval.evaluator.consolidatedFirstName ~ ' ' ~ eval.evaluator.lastName : 'Unknown' }}</strong>
+                {% if eval.submittedAt %} on {{ eval.submittedAt|date('M j, Y') }}{% endif %}
+            </div>
+            {% if eval.evalPros %}
+            <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Strengths</span><br>{{ eval.evalPros }}</div>
+            {% endif %}
+            {% if eval.evalCons %}
+            <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Areas for Growth</span><br>{{ eval.evalCons }}</div>
+            {% endif %}
+            {% if eval.evalWhynot %}
+            <div style="margin-bottom:6px;"><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:#c0392b; letter-spacing:.04em;">Reason Not to Return</span><br>{{ eval.evalWhynot }}</div>
+            {% endif %}
+            {% if eval.evalComments %}
+            <div><span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--ht-text-muted); letter-spacing:.04em;">Other Comments</span><br>{{ eval.evalComments }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+<div class="ht-dt-card ht-dt-scrollable">
+    <table class="table table-sm" id="staff-report-table">
+        <thead><tr>
+            <th class="no-export" style="width:36px;"></th>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Group</th>
+            <th># Evals</th>
+            <th>Avg Score</th>
+            <th>Discussions</th>
+            <th>Enthusiastic</th>
+            <th>Organized</th>
+            <th>Equally</th>
+            <th>Responsible</th>
+            <th>Attentive</th>
+            <th>Inclusive</th>
+            <th>Professional</th>
+            <th>Punctual</th>
+            <th class="no-export">Written</th>
+        </tr></thead>
+        <tbody>
+            {% for data in staffAgg %}
+            {% set s = data.subject %}
+            <tr data-staff-id="{{ s.id }}">
+                <td>{{ avatar.render(s, 32) }}</td>
+                <td>
+                    <a href="{{ path('app_user_show', {'id': s.userId}) }}">
+                        {{ s.consolidatedFirstName }} {{ s.lastName }}
+                    </a>
+                </td>
+                <td style="font-size:13px;">{{ s.position }}</td>
+                <td>
+                    {% if s.letterGroup %}
+                        <span class="ht-group-badge ht-group-{{ s.letterGroup.color }}">{{ s.letterGroup.letter }}</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">{{ data.evalCount }}</td>
+                <td class="text-center fw-semibold">
+                    {% if data.overallAvg %}
+                        <span class="badge {{ data.overallAvg >= 4 ? 'bg-success' : (data.overallAvg >= 3 ? 'bg-warning text-dark' : 'bg-danger') }}">
+                            {{ data.overallAvg }}/5
+                        </span>
+                    {% else %}—{% endif %}
+                </td>
+                {% for field in ['evalDiscussions','evalEnthusiastic','evalOrganized','evalEqually','evalResponsible','evalAttentive','evalInclude','evalProfessional','evalPunctual'] %}
+                <td class="text-center" style="font-size:13px;">
+                    {{ data.averages[field] is not null ? data.averages[field] : '—' }}
+                </td>
+                {% endfor %}
+                <td class="no-export">
+                    <button class="btn btn-sm btn-outline-secondary btn-view-written" type="button">
+                        <i class="fa fa-comment"></i> View
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

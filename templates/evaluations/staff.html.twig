@@ -1,27 +1,82 @@
 {% extends 'base.html.twig' %}
+{% import 'partials/_avatar.html.twig' as avatar %}
 {% block maintag %}<main class="wide">{% endblock %}
 {% block body %}
+
 <a href="{{ path('app_letter_group_show', {'letter': group.letter}) }}" class="ht-back-link">
     <i class="fa fa-chevron-left" style="font-size:11px;"></i> Group {{ group.letter }}
 </a>
-<div class="ht-page-header"><h1>{{ group.printLetterGroup | raw }} &mdash; Co-Facilitator Evaluations</h1></div>
+
+<div class="ht-page-header">
+    <h1>{{ group.printLetterGroup | raw }} — Co-Facilitator Evaluations</h1>
+</div>
+
+{% if not evalOpen %}
+    <div class="alert alert-warning mx-3 mb-3">
+        Evaluations are not currently open. They open on the last day of seminar and close 7 days later.
+    </div>
+{% endif %}
+
 <div class="ht-dt-card">
-    <table class="table" id="my-group-se-table">
+    <table class="table" id="staff-eval-table">
         <thead><tr>
-            <th>View</th><th>First Name</th><th>Last Name</th><th>Role</th><th>Completed?</th>
+            <th class="no-export" style="width:40px;"></th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="no-export"></th>
         </tr></thead>
         <tbody>
             {% for fac in group.facilitators %}
-                {% if fac.userId != app.user.id %}
+                {% if fac.id != myAssignId %}
+                    {% set eval = evalMap[fac.id] ?? null %}
+                    {% set status = eval ? eval.status : 'not_started' %}
                     <tr>
-                        <td class="view-link"><a href="{{ path('staffeval_edit', { 'id': fac.id }) }}"><span class="fa fa-pencil"></span></a></td>
-                        <td>{{fac.consolidatedFirstName}}</td><td>{{fac.lastName}}</td>
-                        <td>{{fac.position}}</td>
-                        <td>{% if fac.evalStatus == 1 %}Yes{% elseif fac.evalStatus == 0 and fac.evalStatus is not null %}No{% endif %}</td>
+                        <td>{{ avatar.render(fac, 36) }}</td>
+                        <td>{{ fac.consolidatedFirstName }}</td>
+                        <td>{{ fac.lastName }}</td>
+                        <td>{{ fac.position }}</td>
+                        <td>
+                            {% if status == 'submitted' %}
+                                <span class="badge bg-success">Submitted</span>
+                            {% elseif status == 'draft' %}
+                                <span class="badge bg-warning text-dark">Draft Saved</span>
+                            {% else %}
+                                <span class="badge bg-light text-secondary border">Not Started</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if status == 'submitted' %}
+                                <a href="{{ path('staffeval_form', {'id': fac.id}) }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="fa fa-eye"></i> View
+                                </a>
+                            {% elseif evalOpen %}
+                                <a href="{{ path('staffeval_form', {'id': fac.id}) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa fa-pencil"></i> {{ status == 'draft' ? 'Continue' : 'Start' }}
+                                </a>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endif %}
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('#staff-eval-table').DataTable({
+        responsive: false,
+        paging: false,
+        info: false,
+        searching: false,
+        order: [[2, 'asc']],
+        columnDefs: [
+            { orderable: false, targets: [0, 4, 5] }
+        ]
+    });
+});
+</script>
+
 {% endblock %}

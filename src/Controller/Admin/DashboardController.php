@@ -14,7 +14,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Ambassador;
+use App\Entity\AmbassadorEvaluation;
 use App\Entity\StaffAssignment;
+use App\Entity\StaffEvaluation;
 use App\Entity\User;
 use App\Entity\ComingsAndGoings;
 use App\Entity\LetterGroup;
@@ -60,7 +62,10 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToRoute('Groups Demographics', 'fas fa-chart-pie', 'admin_group_demo_report'),
             MenuItem::linkToRoute('Shirt Sizes', 'fas fa-shirt', 'admin_shirt_size_report'),
             MenuItem::linkToCrud('Staff Applications', 'fas fa-clipboard-question', Applicant::class),
-            MenuItem::linkToRoute('Evaluations', 'fas fa-gavel', 'admin_evaluations'),
+            MenuItem::section('Evaluations'),
+            MenuItem::linkToCrud('Ambassador Evaluations', 'fas fa-star', AmbassadorEvaluation::class),
+            MenuItem::linkToCrud('Staff Evaluations', 'fas fa-gavel', StaffEvaluation::class),
+            MenuItem::linkToRoute('Evaluations Report', 'fas fa-chart-bar', 'admin_evaluations'),
         ];
     }
 
@@ -105,14 +110,15 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route('/admin/evaluations', name: 'admin_evaluations')]
-    public function evaluationsAction(StaffAssignmentRepository $saRepo, AmbassadorRepository $ambassadorRepository): Response
-    {
+    public function evaluationsAction(
+        \App\Repository\AmbassadorEvaluationRepository $ambEvalRepo,
+        \App\Repository\StaffEvaluationRepository $staffEvalRepo,
+    ): Response {
         $year = $this->seminarYearService->getActiveSeminarYear();
         return $this->render('bundles/EasyAdminBundle/evaluations.html.twig', [
-            'ambassador_evaluations' => $ambassadorRepository->findAllWithEvaluations(),
-            'user_evaluations' => $saRepo->findAllWithEvaluations($year),
-            'ambassador_nulls' => $ambassadorRepository->nullEvaluations(),
-            'user_nulls' => $saRepo->nullEvaluations($year),
+            'ambassador_evaluations' => $ambEvalRepo->findSubmittedByYear($year),
+            'user_evaluations'       => $staffEvalRepo->findSubmittedByYear($year),
+            'year'                   => $year,
         ]);
     }
 }

@@ -418,51 +418,7 @@ class AmbassadorController extends AbstractController
         };
     }
 
-    #[Route('/evaluations/{letter}', name: 'ambeval_index', methods: ['GET'])]
-    public function ambassadorEvalIndex(LetterGroup $letterGroup): Response
-    {
-        if ($this->getUser()->getLetterGroup() == $letterGroup) {
-            return $this->render('evaluations/ambassadors.html.twig', array(
-                'group' => $letterGroup,
-            ));
-        }
-        
-        else {
-            $this->addFlash(
-                'error',
-                'You are not authorized to view this page. If you think this is in error, please contact the Director of Facilitators.'
-            );
-            return $this->render('default/flash.html.twig');
-        }
-    }
-    
-    #[Route('/evaluations/{id}/do', name: 'ambeval_edit', methods: ['GET', 'POST'])]
-    public function ambassadorEvalEditAction(Request $request, Ambassador $ambassador, AmbassadorRepository $ambassadorRepository): Response
-    {
-        if ($this->getUser()->getLetterGroup() == $ambassador->getLetterGroup()) {
-            $editForm = $this->createForm('App\Form\AmbEvaluationType', $ambassador);
-            $editForm->handleRequest($request);
-    
-            if ($editForm->isSubmitted() && $editForm->isValid()) {
-                $ambassadorRepository->save($ambassador, true);
-    
-                return $this->redirectToRoute('ambeval_index', array('letter' => $this->getUser()->getLetterGroup()->getLetter()));
-            }
-    
-            return $this->render('evaluations/edit_ambassador.html.twig', array(
-                'ambassador' => $ambassador,
-                'edit_form' => $editForm->createView(),
-            ));
-        }
-        else {
-            $this->addFlash(
-                'error',
-                'You are not authorized to view this page. If you feel this is in error, please contact the Director of Facilitators.'
-            );
-            return $this->render('default/flash.html.twig');
-        }
-    }
-    
+
     #[Route('/{id}', name: 'app_ambassador_show', methods: ['GET'])]
     public function show(Ambassador $ambassador): Response
     {

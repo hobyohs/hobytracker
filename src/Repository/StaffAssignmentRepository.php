@@ -99,31 +99,11 @@ class StaffAssignmentRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function findAllWithEvaluations(int $year): array
-    {
-        return $this->createQueryBuilder('sa')
-            ->leftJoin('sa.user', 'u')
-            ->addSelect('u')
-            ->leftJoin('sa.letterGroup', 'g')
-            ->addSelect('g')
-            ->andWhere('sa.seminarYear = :year')
-            ->andWhere('sa.evalPros IS NOT NULL')
-            ->setParameter('year', $year)
-            ->orderBy('u.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
-    }
+    /** @deprecated Use StaffEvaluationRepository::findSubmittedByYear() */
+    public function findAllWithEvaluations(int $year): array { return []; }
 
-    public function nullEvaluations(int $year): int
-    {
-        return (int) $this->createQueryBuilder('sa')
-            ->select('COUNT(sa.id)')
-            ->andWhere('sa.seminarYear = :year')
-            ->andWhere('sa.evalPros IS NULL')
-            ->setParameter('year', $year)
-            ->getQuery()
-            ->getSingleScalarResult();
-    }
+    /** @deprecated Use StaffEvaluationRepository::findSubmittedByYear() */
+    public function nullEvaluations(int $year): int { return 0; }
 
     public function getPsmsLastUpdated(int $year): string
     {

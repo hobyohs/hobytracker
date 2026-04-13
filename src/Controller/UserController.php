@@ -87,42 +87,6 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/evaluations/{letter}', name: 'staffeval_index', methods: ['GET'])]
-    public function staffEvalIndex(LetterGroup $letterGroup): Response
-    {
-        if ($this->getUser()->getLetterGroup() == $letterGroup) {
-            return $this->render('evaluations/staff.html.twig', [
-                'group' => $letterGroup,
-            ]);
-        } else {
-            $this->addFlash('error', 'You are not authorized to view this page. If you think this is in error, please contact the Director of Facilitators.');
-            return $this->render('default/flash.html.twig');
-        }
-    }
-
-    #[Route('/evaluations/{id}/do', name: 'staffeval_edit', methods: ['GET', 'POST'])]
-    public function staffEvalEditAction(Request $request, StaffAssignment $staffAssignment, StaffAssignmentRepository $saRepo): Response
-    {
-        if ($this->getUser()->getLetterGroup() == $staffAssignment->getLetterGroup()) {
-            $editForm = $this->createForm('App\Form\StaffEvaluationType', $staffAssignment);
-            $editForm->handleRequest($request);
-
-            if ($editForm->isSubmitted() && $editForm->isValid()) {
-                $staffAssignment->setEvalStatus(true);
-                $saRepo->save($staffAssignment, true);
-                return $this->redirectToRoute('staffeval_index', ['letter' => $this->getUser()->getLetterGroup()->getLetter()]);
-            }
-
-            return $this->render('evaluations/edit_staff.html.twig', [
-                'user' => $staffAssignment,
-                'edit_form' => $editForm->createView(),
-            ]);
-        } else {
-            $this->addFlash('error', 'You are not authorized to view this page. If you feel this is in error, please contact the Director of Facilitators.');
-            return $this->render('default/flash.html.twig');
-        }
-    }
-
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {

@@ -120,9 +120,14 @@
                     <i class="fa fa-kit-medical"></i> Medical Report
                 </a>
             {% endif %}
+            {% if is_granted('ROLE_DOF') %}
+                <a href="{{ path('eval_report') }}" class="sidebar-nav-link">
+                    <i class="fa fa-gavel"></i> Evaluations Report
+                </a>
+            {% endif %}
         {% endif %}
 
-        {# ── My Stuff ─────────────────────────────────────── #}
+        {# ── My Assignments ───────────────────────────────── #}
         <div class="sidebar-divider"></div>
         <a href="{{ path('app_user_my_assignments') }}" class="sidebar-nav-link">
             <i class="fa fa-clipboard-check"></i> My Assignments

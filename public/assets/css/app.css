@@ -839,6 +839,8 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 }
 @media (min-width: 768px) { .ht-dt-card { margin: 4px 0 28px; } }
 .ht-dt-card .dataTables_wrapper { padding-top: 12px; }
+/* Wide report tables (responsive: false) scroll horizontally on mobile */
+.ht-dt-card.ht-dt-scrollable { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .ht-dt-card .dataTables_info {
   font-size: 11px;
   color: #bbb;
@@ -2948,4 +2950,47 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
   color: var(--ht-navy);
   font-weight: 600;
   box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 0 0 0.5px rgba(0,0,0,0.05);
+}
+
+/* ── Eval Report Tables ──────────────────────────────────── */
+#amb-report-table th,
+#staff-report-table th {
+  padding-right: 20px; /* room for DataTables sort icon */
+  white-space: nowrap;
+}
+#amb-report-table td,
+#staff-report-table td {
+  vertical-align: middle;
+}
+
+/* ── Eval report: sort icon overlap fix (stronger specificity) ── */
+table#amb-report-table.dataTable thead th,
+table#staff-report-table.dataTable thead th {
+  padding-right: 26px !important;
+}
+
+/* ── Scrollable report tables: full-width search box ──────── */
+.ht-dt-scrollable .dataTables_wrapper .dataTables_filter {
+  text-align: left;
+  margin-bottom: 12px;
+}
+.ht-dt-scrollable .dataTables_wrapper .dataTables_filter label {
+  display: block;
+  width: 100%;
+  font-size: 0;
+}
+.ht-dt-scrollable .dataTables_wrapper .dataTables_filter input {
+  display: block;
+  width: 100% !important;
+  margin-left: 0 !important;
+  border: 1px solid var(--ht-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 16px;
+  outline: none;
+  background: var(--ht-section-bg);
+}
+.ht-dt-scrollable .dataTables_wrapper .dataTables_filter input:focus {
+  border-color: var(--ht-navy);
+  background: var(--ht-white);
 }

@@ -296,6 +296,28 @@ $(document).ready(function() {
     {responsivePriority:5,targets:0}
   ]});
 
+  // eval report: Av(0) Name(1) Group(2) Recommend(3) ...written(6-9)
+  $('table#amb-report-table').DataTable({ order:[[2,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,6,7,8,9], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
+  // eval report staff — child rows for written responses
+  var staffReportTable = $('table#staff-report-table').DataTable({ order:[[3,"asc"],[1,"asc"]], responsive: false, columnDefs: [
+    { targets: [0,15], orderable: false }, { targets: 0, searchable: false }
+  ], initComplete: function() { $(this).closest('.ht-dt-card').find('.dataTables_filter input').attr('placeholder','Search…'); initSearchClear(this.api().table().container().closest('.ht-dt-card')); }});
+  $('table#staff-report-table').on('click', '.btn-view-written', function() {
+    var tr = $(this).closest('tr');
+    var row = staffReportTable.row(tr);
+    var staffId = tr.data('staff-id');
+    if (row.child.isShown()) {
+      row.child.hide();
+      $(this).html('<i class="fa fa-comment"></i> View');
+    } else {
+      var content = document.getElementById('written-data-' + staffId);
+      row.child(content ? content.innerHTML : '<p style="padding:12px;">No written responses.</p>').show();
+      $(this).html('<i class="fa fa-comment"></i> Hide');
+    }
+  });
+
   // ── Responsive table: search clear button ─────────────────────
   // Works for both DataTables filter inputs (.dataTables_filter input)
   // and custom card-filter inputs (.ht-search-input).

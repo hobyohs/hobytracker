@@ -1,155 +1,79 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block content_title 'Evaluations' %}
+{% block content_title %}Evaluations — {{ year }}{% endblock %}
 
 {% block main %}
 
-	<div class="table-responsive table-striped table-sm mb-5">
-		<h3>Ambassador Evaluations</h3>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Ambassador</th>
-					<th>Facilitators</th>
-					<th>Recommended?</th>
-					<th>Engaged</th>
-					<th>Committed</th>
-					<th>Pros</th>
-					<th>Cons</th>
-					<th>Comments</th>
-				</tr>
-			</thead>
-	
-			<tbody>
-				{% for ambassador in ambassador_evaluations %}
-					<tr>
-						<td>
-							<a href="{{ ea_url()
-								.setController('App\\Controller\\Admin\\AmbassadorCrudController')
-								.setAction('detail')
-								.setEntityId(ambassador.id)
-							}}">{{ambassador.getFullName}}</a>
-						</td>
-						<td>
-							<ul>
-							{% for facilitator in ambassador.letterGroup.facilitators %}
-								<li>{{facilitator}}</li>
-							{% endfor %}
-							</ul>
-						</td>
-						<td>
-							{{ambassador.evalRecommendation|parse_boolean}}
-						</td>
-						<td>
-							{{ambassador.evalEngaged|parse_likert}}
-						</td>
-						<td>
-							{{ambassador.evalService|parse_likert}}
-						</td>
-						<td>
-							{{ambassador.evalPros}}
-						</td>
-						<td>
-							{{ambassador.evalCons}}
-						</td>
-						<td>
-							{{ambassador.evalComments}}
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{% if ambassador_nulls > 0 %}
-			<h5>There {{ ambassador_nulls == 1 ? 'is' : 'are' }} {{ ambassador_nulls }} {{ ambassador_nulls == 1 ? 'ambassador' : 'ambassadors' }} who {{ ambassador_nulls == 1 ? 'has' : 'have' }} not been evaluated.</h5>
-		{% endif %}
-	</div>
-	
-	<div class="table-responsive table-striped table-condensed mb-5" style="font-size: 12px !important;">
-		<h3>Volunteer Evaluations</h3>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Volunteer</th>
-					<th>Co-Facilitator(s)</th>
-					<th>Pros</th>
-					<th>Cons</th>
-					<th>Discussions</th>
-					<th>Enthusiastic</th>
-					<th>Organized</th>
-					<th>Equality</th>
-					<th>Responsible</th>
-					<th>Attentive</th>
-					<th>Inclusive</th>
-					<th>Professional</th>
-					<th>Punctual</th>
-					<th>Reasons Not to Invite Back</th>
-					<th>Comments</th>
-				</tr>
-			</thead>
-	
-			<tbody>
-				{% for user in user_evaluations %}
-					<tr>
-						<td>
-							<a href="{{ ea_url()
-								.setController('App\\Controller\\Admin\\StaffAssignmentCrudController')
-								.setAction('detail')
-								.setEntityId(user.id)
-							}}">{{user}}</a>
-						</td>
-						<td>
-							<ul>
-							{% for facilitator in user.Cofacilitators %}
-								<li>{{facilitator}}</li>
-							{% endfor %}
-							</ul>
-						</td>
-						<td>
-							{{user.evalPros}}
-						</td>
-						<td>
-							{{user.evalCons}}
-						</td>
-						<td>
-							{{user.evalDiscussions|parse_likert}}
-						</td>
-						<td>
-							{{user.evalEnthusiastic|parse_likert}}
-						</td>
-						<td>
-							{{user.evalOrganized|parse_likert}}
-						</td>
-						<td>
-							{{user.evalEqually|parse_likert}}
-						</td>
-						<td>
-							{{user.evalResponsible|parse_likert}}
-						</td>
-						<td>
-							{{user.evalAttentive|parse_likert}}
-						</td>
-						<td>
-							{{user.evalInclude|parse_likert}}
-						</td>
-						<td>
-							{{user.evalProfessional|parse_likert}}
-						</td>
-						<td>
-							{{user.evalPunctual|parse_likert}}
-						</td>
-						<td>
-							{{user.evalWhynot}}
-						</td>
-						<td>
-							{{user.evalComments}}
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{% if user_nulls > 0 %}
-			<h5>There {{ user_nulls == 1 ? 'is' : 'are' }} {{ user_nulls }} {{ user_nulls == 1 ? 'volunteer' : 'volunteers' }} who {{ user_nulls == 1 ? 'has' : 'have' }} not been evaluated.</h5>
-		{% endif %}
-	</div>
+<p class="mb-4">
+    For the full interactive report, see
+    <a href="{{ path('eval_report', {'year': year}) }}">Evaluations Report</a>
+    in the main app (requires DOF role).
+</p>
 
-{% endblock main %}
+<div class="table-responsive mb-5">
+    <h3>Ambassador Evaluations <small class="text-muted" style="font-size:14px;">{{ ambassador_evaluations|length }} submitted</small></h3>
+    {% if ambassador_evaluations is empty %}
+        <p class="text-muted">No submitted ambassador evaluations for {{ year }}.</p>
+    {% else %}
+    <table class="table table-sm table-striped">
+        <thead><tr>
+            <th>Ambassador</th><th>Group</th><th>Recommend</th>
+            <th>Engaged</th><th>Service</th><th>Submitted By</th>
+            <th>Strengths</th><th>Challenges</th><th>Comments</th>
+        </tr></thead>
+        <tbody>
+            {% for eval in ambassador_evaluations %}
+            <tr>
+                <td><a href="{{ ea_url().setController('App\\Controller\\Admin\\AmbassadorCrudController').setAction('detail').setEntityId(eval.ambassador.id) }}">{{ eval.ambassador.fullName }}</a></td>
+                <td>{{ eval.ambassador.letterGroup ? eval.ambassador.letterGroup.letter : '—' }}</td>
+                <td>{% if eval.evalRecommendation == '1' %}Yes{% elseif eval.evalRecommendation == '0' %}No{% else %}—{% endif %}</td>
+                <td>{{ eval.evalEngaged ?: '—' }}</td>
+                <td>{{ eval.evalService ?: '—' }}</td>
+                <td>{{ eval.submittedBy ? eval.submittedBy.fullName : '—' }}</td>
+                <td style="font-size:12px; max-width:200px;">{{ eval.evalPros ?: '' }}</td>
+                <td style="font-size:12px; max-width:200px;">{{ eval.evalCons ?: '' }}</td>
+                <td style="font-size:12px; max-width:180px;">{{ eval.evalComments ?: '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<div class="table-responsive mb-5">
+    <h3>Staff Evaluations <small class="text-muted" style="font-size:14px;">{{ user_evaluations|length }} submitted</small></h3>
+    {% if user_evaluations is empty %}
+        <p class="text-muted">No submitted staff evaluations for {{ year }}.</p>
+    {% else %}
+    <table class="table table-sm table-striped" style="font-size:12px;">
+        <thead><tr>
+            <th>Subject</th><th>Evaluator</th>
+            <th>Disc.</th><th>Enthus.</th><th>Organ.</th><th>Equally</th>
+            <th>Resp.</th><th>Atten.</th><th>Incl.</th><th>Prof.</th><th>Punct.</th>
+            <th>Strengths</th><th>Challenges</th><th>Why Not Return</th>
+        </tr></thead>
+        <tbody>
+            {% for eval in user_evaluations %}
+            <tr>
+                <td><a href="{{ ea_url().setController('App\\Controller\\Admin\\StaffAssignmentCrudController').setAction('detail').setEntityId(eval.subject.id) }}">{{ eval.subject.fullName }}</a></td>
+                <td>{{ eval.evaluator ? eval.evaluator.fullName : '—' }}</td>
+                <td>{{ eval.evalDiscussions ?: '—' }}</td>
+                <td>{{ eval.evalEnthusiastic ?: '—' }}</td>
+                <td>{{ eval.evalOrganized ?: '—' }}</td>
+                <td>{{ eval.evalEqually ?: '—' }}</td>
+                <td>{{ eval.evalResponsible ?: '—' }}</td>
+                <td>{{ eval.evalAttentive ?: '—' }}</td>
+                <td>{{ eval.evalInclude ?: '—' }}</td>
+                <td>{{ eval.evalProfessional ?: '—' }}</td>
+                <td>{{ eval.evalPunctual ?: '—' }}</td>
+                <td style="max-width:180px;">{{ eval.evalPros ?: '' }}</td>
+                <td style="max-width:180px;">{{ eval.evalCons ?: '' }}</td>
+                <td style="max-width:180px;">{{ eval.evalWhynot ?: '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+{% endblock %}
