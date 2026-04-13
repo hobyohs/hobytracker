@@ -60,7 +60,6 @@ class AmbassadorCrudController extends AbstractCrudController
         $entityManager->flush();
         
         $this->addFlash('success', 'Successfully marked '.count($batchActionDto->getEntityIds()).' ambassadors as having paid their key deposits via PayPal.');
-        //return $this->redirect($batchActionDto->getReferrerUrl());
         $url = $this->adminUrlGenerator
         ->setController(AmbassadorCrudController::class)
         ->setAction(Action::INDEX)
@@ -97,16 +96,6 @@ class AmbassadorCrudController extends AbstractCrudController
             yield Field::new('school')->setColumns(6);
             yield Field::new('county')->hideOnIndex()->setColumns(6);
             yield Field::new('ethnicity')->hideOnIndex()->setColumns(6);
-            // yield ChoiceField::new('ethnicity')->hideOnIndex()->setChoices([
-            //     'White or Caucasian' => 'White or Caucasian',
-            //     'Black or African American' => 'Black or African American',
-            //     'Hispanic or Latino' => 'Hispanic or Latino',
-            //     'Asian' => 'Asian',
-            //     'Native American' => 'Native American',
-            //     'Multiracial' => 'Multiracial',
-            //     'Prefer to not disclose' => 'Prefer to not disclose',
-            //     
-            // ])->setColumns(6);
             yield ChoiceField::new('shirtSize')->hideOnIndex()->setChoices([
                 'Small' => 'S',
                 'Medium' => 'M',
