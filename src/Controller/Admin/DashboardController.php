@@ -21,6 +21,7 @@ use App\Entity\User;
 use App\Entity\ComingsAndGoings;
 use App\Entity\LetterGroup;
 use App\Entity\Applicant;
+use App\Entity\Seminar;
 use App\Repository\AmbassadorRepository;
 use App\Repository\StaffAssignmentRepository;
 use App\Service\SeminarYearService;
@@ -62,6 +63,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToRoute('Groups Demographics', 'fas fa-chart-pie', 'admin_group_demo_report'),
             MenuItem::linkToRoute('Shirt Sizes', 'fas fa-shirt', 'admin_shirt_size_report'),
             MenuItem::linkToCrud('Staff Applications', 'fas fa-clipboard-question', Applicant::class),
+            MenuItem::section('Program'),
+            MenuItem::linkToCrud('Seminars', 'fas fa-calendar-days', Seminar::class),
             MenuItem::section('Evaluations'),
             MenuItem::linkToCrud('Ambassador Evaluations', 'fas fa-star', AmbassadorEvaluation::class),
             MenuItem::linkToCrud('Staff Evaluations', 'fas fa-gavel', StaffEvaluation::class),

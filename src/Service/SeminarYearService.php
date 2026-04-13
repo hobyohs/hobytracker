@@ -2,8 +2,23 @@
 
 namespace App\Service;
 
+use App\Entity\Seminar;
+use App\Repository\SeminarRepository;
+
 class SeminarYearService
 {
+    public function __construct(private SeminarRepository $seminarRepository)
+    {
+    }
+
+    /**
+     * Returns the "active" seminar year based on the current date.
+     *
+     * Switchover is September 1: dates from Sep 1 of year N through Aug 31 of year N+1
+     * resolve to the June N+1 seminar. This is a pure date calculation and does NOT
+     * require a Seminar row to exist — it always returns an int so downstream
+     * `seminar_year` filters keep working even if an admin hasn't added the row yet.
+     */
     public function getActiveSeminarYear(): int
     {
         $month = (int) date('n');
@@ -12,19 +27,45 @@ class SeminarYearService
     }
 
     /**
+     * Returns the Seminar entity for the active year, or null if the admin
+     * hasn't created it yet.
+     */
+    public function getActiveSeminar(): ?Seminar
+    {
+        return $this->seminarRepository->findByYear($this->getActiveSeminarYear());
+    }
+
+    /**
+     * Returns the seminar end date for the active year, or null if not configured.
+     */
+    public function getSeminarEndDate(): ?\DateTimeImmutable
+    {
+        return $this->getActiveSeminar()?->getEndDate();
+    }
+
+    /**
+     * Returns the seminar start date for the active year, or null if not configured.
+     */
+    public function getSeminarStartDate(): ?\DateTimeImmutable
+    {
+        return $this->getActiveSeminar()?->getStartDate();
+    }
+
+    /**
      * Returns true if the eval period is currently open.
-     * Opens on SEMINAR_END_DATE and closes 7 days later.
-     * If SEMINAR_END_DATE is not configured, evals are always open
-     * (safe default for dev / pre-seminar configuration).
+     * Opens on the seminar end date (inclusive) and closes 7 days later (inclusive).
+     *
+     * Safe default: if no Seminar row exists for the active year, evals are considered
+     * OPEN. This preserves prior behavior (where a missing SEMINAR_END_DATE env var
+     * meant "always open") and avoids locking admins out during dev/pre-config.
      */
     public function isEvalPeriodOpen(): bool
     {
-        $endDateStr = $_ENV['SEMINAR_END_DATE'] ?? '';
-        if (empty($endDateStr)) {
+        $endDate = $this->getSeminarEndDate();
+        if ($endDate === null) {
             return true;
         }
 
-        $endDate   = new \DateTimeImmutable($endDateStr);
         $closeDate = $endDate->modify('+7 days');
         $now       = new \DateTimeImmutable();
 
@@ -36,22 +77,6 @@ class SeminarYearService
      */
     public function getEvalPeriodClose(): ?\DateTimeImmutable
     {
-        $endDateStr = $_ENV['SEMINAR_END_DATE'] ?? '';
-        if (empty($endDateStr)) {
-            return null;
-        }
-        return (new \DateTimeImmutable($endDateStr))->modify('+7 days');
-    }
-
-    /**
-     * Returns the seminar end date, or null if not configured.
-     */
-    public function getSeminarEndDate(): ?\DateTimeImmutable
-    {
-        $endDateStr = $_ENV['SEMINAR_END_DATE'] ?? '';
-        if (empty($endDateStr)) {
-            return null;
-        }
-        return new \DateTimeImmutable($endDateStr);
+        return $this->getSeminarEndDate()?->modify('+7 days');
     }
 }
