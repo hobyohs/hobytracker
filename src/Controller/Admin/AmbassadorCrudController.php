@@ -13,7 +13,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -209,30 +208,8 @@ class AmbassadorCrudController extends AbstractCrudController
             yield BooleanField::new('bedFriday', 'Friday')->hideOnIndex()->setColumns(4);
             yield BooleanField::new('bedSaturday', 'Saturday')->hideOnIndex()->setColumns(4);
             
-            yield FormField::addTab('Evaluation');
-            yield ArrayField::new('facilitators')->hideOnIndex()->setFormTypeOption('disabled','disabled');
-            yield ChoiceField::new('eval_engaged', 'This ambassador was engaged and added thoughtful input to our group conversations.')->hideOnIndex()->setFormTypeOption('disabled','disabled')->setChoices([
-                'Strongly Disagree' => 1,
-                'Disagree' => 2,
-                'Neutral' => 3,
-                'Agree' => 4,
-                'Strongly Agree' => 5,
-            ]);
-            yield ChoiceField::new('eval_service', 'This ambassador is committed to community service and will likely complete 100 hours of volunteerism.')->hideOnIndex()->setFormTypeOption('disabled','disabled')->setChoices([
-                'Strongly Disagree' => 1,
-                'Disagree' => 2,
-                'Neutral' => 3,
-                'Agree' => 4,
-                'Strongly Agree' => 5,
-            ]);
-            yield TextareaField::new('eval_pros', 'What specific qualities does this ambassador exhibit that would make them a good facilitator?')->hideOnIndex()->setFormTypeOption('disabled','disabled');
-            yield TextareaField::new('eval_cons', 'What obstacles would this ambassador encounter in transitioning to a staff role?')->hideOnIndex()->setFormTypeOption('disabled','disabled');
-            yield ChoiceField::new('eval_recommendation', 'We recommend this ambassador to return on staff.')->hideOnIndex()->setFormTypeOption('disabled','disabled')->setChoices([
-                'Yes' => 1,
-                'No' => 0,
-            ]);
-            yield TextareaField::new('eval_comments', 'Please share any other comments about this ambassador.')->hideOnIndex()->setFormTypeOption('disabled','disabled');
-            
+            // Evaluation tab removed — eval data now lives in the AmbassadorEvaluation
+            // entity and is managed via "Ambassador Evaluations" in the admin sidebar.
             
     }
    

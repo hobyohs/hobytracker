@@ -10,18 +10,18 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AvatarField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 class StaffAssignmentCrudController extends AbstractCrudController
 {
+    use SeminarYearChoiceTrait;
+
     private $adminUrlGenerator;
 
     public function __construct(AdminUrlGenerator $adminUrlGenerator)
@@ -81,7 +81,7 @@ class StaffAssignmentCrudController extends AbstractCrudController
         yield IdField::new('id')->onlyOnIndex();
         yield AssociationField::new('user')->setColumns(6);
         yield Field::new('consolidatedFirstName', 'Name')->onlyOnIndex();
-        yield IntegerField::new('seminarYear', 'Year')->setColumns(3);
+        yield $this->seminarYearField()->setColumns(3);
         yield ChoiceField::new('status')->setColumns(3)->setChoices([
             'Active' => 'active',
             'Dropped' => 'dropped',
@@ -136,37 +136,7 @@ class StaffAssignmentCrudController extends AbstractCrudController
         yield Field::new('ecPhone1', 'Phone 1')->hideOnIndex()->setColumns(6);
         yield Field::new('ecPhone2', 'Phone 2')->hideOnIndex()->setColumns(6);
 
-        yield FormField::addTab('Evaluation');
-        yield TextareaField::new('evalPros', 'Strengths')->hideOnIndex()->setFormTypeOption('disabled', 'disabled');
-        yield TextareaField::new('evalCons', 'Challenges')->hideOnIndex()->setFormTypeOption('disabled', 'disabled');
-        yield ChoiceField::new('evalDiscussions', 'Effective in discussions')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalEnthusiastic', 'Enthusiastic and energetic')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalOrganized', 'Organized')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalEqually', 'Treated ambassadors equally')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalResponsible', 'Responsible and protective')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalAttentive', 'Attentive during activities')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalInclude', 'Inclusive of all ambassadors')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalProfessional', 'Professional and mature')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield ChoiceField::new('evalPunctual', 'Punctual')->hideOnIndex()->setFormTypeOption('disabled', 'disabled')->setChoices([
-            'Strongly Disagree' => 1, 'Disagree' => 2, 'Neutral' => 3, 'Agree' => 4, 'Strongly Agree' => 5,
-        ]);
-        yield TextareaField::new('evalWhynot', 'Reason not to invite back')->hideOnIndex()->setFormTypeOption('disabled', 'disabled');
-        yield TextareaField::new('evalComments', 'Other comments')->hideOnIndex()->setFormTypeOption('disabled', 'disabled');
+        // Evaluation tab removed — eval data now lives in the StaffEvaluation
+        // entity and is managed via "Staff Evaluations" in the admin sidebar.
     }
 }
