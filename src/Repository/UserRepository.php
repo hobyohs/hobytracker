@@ -158,31 +158,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                 ->getSingleScalarResult();
         }
         
-        public function findAllWithEvaluations()
-        {
-            return $this->getEntityManager()
-                ->createQueryBuilder()
-                ->select('u', 'g')
-                ->from('App\Entity\User', 'u')
-                ->leftJoin('u.letterGroup', 'g')
-                ->where('u.eval_status = TRUE')
-                ->orderBy('u.lastName', 'ASC')
-                ->getQuery()
-                ->getResult();   
-        }
-        
-        public function nullEvaluations()
-        {
-            $qb = $this->getEntityManager()
-                ->createQueryBuilder();
-            return $qb    
-                ->select('COUNT(u.id)')
-                ->from('App\Entity\User', 'u')
-                ->where('u.eval_status = FALSE')
-                ->getQuery()
-                ->getSingleScalarResult();
-        }
-
     public function searchByName(string $query, int $limit = 6): array
     {
         return $this->createQueryBuilder('u')
