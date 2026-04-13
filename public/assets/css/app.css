@@ -839,6 +839,8 @@ main .card .card-body ul li:not(:last-child) { margin-bottom: 1em; }
 }
 @media (min-width: 768px) { .ht-dt-card { margin: 4px 0 28px; } }
 .ht-dt-card .dataTables_wrapper { padding-top: 12px; }
+/* Wide report tables (responsive: false) scroll horizontally on mobile */
+.ht-dt-card.ht-dt-scrollable { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .ht-dt-card .dataTables_info {
   font-size: 11px;
   color: #bbb;

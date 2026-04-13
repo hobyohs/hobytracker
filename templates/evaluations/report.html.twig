@@ -26,7 +26,7 @@
 {% if ambEvals is empty %}
     <div class="ht-dt-card" style="padding:24px; color:var(--ht-text-muted);">No submitted ambassador evaluations for {{ year }}.</div>
 {% else %}
-<div class="ht-dt-card">
+<div class="ht-dt-card ht-dt-scrollable">
     <table class="table table-sm" id="amb-report-table">
         <thead><tr>
             <th class="no-export" style="width:36px;"></th>
@@ -120,7 +120,7 @@
 </div>
 {% endfor %}
 
-<div class="ht-dt-card">
+<div class="ht-dt-card ht-dt-scrollable">
     <table class="table table-sm" id="staff-report-table">
         <thead><tr>
             <th class="no-export" style="width:36px;"></th>
