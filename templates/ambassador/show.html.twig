@@ -133,7 +133,7 @@
 </div>
 
 {# ── Parent / Guardian & Emergency Contact (board or own-group facilitator) #}
-{% if is_granted('ROLE_BOARD') or (app.user.controlledAge >= 21 and app.user.letterGroup == ambassador.letterGroup) %}
+{% if is_granted('ROLE_BOARD') or (app.user.isSeniorOps and app.user.letterGroup == ambassador.letterGroup) %}
 
     {% if ambassador.parent1FirstName %}
     <div class="ht-section">

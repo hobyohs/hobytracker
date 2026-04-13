@@ -177,6 +177,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPhoto(): ?string { return $this->getActiveAssignment()?->getPhoto(); }
     public function getPosition(): ?string { return $this->getActiveAssignment()?->getPosition(); }
+    public function getRoleGroup(): ?string { return $this->getActiveAssignment()?->getRoleGroup(); }
+    public function isSeniorOps(): bool { return $this->getActiveAssignment()?->isSeniorOps() ?? false; }
+    public function isYoungStaff(): bool { return $this->getActiveAssignment()?->isYoungStaff() ?? false; }
     public function getShirtSize(): ?string { return $this->getActiveAssignment()?->getShirtSize(); }
     public function getAge(): ?int { return $this->getActiveAssignment()?->getAge(); }
     public function getLetterGroup(): ?LetterGroup { return $this->getActiveAssignment()?->getLetterGroup(); }

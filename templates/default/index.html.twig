@@ -103,7 +103,7 @@
             <i class="fa fa-chevron-right ht-homepage-shortcut-arrow"></i>
         </a>
     {% endif %}
-    {% if app.user.controlledAge >= 21 %}
+    {% if app.user.isSeniorOps %}
         <a href="{{ path('app_ambassador_checkin') }}" class="ht-homepage-shortcut">
             <i class="fa fa-right-to-bracket"></i>
             <span>Check In</span>

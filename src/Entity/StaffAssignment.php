@@ -9,8 +9,58 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StaffAssignmentRepository::class)]
 #[ORM\UniqueConstraint(name: 'user_year_unique', columns: ['user_id', 'seminar_year'])]
+#[ORM\HasLifecycleCallbacks]
 class StaffAssignment
 {
+    // ========== Role group taxonomy ==========
+    public const ROLE_SENIOR_FACILITATOR = 'Senior Facilitator';
+    public const ROLE_JUNIOR_FACILITATOR = 'Junior Facilitator';
+    public const ROLE_TEAM_HQ            = 'Team HQ';
+    public const ROLE_JCREW              = 'J-Crew';
+    public const ROLE_MEDICAL            = 'Medical';
+
+    public const ROLE_GROUPS = [
+        self::ROLE_SENIOR_FACILITATOR,
+        self::ROLE_JUNIOR_FACILITATOR,
+        self::ROLE_TEAM_HQ,
+        self::ROLE_JCREW,
+        self::ROLE_MEDICAL,
+    ];
+
+    /** Role groups treated as <21 young staff — no Seminar Ops access, age defaults to 0. */
+    public const YOUNG_STAFF_GROUPS = [
+        self::ROLE_JUNIOR_FACILITATOR,
+        self::ROLE_JCREW,
+    ];
+
+    /** Role groups treated as 21+ senior staff — Seminar Ops access allowed. */
+    public const SENIOR_OPS_GROUPS = [
+        self::ROLE_SENIOR_FACILITATOR,
+        self::ROLE_TEAM_HQ,
+        self::ROLE_MEDICAL,
+    ];
+
+    /**
+     * Default role group mapping from free-text `position` strings. Applied automatically
+     * on persist/update when roleGroup is null. Admins can override via the CRUD, and
+     * their explicit value will not be stomped on subsequent saves. Extend this list as
+     * new position strings come into use.
+     */
+    public const POSITION_TO_ROLE_GROUP = [
+        'Senior Facilitator'                   => self::ROLE_SENIOR_FACILITATOR,
+        'Junior Facilitator'                   => self::ROLE_JUNIOR_FACILITATOR,
+        'J-Crew'                               => self::ROLE_JCREW,
+        'DOF'                                  => self::ROLE_TEAM_HQ,
+        'Director of Facilitators'             => self::ROLE_TEAM_HQ,
+        'ADOF'                                 => self::ROLE_TEAM_HQ,
+        'Assistant Director of Facilitators'   => self::ROLE_TEAM_HQ,
+        'Program Director'                     => self::ROLE_TEAM_HQ,
+        'Seminar Chair'                        => self::ROLE_TEAM_HQ,
+        'Board Member'                         => self::ROLE_TEAM_HQ,
+        'Nurse'                                => self::ROLE_MEDICAL,
+        'EMT'                                  => self::ROLE_MEDICAL,
+    ];
+
     public function __toString(): string
     {
         return $this->getFullName() . ' (' . $this->seminarYear . ')';
@@ -36,6 +86,9 @@ class StaffAssignment
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $position = null;
+
+    #[ORM\Column(length: 30, nullable: true)]
+    private ?string $roleGroup = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $shirtSize = null;
@@ -194,20 +247,38 @@ class StaffAssignment
 
     public function getSortRank(): ?int
     {
-        if ($this->position == 'Senior Facilitator') return 1;
-        elseif ($this->position == 'Junior Facilitator') return 2;
-        elseif ($this->position == 'J-Crew') return 3;
-        else return 0;
+        return match ($this->roleGroup) {
+            self::ROLE_SENIOR_FACILITATOR => 1,
+            self::ROLE_JUNIOR_FACILITATOR => 2,
+            self::ROLE_JCREW              => 3,
+            default                       => 0,
+        };
+    }
+
+    /**
+     * Returns true if this assignment is a <21 young staff role (Junior Facilitator
+     * or J-Crew). Null roleGroup returns false — unknown is NOT treated as young.
+     */
+    public function isYoungStaff(): bool
+    {
+        return in_array($this->roleGroup, self::YOUNG_STAFF_GROUPS, true);
+    }
+
+    /**
+     * Returns true if this assignment is a 21+ senior ops role (Senior Facilitator,
+     * Team HQ, or Medical) with access to check-in, check-out, bed checks, and C&G.
+     * Null roleGroup returns false — unknown fails closed, locking out until an
+     * admin classifies the assignment.
+     */
+    public function isSeniorOps(): bool
+    {
+        return in_array($this->roleGroup, self::SENIOR_OPS_GROUPS, true);
     }
 
     public function getControlledAge(): ?int
     {
         if (is_null($this->age)) {
-            if (in_array($this->position, ['J-Crew', 'Junior Facilitator'])) {
-                return 0;
-            } else {
-                return 100;
-            }
+            return $this->isYoungStaff() ? 0 : 100;
         }
         return $this->age;
     }
@@ -289,6 +360,35 @@ class StaffAssignment
     {
         $this->position = $position;
         return $this;
+    }
+
+    public function getRoleGroup(): ?string
+    {
+        return $this->roleGroup;
+    }
+
+    public function setRoleGroup(?string $roleGroup): self
+    {
+        $this->roleGroup = $roleGroup;
+        return $this;
+    }
+
+    /**
+     * On persist and update, if roleGroup is null and position has a known mapping,
+     * populate roleGroup from the default mapping. If roleGroup is already set (either
+     * by an admin override in the CRUD or carried over from a previous save), it is
+     * left alone. To re-derive from position, admins clear roleGroup and save.
+     */
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function populateDefaultRoleGroup(): void
+    {
+        if ($this->roleGroup !== null) {
+            return;
+        }
+        if ($this->position !== null && isset(self::POSITION_TO_ROLE_GROUP[$this->position])) {
+            $this->roleGroup = self::POSITION_TO_ROLE_GROUP[$this->position];
+        }
     }
 
     public function getShirtSize(): ?string
