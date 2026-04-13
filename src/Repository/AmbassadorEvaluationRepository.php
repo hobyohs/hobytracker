@@ -29,6 +29,26 @@ class AmbassadorEvaluationRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findSubmittedByYear(int $year): array
+    {
+        return $this->createQueryBuilder('e')
+            ->join('e.ambassador', 'a')
+            ->addSelect('a')
+            ->leftJoin('a.letterGroup', 'g')
+            ->addSelect('g')
+            ->leftJoin('e.submittedBy', 'sb')
+            ->addSelect('sb')
+            ->where('e.seminarYear = :year')
+            ->andWhere('e.status = :status')
+            ->setParameter('year', $year)
+            ->setParameter('status', 'submitted')
+            ->orderBy('g.letter', 'ASC')
+            ->addOrderBy('a.lastName', 'ASC')
+            ->addOrderBy('a.firstName', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findForAmbassador(int $ambassadorId): array
     {
         return $this->createQueryBuilder('e')

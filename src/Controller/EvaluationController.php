@@ -28,6 +28,84 @@ class EvaluationController extends AbstractController
     ) {}
 
     // ─────────────────────────────────────────────────────────
+    // REPORT (ROLE_DOF+)
+    // ─────────────────────────────────────────────────────────
+
+    #[Route('/evaluations/report', name: 'eval_report', methods: ['GET'])]
+    #[IsGranted('ROLE_DOF')]
+    public function reportAction(
+        Request $request,
+        AmbassadorEvaluationRepository $ambEvalRepo,
+        StaffEvaluationRepository $staffEvalRepo,
+    ): Response {
+        $currentYear = $this->seminarYearService->getActiveSeminarYear();
+        $year        = (int) $request->query->get('year', $currentYear);
+
+        $ambEvals   = $ambEvalRepo->findSubmittedByYear($year);
+        $staffEvals = $staffEvalRepo->findSubmittedByYear($year);
+        $staffAgg   = $this->aggregateStaffEvals($staffEvals);
+
+        return $this->render('evaluations/report.html.twig', [
+            'ambEvals'    => $ambEvals,
+            'staffAgg'    => $staffAgg,
+            'year'        => $year,
+            'currentYear' => $currentYear,
+        ]);
+    }
+
+    private function aggregateStaffEvals(array $evals): array
+    {
+        $ratingFields = [
+            'evalDiscussions', 'evalEnthusiastic', 'evalOrganized', 'evalEqually',
+            'evalResponsible', 'evalAttentive', 'evalInclude', 'evalProfessional', 'evalPunctual',
+        ];
+
+        $grouped = [];
+        foreach ($evals as $eval) {
+            $sid = $eval->getSubject()->getId();
+            if (!isset($grouped[$sid])) {
+                $grouped[$sid] = [
+                    'subject'    => $eval->getSubject(),
+                    'evals'      => [],
+                    'averages'   => [],
+                    'overallAvg' => null,
+                    'evalCount'  => 0,
+                ];
+            }
+            $grouped[$sid]['evals'][] = $eval;
+            $grouped[$sid]['evalCount']++;
+        }
+
+        foreach ($grouped as &$data) {
+            $allValues = [];
+            foreach ($ratingFields as $field) {
+                $getter = 'get' . ucfirst($field);
+                $values = array_filter(
+                    array_map(fn($e) => $e->$getter(), $data['evals']),
+                    fn($v) => $v !== null && $v !== ''
+                );
+                $data['averages'][$field] = count($values) > 0
+                    ? round(array_sum($values) / count($values), 1)
+                    : null;
+                array_push($allValues, ...$values);
+            }
+            $data['overallAvg'] = count($allValues) > 0
+                ? round(array_sum($allValues) / count($allValues), 1)
+                : null;
+        }
+        unset($data);
+
+        usort($grouped, fn($a, $b) =>
+            strcmp(
+                $a['subject']->getLastName() . $a['subject']->getFirstName(),
+                $b['subject']->getLastName() . $b['subject']->getFirstName()
+            )
+        );
+
+        return $grouped;
+    }
+
+    // ─────────────────────────────────────────────────────────
     // AMBASSADOR EVALUATIONS
     // ─────────────────────────────────────────────────────────
 
@@ -45,7 +123,6 @@ class EvaluationController extends AbstractController
 
         $year = $this->seminarYearService->getActiveSeminarYear();
 
-        // Build a map of ambassador_id => AmbassadorEvaluation for quick lookup in template
         $existingEvals = $evalRepo->findByYear($year);
         $evalMap = [];
         foreach ($existingEvals as $eval) {
@@ -76,7 +153,6 @@ class EvaluationController extends AbstractController
 
         $year = $this->seminarYearService->getActiveSeminarYear();
 
-        // Find existing eval for this ambassador+year, or create a new one
         $eval = $this->em->getRepository(AmbassadorEvaluation::class)->findOneBy([
             'ambassador'  => $ambassador,
             'seminarYear' => $year,
@@ -88,7 +164,6 @@ class EvaluationController extends AbstractController
             $eval->setSeminarYear($year);
         }
 
-        // Submitted evals are read-only
         if ($eval->isSubmitted()) {
             return $this->render('evaluations/edit_ambassador.html.twig', [
                 'ambassador' => $ambassador,
@@ -151,7 +226,6 @@ class EvaluationController extends AbstractController
 
         $year = $this->seminarYearService->getActiveSeminarYear();
 
-        // All evals written BY the current user this year, keyed by subject_id
         $myEvals = $evalRepo->findByEvaluator($currentAssignment->getId());
         $evalMap = [];
         foreach ($myEvals as $eval) {
@@ -176,7 +250,6 @@ class EvaluationController extends AbstractController
     ): Response {
         $currentAssignment = $this->getUser()->getActiveAssignment();
 
-        // Self-eval prevention
         if ($currentAssignment?->getId() === $staffAssignment->getId()) {
             $this->addFlash('error', 'You cannot evaluate yourself.');
             return $this->redirectToRoute('staffeval_index', [
@@ -191,7 +264,6 @@ class EvaluationController extends AbstractController
 
         $year = $this->seminarYearService->getActiveSeminarYear();
 
-        // Find existing eval for (evaluator, subject, year) or create new
         $eval = $this->em->getRepository(StaffEvaluation::class)->findOneBy([
             'subject'     => $staffAssignment,
             'evaluator'   => $currentAssignment,
@@ -205,7 +277,6 @@ class EvaluationController extends AbstractController
             $eval->setSeminarYear($year);
         }
 
-        // Submitted evals are read-only
         if ($eval->isSubmitted()) {
             return $this->render('evaluations/edit_staff.html.twig', [
                 'subject'  => $staffAssignment,

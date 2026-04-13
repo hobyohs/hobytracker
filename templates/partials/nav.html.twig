@@ -30,7 +30,6 @@
             <a href="{{ path('app_letter_group_show_thankyous', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Thank Yous</a>
             <a href="{{ path('ambeval_index', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Amb. Evaluations</a>
             <a href="{{ path('staffeval_index', {'letter': app.user.letterGroup.letter}) }}" class="sidebar-sub-link">Co-Fac. Evaluations</a>
-
         {% endif %}
 
         {# ── Seminar Ops (21+) ────────────────────────────── #}
@@ -119,6 +118,11 @@
             {% if is_granted('ROLE_NURSE') %}
                 <a href="{{ path('medical') }}" class="sidebar-nav-link">
                     <i class="fa fa-kit-medical"></i> Medical Report
+                </a>
+            {% endif %}
+            {% if is_granted('ROLE_DOF') %}
+                <a href="{{ path('eval_report') }}" class="sidebar-nav-link">
+                    <i class="fa fa-gavel"></i> Evaluations Report
                 </a>
             {% endif %}
         {% endif %}
