@@ -5,6 +5,11 @@
 
 <div class="ht-page-header">
     <h1>Bed Checks</h1>
+    {% if is_granted('ROLE_BOARD') %}
+        <a href="{{ path('app_user_duty_assignments', {'tab': 'bedchecks'}) }}" class="ht-page-header-action">
+            <i class="fa fa-users-gear"></i> Manage Assignments
+        </a>
+    {% endif %}
 </div>
 
 {# ── Night selector ──────────────────────────────────────── #}
@@ -19,6 +24,22 @@
         {% endfor %}
     </div>
 </div>
+
+{# ── Your assignment ─────────────────────────────────────── #}
+{% if myAssignments is not empty %}
+    <div class="ht-bc-my-assignment">
+        <div class="ht-bc-my-assignment-label">
+            <i class="fa fa-map-pin"></i> Your {{ nightName }} assignment{{ myAssignments|length > 1 ? 's' : '' }}:
+        </div>
+        <div class="ht-bc-my-assignment-floors">
+            {% for a in myAssignments %}
+                <a href="{{ path('app_ambassador_bedchecks_floor', {'dorm': a.dorm, 'floor': a.floor}) }}?night={{ nightName }}" class="ht-bc-my-assignment-link">
+                    {{ a.dorm }} — Floor {{ a.floor }} <i class="fa fa-arrow-right" style="font-size: 11px;"></i>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
 
 {# ── Floor cards ─────────────────────────────────────────── #}
 {% if floors is empty %}
@@ -47,3 +68,4 @@
 {% endif %}
 
 {% endblock %}
+

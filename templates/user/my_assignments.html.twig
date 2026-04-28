@@ -88,6 +88,23 @@
     </div>
 </div>
 
+{% if bcByNight.Thursday is not empty or bcByNight.Friday is not empty or bcByNight.Saturday is not empty %}
+{# ── Bed Checks ──────────────────────────────────────────── #}
+<div class="ht-section">
+    <div class="ht-section-label">Bed Checks</div>
+    <div class="ht-section-card">
+        {% for night in ['Thursday', 'Friday', 'Saturday'] %}
+            <div class="ht-section-row">
+                <span class="ht-section-key">{{ night }}</span>
+                <span class="ht-section-val{% if bcByNight[night] is empty %} ht-empty{% endif %}">
+                    {{ bcByNight[night] is not empty ? bcByNight[night]|join(', ') : 'Not assigned' }}
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
 </div>{# end ht-show-body #}
 
 {% endblock %}

@@ -2994,3 +2994,191 @@ table#staff-report-table.dataTable thead th {
   border-color: var(--ht-navy);
   background: var(--ht-white);
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Bed Check Assignments — grid, picker, chips
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Responsive toggle ───────────────────────────────────── */
+.ht-bca-cards { display: none; }
+@media (max-width: 768px) {
+    .ht-bca-grid  { display: none; }
+    .ht-bca-cards { display: block; }
+}
+
+/* ── Desktop table ───────────────────────────────────────── */
+.ht-bca-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 32px;
+}
+.ht-bca-table th {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--ht-border, #e0e0e0);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ht-sub, #666);
+}
+.ht-bca-th-floor { width: 25%; }
+.ht-bca-floor-label {
+    padding: 10px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--ht-border, #eee);
+}
+.ht-bca-cell {
+    padding: 8px 12px;
+    vertical-align: top;
+    border-bottom: 1px solid var(--ht-border, #eee);
+    min-width: 160px;
+}
+
+/* ── Mobile cards ────────────────────────────────────────── */
+.ht-bca-card {
+    background: var(--ht-card-bg, #fff);
+    border: 1px solid var(--ht-border, #e0e0e0);
+    border-radius: 10px;
+    margin: 0 16px 12px;
+    overflow: hidden;
+}
+.ht-bca-card-header {
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 15px;
+    background: var(--ht-header-bg, #f8f8f8);
+    border-bottom: 1px solid var(--ht-border, #e0e0e0);
+}
+.ht-bca-card-row {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--ht-border, #eee);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+.ht-bca-card-row:last-child { border-bottom: none; }
+.ht-bca-card-night {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ht-sub, #666);
+    min-width: 70px;
+}
+
+/* ── Chips ────────────────────────────────────────────────── */
+.ht-bca-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.ht-bca-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: var(--ht-accent-light, #e8f0fe);
+    color: var(--ht-accent, #1a73e8);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.ht-bca-remove {
+    background: none;
+    border: none;
+    color: var(--ht-accent, #1a73e8);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 2px;
+    opacity: 0.6;
+}
+.ht-bca-remove:hover { opacity: 1; }
+
+/* ── Add button ───────────────────────────────────────────── */
+.ht-bca-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--ht-sub, #999);
+    background: none;
+    color: var(--ht-sub, #999);
+    font-size: 16px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+.ht-bca-add:hover {
+    border-color: var(--ht-accent, #1a73e8);
+    color: var(--ht-accent, #1a73e8);
+}
+
+/* ── Inline picker ───────────────────────────────────────── */
+/* ── Floating picker (positioned via JS, outside the table) ── */
+.ht-bca-floating-picker {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    min-width: 220px;
+    background: var(--ht-card-bg, #fff);
+    border: 1px solid var(--ht-border, #e0e0e0);
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.ht-bca-floating-picker .ts-wrapper { min-width: 200px; }
+.ht-bca-floating-picker .ts-wrapper input {
+    width: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Bed Checks — "Your Assignment" card + page header action
+   ══════════════════════════════════════════════════════════════ */
+.ht-bc-my-assignment {
+    margin: 0 16px 16px;
+    padding: 12px 16px;
+    background: var(--ht-accent-light, #e8f0fe);
+    border-radius: 10px;
+    border: 1px solid var(--ht-accent, #1a73e8);
+}
+.ht-bc-my-assignment-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ht-accent, #1a73e8);
+    margin-bottom: 6px;
+}
+.ht-bc-my-assignment-floors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.ht-bc-my-assignment-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--ht-accent, #1a73e8);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+}
+.ht-bc-my-assignment-link:hover { opacity: 0.9; }
+.ht-page-header-action {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ht-accent, #1a73e8);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}

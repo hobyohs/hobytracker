@@ -46,25 +46,61 @@ class UserController extends AbstractController
 
     #[Route('/assignments', name: 'app_user_duty_assignments', methods: ['GET'])]
     #[IsGranted('ROLE_BOARD')]
-    public function dutyAssignmentsAction(Request $request, StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
-    {
-        $users = $saRepo->findActiveByYear($yearService->getActiveSeminarYear());
+    public function dutyAssignmentsAction(
+        Request $request,
+        StaffAssignmentRepository $saRepo,
+        SeminarYearService $yearService,
+        \App\Repository\BedCheckAssignmentRepository $bcaRepo,
+        \App\Repository\DormRoomRepository $dormRoomRepo,
+    ): Response {
+        $year = $yearService->getActiveSeminarYear();
+        $users = $saRepo->findActiveByYear($year);
         $tab = $request->query->get('tab', 'checkin');
-        if (!in_array($tab, ['checkin', 'checkout', 'cc'])) {
+        if (!in_array($tab, ['checkin', 'checkout', 'cc', 'bedchecks'])) {
             $tab = 'checkin';
         }
+
+        // For the bed checks tab, build the assignment grid
+        $bcFloors = [];
+        $bcAssignments = [];
+        if ($tab === 'bedchecks') {
+            $allRooms = $dormRoomRepo->findAllOrderedForBedChecks();
+            $seen = [];
+            foreach ($allRooms as $room) {
+                if ($room->getAmbassadors()->isEmpty()) continue;
+                $key = $room->getDorm() . '|||' . $room->getFloor();
+                if (isset($seen[$key])) continue;
+                $seen[$key] = true;
+                $bcFloors[] = ['dorm' => $room->getDorm(), 'floor' => $room->getFloor()];
+            }
+            $bcAssignments = $bcaRepo->findAllByYearIndexed($year);
+        }
+
         return $this->render('user/duty_assignments.html.twig', [
-            'users' => $users,
-            'tab'   => $tab,
+            'users'         => $users,
+            'tab'           => $tab,
+            'bcFloors'      => $bcFloors,
+            'bcAssignments' => $bcAssignments,
+            'bcNights'      => \App\Entity\BedCheckAssignment::NIGHTS,
         ]);
     }
 
     #[Route('/assignments/my', name: 'app_user_my_assignments', methods: ['GET'])]
     #[IsGranted('ROLE_BOARD')]
-    public function myAssignmentsAction(): Response
+    public function myAssignmentsAction(\App\Repository\BedCheckAssignmentRepository $bcaRepo, SeminarYearService $yearService): Response
     {
+        $user = $this->getUser();
+        $bcAssignments = $bcaRepo->findByUserAndYear($user->getId(), $yearService->getActiveSeminarYear());
+
+        // Group by night for template display
+        $bcByNight = ['Thursday' => [], 'Friday' => [], 'Saturday' => []];
+        foreach ($bcAssignments as $a) {
+            $bcByNight[$a->getNight()][] = $a->getDorm() . ' — Floor ' . $a->getFloor();
+        }
+
         return $this->render('user/my_assignments.html.twig', [
-            'user' => $this->getUser(),
+            'user'      => $user,
+            'bcByNight' => $bcByNight,
         ]);
     }
 

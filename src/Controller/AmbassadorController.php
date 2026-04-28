@@ -9,6 +9,7 @@ use App\Form\CallType;
 use App\Form\CheckinType;
 use App\Form\CheckoutType;
 use App\Repository\AmbassadorRepository;
+use App\Repository\BedCheckAssignmentRepository;
 use App\Repository\DormRoomRepository;
 use App\Entity\LetterGroup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -259,11 +260,23 @@ class AmbassadorController extends AbstractController
     }
     
     #[Route('/bedchecks', name: 'app_ambassador_bedchecks', methods: ['GET'])]
-    public function bedChecksAction(DormRoomRepository $dormRoomRepository, Request $request): Response
+    public function bedChecksAction(DormRoomRepository $dormRoomRepository, BedCheckAssignmentRepository $bcaRepo, Request $request): Response
     {
         [$nightField, $nightName] = $this->resolveNight($request);
         $allRooms = $dormRoomRepository->findAllOrderedForBedChecks();
         $now = new \DateTime('now', new \DateTimeZone('America/New_York'));
+
+        // Get the current user's bed check assignments for tonight
+        $myAssignments = [];
+        $user = $this->getUser();
+        if ($user && $user->getActiveAssignment()) {
+            $allMyAssignments = $bcaRepo->findByStaffAssignment($user->getActiveAssignment()->getId());
+            foreach ($allMyAssignments as $a) {
+                if ($a->getNight() === $nightName) {
+                    $myAssignments[] = $a;
+                }
+            }
+        }
 
         $floors = [];
         foreach ($allRooms as $room) {
@@ -299,9 +312,10 @@ class AmbassadorController extends AbstractController
         }
 
         return $this->render('ambassador/bedchecks.html.twig', [
-            'floors'     => array_values($floors),
-            'nightField' => $nightField,
-            'nightName'  => $nightName,
+            'floors'        => array_values($floors),
+            'nightField'    => $nightField,
+            'nightName'     => $nightName,
+            'myAssignments' => $myAssignments,
         ]);
     }
 
