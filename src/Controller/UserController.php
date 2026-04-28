@@ -9,6 +9,8 @@ use App\Repository\UserRepository;
 use App\Repository\StaffAssignmentRepository;
 use App\Service\SeminarYearService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -83,6 +85,42 @@ class UserController extends AbstractController
             'bcAssignments' => $bcAssignments,
             'bcNights'      => \App\Entity\BedCheckAssignment::NIGHTS,
         ]);
+    }
+
+    #[Route('/assignments/update', name: 'app_user_duty_assignment_update', methods: ['POST'])]
+    #[IsGranted('ROLE_BOARD')]
+    public function dutyAssignmentUpdateAction(
+        Request $request,
+        StaffAssignmentRepository $saRepo,
+        EntityManagerInterface $em,
+    ): JsonResponse {
+        $allowedFields = [
+            'assignmentCheckIn',
+            'assignmentCheckInNotes',
+            'assignmentCheckOut',
+            'assignmentCheckOutNotes',
+            'assignmentClosingCeremonies',
+            'assignmentClosingCeremoniesNotes',
+        ];
+
+        $id    = (int) $request->request->get('id');
+        $field = $request->request->get('field', '');
+        $value = trim($request->request->get('value', ''));
+
+        if (!in_array($field, $allowedFields, true)) {
+            return new JsonResponse(['success' => false, 'error' => 'Invalid field'], 400);
+        }
+
+        $sa = $saRepo->find($id);
+        if (!$sa) {
+            return new JsonResponse(['success' => false, 'error' => 'Staff not found'], 404);
+        }
+
+        // Normalize empty string to null for clean DB storage
+        $sa->{'set' . ucfirst($field)}($value === '' ? null : $value);
+        $em->flush();
+
+        return new JsonResponse(['success' => true, 'value' => $value]);
     }
 
     #[Route('/assignments/my', name: 'app_user_my_assignments', methods: ['GET'])]

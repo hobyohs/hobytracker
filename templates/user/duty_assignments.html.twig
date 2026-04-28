@@ -2,6 +2,55 @@
 {% import 'partials/_avatar.html.twig' as avatar %}
 {% block maintag %}<main class="wide">{% endblock %}
 
+{# ── Editable assignment table macro ────────────────────────── #}
+{% macro editable_table(users, assignmentField, notesField, assignmentGetter, notesGetter) %}
+{% import 'partials/_avatar.html.twig' as avatar %}
+<div class="ht-da-filter">
+    <input type="text" class="ht-da-filter-input" placeholder="Search staff…" autocomplete="off">
+</div>
+<div class="ht-dt-card ht-responsive-table">
+    <table class="table ht-da-table">
+        <thead><tr>
+            <th class="ht-avatar-col"></th>
+            <th>First Name</th>
+            <th class="ht-mobile-hide">Last Name</th>
+            <th class="ht-mobile-hide">Position</th>
+            <th>Assignment</th>
+            <th>Notes</th>
+            <th class="ht-chevron-col"></th>
+        </tr></thead>
+        <tbody>
+            {% for user in users %}
+                <tr data-search="{{ user.consolidatedFirstName|lower }} {{ user.lastName|lower }} {{ user.position|lower }}">
+                    <td class="ht-avatar-col">{{ avatar.render(user, 32) }}</td>
+                    <td data-label="First" class="ht-name-td">
+                        <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
+                        <span class="ht-name-mobile-header">
+                            {{ avatar.render(user, 36) }}
+                            <span class="ht-name-mobile-text">
+                                <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
+                                {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
+                            </span>
+                        </span>
+                    </td>
+                    <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
+                    <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
+                    <td data-label="Assignment"
+                        class="ht-da-editable ht-da-assignment"
+                        data-staff-id="{{ user.id }}"
+                        data-field="{{ assignmentField }}">{{ attribute(user, assignmentGetter) }}</td>
+                    <td data-label="Notes"
+                        class="ht-da-editable ht-da-notes"
+                        data-staff-id="{{ user.id }}"
+                        data-field="{{ notesField }}">{{ attribute(user, notesGetter) }}</td>
+                    <td class="ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endmacro %}
+
 {% block body %}
 
 <a href="{{ path('homepage') }}" class="ht-back-link">
@@ -28,114 +77,31 @@
 
 {# ── Check-In Assignments ─────────────────────────────────── #}
 {% if tab == 'checkin' %}
-<div class="ht-dt-card ht-responsive-table">
-    <table class="table" id="duty-table">
-        <thead><tr>
-            <th class="ht-avatar-col no-export"></th>
-            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
-            <th>Assignment</th><th>Notes</th>
-            <th class="no-export ht-chevron-col"></th>
-        </tr></thead>
-        <tbody>
-            {% for user in users %}
-                {% if user.assignmentCheckIn is not null or user.assignmentCheckInNotes is not null %}
-                    <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
-                        <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
-                        <td data-label="First" class="ht-name-td">
-                            <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
-                            <span class="ht-name-mobile-header">
-                                {{ avatar.render(user, 36) }}
-                                <span class="ht-name-mobile-text">
-                                    <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
-                                    {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
-                                </span>
-                            </span>
-                        </td>
-                        <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
-                        <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
-                        <td data-label="Assignment">{{ user.assignmentCheckIn }}</td>
-                        <td data-label="Notes" class="{{ not user.assignmentCheckInNotes ? 'ht-mobile-hide' : '' }}">{{ user.assignmentCheckInNotes }}</td>
-                        <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+    <p class="ht-da-hint"><i class="fa fa-pencil"></i> Click any Assignment or Notes cell to edit</p>
+    {% set assignmentField = 'assignmentCheckIn' %}
+    {% set notesField = 'assignmentCheckInNotes' %}
+    {% set assignmentGetter = 'assignmentCheckIn' %}
+    {% set notesGetter = 'assignmentCheckInNotes' %}
+    {{ _self.editable_table(users, assignmentField, notesField, assignmentGetter, notesGetter) }}
 
 {# ── Check-Out Assignments ────────────────────────────────── #}
 {% elseif tab == 'checkout' %}
-<div class="ht-dt-card ht-responsive-table">
-    <table class="table" id="duty-table">
-        <thead><tr>
-            <th class="ht-avatar-col no-export"></th>
-            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
-            <th>Assignment</th><th>Notes</th>
-            <th class="no-export ht-chevron-col"></th>
-        </tr></thead>
-        <tbody>
-            {% for user in users %}
-                {% if user.assignmentCheckOut is not null or user.assignmentCheckOutNotes is not null %}
-                    <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
-                        <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
-                        <td data-label="First" class="ht-name-td">
-                            <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
-                            <span class="ht-name-mobile-header">
-                                {{ avatar.render(user, 36) }}
-                                <span class="ht-name-mobile-text">
-                                    <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
-                                    {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
-                                </span>
-                            </span>
-                        </td>
-                        <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
-                        <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
-                        <td data-label="Assignment">{{ user.assignmentCheckOut }}</td>
-                        <td data-label="Notes" class="{{ not user.assignmentCheckOutNotes ? 'ht-mobile-hide' : '' }}">{{ user.assignmentCheckOutNotes }}</td>
-                        <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+    <p class="ht-da-hint"><i class="fa fa-pencil"></i> Click any Assignment or Notes cell to edit</p>
+    {% set assignmentField = 'assignmentCheckOut' %}
+    {% set notesField = 'assignmentCheckOutNotes' %}
+    {% set assignmentGetter = 'assignmentCheckOut' %}
+    {% set notesGetter = 'assignmentCheckOutNotes' %}
+    {{ _self.editable_table(users, assignmentField, notesField, assignmentGetter, notesGetter) }}
 
 {# ── Closing Ceremony Assignments ─────────────────────────── #}
 {% elseif tab == 'cc' %}
-<div class="ht-dt-card ht-responsive-table">
-    <table class="table" id="duty-table">
-        <thead><tr>
-            <th class="ht-avatar-col no-export"></th>
-            <th>First Name</th><th class="ht-mobile-hide">Last Name</th><th class="ht-mobile-hide">Position</th>
-            <th>Assignment</th><th>Notes</th>
-            <th class="no-export ht-chevron-col"></th>
-        </tr></thead>
-        <tbody>
-            {% for user in users %}
-                {% if user.assignmentClosingCeremonies is not null or user.assignmentClosingCeremoniesNotes is not null %}
-                    <tr data-href="{{ path('app_user_show', { 'id': user.userId }) }}">
-                        <td class="ht-avatar-col no-export">{{ avatar.render(user, 32) }}</td>
-                        <td data-label="First" class="ht-name-td">
-                            <span class="ht-name-desktop">{{ user.consolidatedFirstName }}</span>
-                            <span class="ht-name-mobile-header">
-                                {{ avatar.render(user, 36) }}
-                                <span class="ht-name-mobile-text">
-                                    <span class="ht-card-name">{{ user.consolidatedFirstName }} {{ user.lastName }}</span>
-                                    {% if user.position %}<span class="ht-card-sub">{{ user.position }}</span>{% endif %}
-                                </span>
-                            </span>
-                        </td>
-                        <td data-label="Last" class="ht-mobile-hide">{{ user.lastName }}</td>
-                        <td data-label="Position" class="ht-mobile-hide">{{ user.position }}</td>
-                        <td data-label="Assignment">{{ user.assignmentClosingCeremonies }}</td>
-                        <td data-label="Notes" class="{{ not user.assignmentClosingCeremoniesNotes ? 'ht-mobile-hide' : '' }}">{{ user.assignmentClosingCeremoniesNotes }}</td>
-                        <td class="no-export ht-chevron-col"><a href="{{ path('app_user_show', { 'id': user.userId }) }}" class="ht-row-chevron"><i class="fa fa-chevron-right"></i></a></td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+    <p class="ht-da-hint"><i class="fa fa-pencil"></i> Click any Assignment or Notes cell to edit</p>
+    {% set assignmentField = 'assignmentClosingCeremonies' %}
+    {% set notesField = 'assignmentClosingCeremoniesNotes' %}
+    {% set assignmentGetter = 'assignmentClosingCeremonies' %}
+    {% set notesGetter = 'assignmentClosingCeremoniesNotes' %}
+    {{ _self.editable_table(users, assignmentField, notesField, assignmentGetter, notesGetter) }}
+
 {% endif %}
 
 {# ── Bed Checks Assignments ───────────────────────────────── #}
@@ -226,6 +192,201 @@
 {{ parent() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    // ── Inline editing for text assignment tabs ──────────────
+    const updateUrl = '{{ path("app_user_duty_assignment_update") }}';
+    let activeEditor = null; // track the active Tom Select or textarea
+
+    // Predefined assignment options per tab (alphabetical)
+    var assignmentOptions = {% if tab == 'checkin' %}[
+        "Bus Chaperone",
+        "Dorm Greeter",
+        "Floater",
+        "Floater/Speaker Prep",
+        "Flow Manager",
+        "Golf Cart Transport",
+        "HOBY Store",
+        "Icebreakers",
+        "Interviews",
+        "Key Table",
+        "Meds Table",
+        "Parking Lot Greeter",
+        "Registration",
+        "Traffic Director"
+    ]{% elseif tab == 'checkout' %}[
+        "Check-Out Table",
+        "HOBY Store",
+        "Meds Table",
+        "Staff Lounge Cleanup",
+        "Staff Lounge Cleanup Manager"
+    ]{% elseif tab == 'cc' %}[
+        "Ambassador Lineup Manager",
+        "Door Holder",
+        "Extra Hands Where Needed",
+        "Flow Manager",
+        "Parking Lot Greeter",
+        "Parking Lot/McCoy Area Manager",
+        "Roving Problem Solver"
+    ]{% else %}[]{% endif %};
+
+    // Client-side search filter
+    document.querySelectorAll('.ht-da-filter-input').forEach(function(input) {
+        input.addEventListener('input', function() {
+            const q = this.value.toLowerCase();
+            const table = this.closest('.ht-da-filter').nextElementSibling.querySelector('.ht-da-table');
+            if (!table) return;
+            table.querySelectorAll('tbody tr').forEach(function(row) {
+                const text = row.dataset.search || '';
+                row.style.display = text.includes(q) ? '' : 'none';
+            });
+        });
+    });
+
+    // Click on editable cell → create editor
+    document.addEventListener('click', function(e) {
+        const cell = e.target.closest('.ht-da-editable');
+        if (!cell || cell.querySelector('input, textarea, .ts-wrapper')) return;
+        if (e.target.closest('a')) return;
+
+        // Close any other active editor first
+        closeActiveEditor();
+
+        const staffId = cell.dataset.staffId;
+        const field   = cell.dataset.field;
+        const isNotes = cell.classList.contains('ht-da-notes');
+        const isAssignment = cell.classList.contains('ht-da-assignment');
+        const currentValue = cell.textContent.trim();
+
+        cell.classList.add('ht-da-editing');
+
+        if (isAssignment) {
+            // Tom Select with create mode for assignments
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'ht-da-ts-input-' + staffId + '-' + field;
+            cell.textContent = '';
+            cell.appendChild(input);
+
+            var ts = new TomSelect(input, {
+                create: true,
+                createOnBlur: true,
+                maxItems: 1,
+                options: assignmentOptions.map(function(v) { return { value: v, text: v }; }),
+                items: currentValue ? [currentValue] : [],
+                valueField: 'value',
+                labelField: 'text',
+                searchField: 'text',
+                placeholder: 'Select or type…',
+                onChange: function(value) {
+                    saveCellValue(cell, value || '', staffId, field, ts);
+                },
+                onBlur: function() {
+                    // If nothing was selected and user just blurred away, close
+                    setTimeout(function() {
+                        if (activeEditor === ts) {
+                            var v = ts.getValue();
+                            if (v === currentValue || (v === '' && currentValue === '')) {
+                                cancelEditor(cell, currentValue, ts);
+                            }
+                        }
+                    }, 150);
+                },
+                render: {
+                    option_create: function(data, escape) {
+                        return '<div class="create">Add: <strong>' + escape(data.input) + '</strong></div>';
+                    }
+                }
+            });
+
+            activeEditor = ts;
+            ts.focus();
+            ts.open();
+
+        } else if (isNotes) {
+            const textarea = document.createElement('textarea');
+            textarea.className = 'ht-da-input';
+            textarea.value = currentValue;
+            textarea.rows = 2;
+            cell.textContent = '';
+            cell.appendChild(textarea);
+            activeEditor = textarea;
+            textarea.focus();
+            textarea.addEventListener('blur', function() {
+                saveCellValue(cell, textarea.value, staffId, field, null);
+            });
+            textarea.addEventListener('keydown', function(ev) {
+                if (ev.key === 'Escape') { ev.preventDefault(); cancelEditor(cell, currentValue, null); }
+            });
+        }
+    });
+
+    function saveCellValue(cell, newValue, staffId, field, tsInstance) {
+        newValue = newValue.trim();
+        var oldValue = cell.dataset.lastValue || '';
+
+        var formData = new FormData();
+        formData.append('id', staffId);
+        formData.append('field', field);
+        formData.append('value', newValue);
+
+        fetch(updateUrl, { method: 'POST', body: formData })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    finishEditor(cell, newValue, tsInstance);
+                    cell.classList.add('ht-da-saved');
+                    setTimeout(function() { cell.classList.remove('ht-da-saved'); }, 800);
+                } else {
+                    finishEditor(cell, oldValue, tsInstance);
+                    cell.classList.add('ht-da-error');
+                    setTimeout(function() { cell.classList.remove('ht-da-error'); }, 800);
+                }
+            })
+            .catch(function() {
+                finishEditor(cell, oldValue, tsInstance);
+                cell.classList.add('ht-da-error');
+                setTimeout(function() { cell.classList.remove('ht-da-error'); }, 800);
+            });
+    }
+
+    function finishEditor(cell, value, tsInstance) {
+        if (tsInstance) { try { tsInstance.destroy(); } catch(e) {} }
+        cell.textContent = value;
+        cell.dataset.lastValue = value;
+        cell.classList.remove('ht-da-editing');
+        activeEditor = null;
+    }
+
+    function cancelEditor(cell, originalValue, tsInstance) {
+        finishEditor(cell, originalValue, tsInstance);
+    }
+
+    function closeActiveEditor() {
+        if (!activeEditor) return;
+        var cell = activeEditor instanceof TomSelect
+            ? activeEditor.wrapper?.closest('.ht-da-editable')
+            : activeEditor.closest?.('.ht-da-editable');
+        if (cell) {
+            var originalValue = cell.dataset.lastValue || '';
+            if (activeEditor instanceof TomSelect) {
+                cancelEditor(cell, originalValue, activeEditor);
+            } else {
+                cancelEditor(cell, originalValue, null);
+            }
+        }
+    }
+
+    // Escape key closes any active editor
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeActiveEditor();
+    });
+
+    // Store initial values
+    document.querySelectorAll('.ht-da-editable').forEach(function(cell) {
+        cell.dataset.lastValue = cell.textContent.trim();
+    });
+
+    // ── Bed check assignments (existing) ────────────────────
     const searchUrl  = '{{ path("bedcheck_assignments_search") }}';
     const addUrl     = '{{ path("bedcheck_assignments_add") }}';
     const removeBase = '{{ path("bedcheck_assignments_remove", {id: "__ID__"}) }}';
