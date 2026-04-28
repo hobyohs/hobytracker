@@ -140,48 +140,191 @@
 
 {# ── Bed Checks Assignments ───────────────────────────────── #}
 {% if tab == 'bedchecks' %}
-<div class="ht-dt-card ht-responsive-table">
-    {% if bcByStaff is empty %}
-        <div style="padding: 24px; text-align: center; color: var(--ht-sub);">
-            No bed check assignments yet.
-            <a href="{{ path('bedcheck_assignments') }}">Manage assignments</a>
-        </div>
-    {% else %}
-        <table class="table" id="duty-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Thursday</th>
-                    <th>Friday</th>
-                    <th>Saturday</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for entry in bcByStaff %}
-                <tr>
-                    <td data-label="Name">
-                        {{ entry.staff.consolidatedFirstName }} {{ entry.staff.lastName }}
-                    </td>
-                    {% for night in ['Thursday', 'Friday', 'Saturday'] %}
-                        <td data-label="{{ night }}">
-                            {% if entry.nights[night] is not empty %}
-                                {{ entry.nights[night]|join(', ') }}
-                            {% else %}
-                                <span style="color: var(--ht-sub);">—</span>
+
+<p class="ht-page-sub" style="margin: 0 16px 16px;">Assign staff to dorm floors for each night. Click <strong>+</strong> to add, <strong>×</strong> to remove.</p>
+
+{% if bcFloors is empty %}
+    <div class="ht-section-card" style="margin: 20px 16px; text-align: center; color: var(--ht-sub);">
+        No dorm rooms assigned yet.
+    </div>
+{% else %}
+
+{# ── Desktop grid ────────────────────────────────────────── #}
+<div class="ht-bca-grid">
+    <table class="ht-bca-table">
+        <thead>
+            <tr>
+                <th class="ht-bca-th-floor">Dorm / Floor</th>
+                {% for night in bcNights %}
+                    <th>{{ night }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for floor in bcFloors %}
+            <tr>
+                <td class="ht-bca-floor-label">{{ floor.dorm }} — Floor {{ floor.floor }}</td>
+                {% for night in bcNights %}
+                    {% set key = floor.dorm ~ '|||' ~ floor.floor ~ '|||' ~ night %}
+                    <td class="ht-bca-cell" data-dorm="{{ floor.dorm }}" data-floor="{{ floor.floor }}" data-night="{{ night }}">
+                        <div class="ht-bca-chips">
+                            {% if bcAssignments[key] is defined %}
+                                {% for a in bcAssignments[key] %}
+                                    <span class="ht-bca-chip" data-id="{{ a.id }}">
+                                        {{ a.staffName }}
+                                        <button class="ht-bca-remove" data-id="{{ a.id }}" aria-label="Remove">&times;</button>
+                                    </span>
+                                {% endfor %}
                             {% endif %}
-                        </td>
-                    {% endfor %}
-                </tr>
+                        </div>
+                        <button class="ht-bca-add" title="Add staff">+</button>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# ── Mobile cards ────────────────────────────────────────── #}
+<div class="ht-bca-cards">
+    {% for floor in bcFloors %}
+        <div class="ht-bca-card">
+            <div class="ht-bca-card-header">{{ floor.dorm }} — Floor {{ floor.floor }}</div>
+            {% for night in bcNights %}
+                {% set key = floor.dorm ~ '|||' ~ floor.floor ~ '|||' ~ night %}
+                <div class="ht-bca-card-row" data-dorm="{{ floor.dorm }}" data-floor="{{ floor.floor }}" data-night="{{ night }}">
+                    <span class="ht-bca-card-night">{{ night }}</span>
+                    <div class="ht-bca-chips">
+                        {% if bcAssignments[key] is defined %}
+                            {% for a in bcAssignments[key] %}
+                                <span class="ht-bca-chip" data-id="{{ a.id }}">
+                                    {{ a.staffName }}
+                                    <button class="ht-bca-remove" data-id="{{ a.id }}" aria-label="Remove">&times;</button>
+                                </span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <button class="ht-bca-add" title="Add staff">+</button>
+                </div>
             {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+        </div>
+    {% endfor %}
 </div>
-<div style="margin: 12px 16px;">
-    <a href="{{ path('bedcheck_assignments') }}" class="ht-page-header-action">
-        <i class="fa fa-users-gear"></i> Manage Assignments
-    </a>
+
+{# ── Floating picker (lives outside the table, positioned via JS) ── #}
+<div id="ht-bca-floating-picker" class="ht-bca-floating-picker">
+    <input type="text" id="ht-bca-floating-input" placeholder="Search staff…">
 </div>
+
+{% endif %}
 {% endif %}
 
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchUrl  = '{{ path("bedcheck_assignments_search") }}';
+    const addUrl     = '{{ path("bedcheck_assignments_add") }}';
+    const removeBase = '{{ path("bedcheck_assignments_remove", {id: "__ID__"}) }}';
+
+    const floatingPicker = document.getElementById('ht-bca-floating-picker');
+    if (!floatingPicker) return;
+
+    let activePicker = null;
+    let activeContainer = null;
+
+    // ── Add button click: position floating picker near the button ──
+    document.addEventListener('click', function(e) {
+        const addBtn = e.target.closest('.ht-bca-add');
+        if (!addBtn) return;
+        e.stopPropagation();
+        closePicker();
+
+        activeContainer = addBtn.closest('.ht-bca-cell, .ht-bca-card-row');
+        const rect = addBtn.getBoundingClientRect();
+
+        floatingPicker.style.display = 'block';
+        floatingPicker.style.top  = (rect.bottom + window.scrollY + 4) + 'px';
+        floatingPicker.style.left = (rect.left + window.scrollX) + 'px';
+
+        activePicker = new TomSelect(document.getElementById('ht-bca-floating-input'), {
+            valueField: 'id',
+            labelField: 'name',
+            searchField: 'name',
+            placeholder: 'Search staff…',
+            openOnFocus: true,
+            load: function(query, callback) {
+                if (query.length < 1) return callback();
+                fetch(searchUrl + '?q=' + encodeURIComponent(query))
+                    .then(r => r.json())
+                    .then(data => callback(data))
+                    .catch(() => callback());
+            },
+            onItemAdd: function(value, item) {
+                const dorm  = activeContainer.dataset.dorm;
+                const floor = activeContainer.dataset.floor;
+                const night = activeContainer.dataset.night;
+
+                const formData = new FormData();
+                formData.append('staff_assignment_id', value);
+                formData.append('dorm', dorm);
+                formData.append('floor', floor);
+                formData.append('night', night);
+
+                fetch(addUrl, { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            const chips = activeContainer.querySelector('.ht-bca-chips');
+                            const chip = document.createElement('span');
+                            chip.className = 'ht-bca-chip';
+                            chip.dataset.id = data.id;
+                            chip.innerHTML = data.name +
+                                ' <button class="ht-bca-remove" data-id="' + data.id + '" aria-label="Remove">&times;</button>';
+                            chips.appendChild(chip);
+                        }
+                        closePicker();
+                    })
+                    .catch(() => closePicker());
+            },
+            render: {
+                no_results: function() {
+                    return '<div class="no-results">No staff found</div>';
+                }
+            }
+        });
+
+        activePicker.focus();
+    });
+
+    // ── Remove button click ──
+    document.addEventListener('click', function(e) {
+        const removeBtn = e.target.closest('.ht-bca-remove');
+        if (!removeBtn) return;
+        const id = removeBtn.dataset.id;
+        fetch(removeBase.replace('__ID__', id), { method: 'POST' })
+            .then(r => r.json())
+            .then(data => { if (data.success) removeBtn.closest('.ht-bca-chip').remove(); });
+    });
+
+    // ── Close picker ──
+    function closePicker() {
+        if (activePicker) {
+            activePicker.destroy();
+            activePicker = null;
+            floatingPicker.innerHTML = '<input type="text" id="ht-bca-floating-input" placeholder="Search staff…">';
+        }
+        floatingPicker.style.display = 'none';
+        activeContainer = null;
+    }
+
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePicker(); });
+    document.addEventListener('click', function(e) {
+        if (activePicker && !e.target.closest('.ht-bca-floating-picker, .ht-bca-add, .ts-dropdown')) closePicker();
+    });
+});
+</script>
 {% endblock %}

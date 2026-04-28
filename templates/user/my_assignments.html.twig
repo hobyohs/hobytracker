@@ -88,6 +88,7 @@
     </div>
 </div>
 
+{% if bcByNight.Thursday is not empty or bcByNight.Friday is not empty or bcByNight.Saturday is not empty %}
 {# ── Bed Checks ──────────────────────────────────────────── #}
 <div class="ht-section">
     <div class="ht-section-label">Bed Checks</div>
@@ -102,6 +103,7 @@
         {% endfor %}
     </div>
 </div>
+{% endif %}
 
 </div>{# end ht-show-body #}
 

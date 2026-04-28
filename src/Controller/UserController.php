@@ -51,6 +51,7 @@ class UserController extends AbstractController
         StaffAssignmentRepository $saRepo,
         SeminarYearService $yearService,
         \App\Repository\BedCheckAssignmentRepository $bcaRepo,
+        \App\Repository\DormRoomRepository $dormRoomRepo,
     ): Response {
         $year = $yearService->getActiveSeminarYear();
         $users = $saRepo->findActiveByYear($year);
@@ -59,34 +60,28 @@ class UserController extends AbstractController
             $tab = 'checkin';
         }
 
-        // For the bed checks tab, build a per-staff-member view of assignments
-        $bcByStaff = [];
+        // For the bed checks tab, build the assignment grid
+        $bcFloors = [];
+        $bcAssignments = [];
         if ($tab === 'bedchecks') {
-            $allBc = $bcaRepo->findAllByYearIndexed($year);
-            // Flatten and reindex by staff assignment ID → night → floors[]
-            foreach ($allBc as $key => $group) {
-                foreach ($group as $a) {
-                    $saId = $a->getStaffAssignment()->getId();
-                    if (!isset($bcByStaff[$saId])) {
-                        $bcByStaff[$saId] = [
-                            'staff' => $a->getStaffAssignment(),
-                            'nights' => ['Thursday' => [], 'Friday' => [], 'Saturday' => []],
-                        ];
-                    }
-                    $bcByStaff[$saId]['nights'][$a->getNight()][] = $a->getDorm() . ' ' . $a->getFloor();
-                }
+            $allRooms = $dormRoomRepo->findAllOrderedForBedChecks();
+            $seen = [];
+            foreach ($allRooms as $room) {
+                if ($room->getAmbassadors()->isEmpty()) continue;
+                $key = $room->getDorm() . '|||' . $room->getFloor();
+                if (isset($seen[$key])) continue;
+                $seen[$key] = true;
+                $bcFloors[] = ['dorm' => $room->getDorm(), 'floor' => $room->getFloor()];
             }
-            // Sort by last name
-            uasort($bcByStaff, fn($a, $b) => strcmp(
-                $a['staff']->getLastName() . $a['staff']->getConsolidatedFirstName(),
-                $b['staff']->getLastName() . $b['staff']->getConsolidatedFirstName()
-            ));
+            $bcAssignments = $bcaRepo->findAllByYearIndexed($year);
         }
 
         return $this->render('user/duty_assignments.html.twig', [
-            'users'     => $users,
-            'tab'       => $tab,
-            'bcByStaff' => $bcByStaff,
+            'users'         => $users,
+            'tab'           => $tab,
+            'bcFloors'      => $bcFloors,
+            'bcAssignments' => $bcAssignments,
+            'bcNights'      => \App\Entity\BedCheckAssignment::NIGHTS,
         ]);
     }
 

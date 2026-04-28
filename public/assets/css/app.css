@@ -3118,9 +3118,20 @@ table#staff-report-table.dataTable thead th {
 }
 
 /* ── Inline picker ───────────────────────────────────────── */
-.ht-bca-picker { margin-top: 6px; }
-.ht-bca-picker .ts-wrapper { min-width: 160px; }
-.ht-bca-picker .ts-wrapper input {
+/* ── Floating picker (positioned via JS, outside the table) ── */
+.ht-bca-floating-picker {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    min-width: 220px;
+    background: var(--ht-card-bg, #fff);
+    border: 1px solid var(--ht-border, #e0e0e0);
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.ht-bca-floating-picker .ts-wrapper { min-width: 200px; }
+.ht-bca-floating-picker .ts-wrapper input {
     width: auto !important;
     padding: 0 !important;
     border: none !important;

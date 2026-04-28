@@ -6,7 +6,7 @@
 <div class="ht-page-header">
     <h1>Bed Checks</h1>
     {% if is_granted('ROLE_BOARD') %}
-        <a href="{{ path('bedcheck_assignments') }}" class="ht-page-header-action">
+        <a href="{{ path('app_user_duty_assignments', {'tab': 'bedchecks'}) }}" class="ht-page-header-action">
             <i class="fa fa-users-gear"></i> Manage Assignments
         </a>
     {% endif %}
