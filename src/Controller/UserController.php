@@ -92,10 +92,20 @@ class UserController extends AbstractController
 
     #[Route('/assignments/my', name: 'app_user_my_assignments', methods: ['GET'])]
     #[IsGranted('ROLE_BOARD')]
-    public function myAssignmentsAction(): Response
+    public function myAssignmentsAction(\App\Repository\BedCheckAssignmentRepository $bcaRepo, SeminarYearService $yearService): Response
     {
+        $user = $this->getUser();
+        $bcAssignments = $bcaRepo->findByUserAndYear($user->getId(), $yearService->getActiveSeminarYear());
+
+        // Group by night for template display
+        $bcByNight = ['Thursday' => [], 'Friday' => [], 'Saturday' => []];
+        foreach ($bcAssignments as $a) {
+            $bcByNight[$a->getNight()][] = $a->getDorm() . ' — Floor ' . $a->getFloor();
+        }
+
         return $this->render('user/my_assignments.html.twig', [
-            'user' => $this->getUser(),
+            'user'      => $user,
+            'bcByNight' => $bcByNight,
         ]);
     }
 
