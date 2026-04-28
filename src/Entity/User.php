@@ -232,21 +232,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRequirementNotes(): ?string { return $this->getActiveAssignment()?->getRequirementNotes(); }
     public function getPsmsUploadedOn(): ?string { return $this->getActiveAssignment()?->getPsmsUploadedOn(); }
 
-    public function getEvalPros(): ?string { return $this->getActiveAssignment()?->getEvalPros(); }
-    public function getEvalCons(): ?string { return $this->getActiveAssignment()?->getEvalCons(); }
-    public function getEvalDiscussions(): ?string { return $this->getActiveAssignment()?->getEvalDiscussions(); }
-    public function getEvalEnthusiastic(): ?string { return $this->getActiveAssignment()?->getEvalEnthusiastic(); }
-    public function getEvalOrganized(): ?string { return $this->getActiveAssignment()?->getEvalOrganized(); }
-    public function getEvalEqually(): ?string { return $this->getActiveAssignment()?->getEvalEqually(); }
-    public function getEvalResponsible(): ?string { return $this->getActiveAssignment()?->getEvalResponsible(); }
-    public function getEvalAttentive(): ?string { return $this->getActiveAssignment()?->getEvalAttentive(); }
-    public function getEvalInclude(): ?string { return $this->getActiveAssignment()?->getEvalInclude(); }
-    public function getEvalProfessional(): ?string { return $this->getActiveAssignment()?->getEvalProfessional(); }
-    public function getEvalPunctual(): ?string { return $this->getActiveAssignment()?->getEvalPunctual(); }
-    public function getEvalWhynot(): ?string { return $this->getActiveAssignment()?->getEvalWhynot(); }
-    public function getEvalComments(): ?string { return $this->getActiveAssignment()?->getEvalComments(); }
-    public function isEvalStatus(): ?bool { return $this->getActiveAssignment()?->isEvalStatus() ?? false; }
-
     public function getAssignmentCheckIn(): ?string { return $this->getActiveAssignment()?->getAssignmentCheckIn(); }
     public function getAssignmentClosingCeremonies(): ?string { return $this->getActiveAssignment()?->getAssignmentClosingCeremonies(); }
     public function getAssignmentCheckOut(): ?string { return $this->getActiveAssignment()?->getAssignmentCheckOut(); }
