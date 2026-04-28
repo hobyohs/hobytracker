@@ -2996,6 +2996,285 @@ table#staff-report-table.dataTable thead th {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   Duty Assignments — inline editing
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Edit hint ───────────────────────────────────────────── */
+.ht-da-hint {
+    margin: 0 16px 12px;
+    font-size: 13px;
+    color: var(--ht-sub);
+}
+.ht-da-hint .fa { margin-right: 4px; }
+
+/* ── Filter input ────────────────────────────────────────── */
+.ht-da-filter {
+    padding: 0 16px 12px;
+}
+.ht-da-filter-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 7px 12px;
+    border: 1px solid var(--ht-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--ht-white);
+    color: var(--ht-text);
+    outline: none;
+    transition: border-color 0.15s;
+}
+.ht-da-filter-input:focus {
+    border-color: var(--ht-accent);
+}
+.ht-da-filter-input::placeholder {
+    color: var(--ht-sub);
+}
+
+/* ── Table base ──────────────────────────────────────────── */
+.ht-dt-card:has(.ht-da-table) {
+    padding: 0 0 8px;
+}
+.ht-da-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+.ht-da-table th {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ht-sub);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--ht-border);
+    background: var(--ht-section-bg, #f7f9fb);
+}
+.ht-da-table th:first-child { padding-left: 16px; }
+.ht-da-table th:last-child  { padding-right: 16px; }
+.ht-da-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--ht-border-light, rgba(0,0,0,0.05));
+    vertical-align: middle;
+}
+.ht-da-table td:first-child { padding-left: 16px; }
+.ht-da-table td:last-child  { padding-right: 16px; }
+.ht-da-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Editable cells — visual cues ────────────────────────── */
+.ht-da-editable {
+    cursor: pointer;
+    position: relative;
+    min-height: 20px;
+    transition: background 0.3s;
+    border-left: 2px solid transparent;
+}
+.ht-da-editable:hover {
+    background: rgba(59, 130, 246, 0.05);
+    border-left-color: var(--ht-accent, #3b82f6);
+}
+/* Pencil icon on hover */
+.ht-da-editable::after {
+    content: '\f303'; /* fa-pencil */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 10px;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    color: var(--ht-sub);
+    opacity: 0;
+    transition: opacity 0.15s;
+    pointer-events: none;
+}
+.ht-da-editable:hover::after {
+    opacity: 0.5;
+}
+/* Empty cell placeholder */
+.ht-da-editable:empty::before {
+    content: '—';
+    color: var(--ht-sub);
+    opacity: 0.4;
+}
+/* When editing, suppress hover and pencil */
+.ht-da-editing {
+    cursor: default;
+    border-left-color: var(--ht-accent, #3b82f6) !important;
+    background: rgba(59, 130, 246, 0.05) !important;
+}
+.ht-da-editing::after { display: none; }
+.ht-da-editing::before { display: none; }
+
+/* ── Active input / textarea ─────────────────────────────── */
+.ht-da-input {
+    width: 100%;
+    padding: 4px 6px;
+    border: 1px solid var(--ht-accent);
+    border-radius: 4px;
+    font-size: inherit;
+    font-family: inherit;
+    background: var(--ht-white);
+    color: var(--ht-text);
+    outline: none;
+    box-sizing: border-box;
+    resize: vertical;
+}
+textarea.ht-da-input {
+    min-height: 40px;
+}
+
+/* ── Tom Select inside editable cells ────────────────────── */
+.ht-da-editable .ts-wrapper {
+    min-width: 0;
+}
+.ht-da-editable .ts-wrapper .ts-control {
+    padding: 3px 6px !important;
+    min-height: 28px !important;
+    border-radius: 4px !important;
+    font-size: 14px !important;
+    border-color: var(--ht-accent) !important;
+}
+.ht-da-editable .ts-wrapper .ts-control > input {
+    font-size: 14px !important;
+}
+.ht-da-editable .ts-dropdown {
+    font-size: 14px;
+}
+
+/* ── Save / error feedback ───────────────────────────────── */
+.ht-da-saved {
+    animation: ht-da-flash-ok 0.8s ease;
+}
+.ht-da-error {
+    animation: ht-da-flash-err 0.8s ease;
+}
+@keyframes ht-da-flash-ok {
+    0%   { background: rgba(34,197,94,0.2); }
+    100% { background: transparent; }
+}
+@keyframes ht-da-flash-err {
+    0%   { background: rgba(239,68,68,0.2); }
+    100% { background: transparent; }
+}
+
+/* ── Mobile responsive card layout for ht-da-table ───────── */
+@media (max-width: 767.98px) {
+    /* Strip the card wrapper so row-cards float on the page background */
+    .ht-dt-card:has(.ht-da-table) {
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        margin: 0;
+        padding: 0 16px;
+    }
+
+    .ht-da-filter-input {
+        max-width: 100%;
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+
+    .ht-da-table,
+    .ht-da-table tbody,
+    .ht-da-table tbody tr {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .ht-da-table thead { display: none !important; }
+
+    .ht-da-table tbody tr {
+        border: 1px solid rgba(0,0,0,0.07);
+        background: var(--ht-white);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.05);
+        margin-bottom: 14px;
+        padding: 0;
+        overflow: hidden;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Hide columns redundant on mobile */
+    .ht-da-table tbody td.ht-mobile-hide { display: none !important; }
+
+    /* Name td becomes the card header */
+    .ht-da-table tbody td.ht-name-td {
+        display: flex !important;
+        align-items: center;
+        padding: 10px 14px !important;
+        border-bottom: 2px solid var(--ht-border) !important;
+        background: var(--ht-section-bg);
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+    }
+    .ht-da-table .ht-name-td .ht-name-desktop { display: none !important; }
+    .ht-da-table .ht-name-td .ht-name-mobile-header {
+        display: flex !important;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        overflow: hidden;
+    }
+    .ht-da-table .ht-name-td::before { display: none !important; }
+
+    /* Hide avatar and chevron columns */
+    .ht-da-table tbody td.ht-avatar-col { display: none !important; }
+    .ht-da-table tbody td.ht-chevron-col { display: none !important; }
+
+    /* Data cells: label stacked above value */
+    .ht-da-table tbody td {
+        display: flex !important;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 9px 14px !important;
+        border-bottom: 1px solid var(--ht-border) !important;
+        font-size: 14px;
+        min-height: 0;
+    }
+    .ht-da-table tbody td:last-child { border-bottom: none !important; }
+
+    /* Hide cells with no data-label */
+    .ht-da-table tbody td:not([data-label]):not(.ht-name-td) { display: none !important; }
+
+    /* Label above value */
+    .ht-da-table tbody td[data-label]::before {
+        content: attr(data-label);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--ht-sub);
+        margin-bottom: 2px;
+    }
+
+    /* Editable cells on mobile — make tap targets bigger */
+    .ht-da-editable {
+        min-height: 32px;
+        width: 100%;
+        border-left: none;
+    }
+    .ht-da-editable:hover {
+        border-left: none;
+    }
+    /* Pencil icon repositioned for card layout */
+    .ht-da-editable::after {
+        top: 8px;
+        right: 10px;
+        opacity: 0.3;
+    }
+
+    .ht-da-hint {
+        margin: 0 16px 8px;
+    }
+
+    /* Tom Select full-width on mobile */
+    .ht-da-editable .ts-wrapper {
+        width: 100% !important;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════
    Bed Check Assignments — grid, picker, chips
    ══════════════════════════════════════════════════════════════ */
 
