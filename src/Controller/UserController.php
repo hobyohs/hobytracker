@@ -46,16 +46,47 @@ class UserController extends AbstractController
 
     #[Route('/assignments', name: 'app_user_duty_assignments', methods: ['GET'])]
     #[IsGranted('ROLE_BOARD')]
-    public function dutyAssignmentsAction(Request $request, StaffAssignmentRepository $saRepo, SeminarYearService $yearService): Response
-    {
-        $users = $saRepo->findActiveByYear($yearService->getActiveSeminarYear());
+    public function dutyAssignmentsAction(
+        Request $request,
+        StaffAssignmentRepository $saRepo,
+        SeminarYearService $yearService,
+        \App\Repository\BedCheckAssignmentRepository $bcaRepo,
+    ): Response {
+        $year = $yearService->getActiveSeminarYear();
+        $users = $saRepo->findActiveByYear($year);
         $tab = $request->query->get('tab', 'checkin');
-        if (!in_array($tab, ['checkin', 'checkout', 'cc'])) {
+        if (!in_array($tab, ['checkin', 'checkout', 'cc', 'bedchecks'])) {
             $tab = 'checkin';
         }
+
+        // For the bed checks tab, build a per-staff-member view of assignments
+        $bcByStaff = [];
+        if ($tab === 'bedchecks') {
+            $allBc = $bcaRepo->findAllByYearIndexed($year);
+            // Flatten and reindex by staff assignment ID → night → floors[]
+            foreach ($allBc as $key => $group) {
+                foreach ($group as $a) {
+                    $saId = $a->getStaffAssignment()->getId();
+                    if (!isset($bcByStaff[$saId])) {
+                        $bcByStaff[$saId] = [
+                            'staff' => $a->getStaffAssignment(),
+                            'nights' => ['Thursday' => [], 'Friday' => [], 'Saturday' => []],
+                        ];
+                    }
+                    $bcByStaff[$saId]['nights'][$a->getNight()][] = $a->getDorm() . ' ' . $a->getFloor();
+                }
+            }
+            // Sort by last name
+            uasort($bcByStaff, fn($a, $b) => strcmp(
+                $a['staff']->getLastName() . $a['staff']->getConsolidatedFirstName(),
+                $b['staff']->getLastName() . $b['staff']->getConsolidatedFirstName()
+            ));
+        }
+
         return $this->render('user/duty_assignments.html.twig', [
-            'users' => $users,
-            'tab'   => $tab,
+            'users'     => $users,
+            'tab'       => $tab,
+            'bcByStaff' => $bcByStaff,
         ]);
     }
 

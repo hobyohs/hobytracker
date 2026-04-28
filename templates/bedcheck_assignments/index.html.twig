@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+{% block maintag %}<main class="wide">{% endblock %}
+
+{% block body %}
+
+<a href="{{ path('app_ambassador_bedchecks') }}" class="ht-back-link">
+    <i class="fa fa-chevron-left" style="font-size:11px;"></i> Bed Checks
+</a>
+
+<div class="ht-page-header">
+    <h1>Bed Check Assignments</h1>
+    <p class="ht-page-sub">Assign staff to dorm floors for each night. Click <strong>+</strong> to add, <strong>×</strong> to remove.</p>
+</div>
+
+{% if floors is empty %}
+    <div class="ht-section-card" style="margin: 20px 16px; text-align: center; color: var(--ht-sub);">
+        No dorm rooms assigned yet.
+    </div>
+{% else %}
+
+{# ── Desktop grid ────────────────────────────────────────── #}
+<div class="ht-bca-grid">
+    <table class="ht-bca-table">
+        <thead>
+            <tr>
+                <th class="ht-bca-th-floor">Dorm / Floor</th>
+                {% for night in nights %}
+                    <th>{{ night }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+        {% for floor in floors %}
+            <tr>
+                <td class="ht-bca-floor-label">{{ floor.dorm }} — Floor {{ floor.floor }}</td>
+                {% for night in nights %}
+                    {% set key = floor.dorm ~ '|||' ~ floor.floor ~ '|||' ~ night %}
+                    <td class="ht-bca-cell" data-dorm="{{ floor.dorm }}" data-floor="{{ floor.floor }}" data-night="{{ night }}">
+                        <div class="ht-bca-chips">
+                            {% if assignments[key] is defined %}
+                                {% for a in assignments[key] %}
+                                    <span class="ht-bca-chip" data-id="{{ a.id }}">
+                                        {{ a.staffName }}
+                                        <button class="ht-bca-remove" data-id="{{ a.id }}" aria-label="Remove">&times;</button>
+                                    </span>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <button class="ht-bca-add" title="Add staff">+</button>
+                        <div class="ht-bca-picker" style="display:none;">
+                            <input type="text" class="ht-bca-picker-input" placeholder="Search staff…">
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{# ── Mobile cards ────────────────────────────────────────── #}
+<div class="ht-bca-cards">
+    {% for floor in floors %}
+        <div class="ht-bca-card">
+            <div class="ht-bca-card-header">{{ floor.dorm }} — Floor {{ floor.floor }}</div>
+            {% for night in nights %}
+                {% set key = floor.dorm ~ '|||' ~ floor.floor ~ '|||' ~ night %}
+                <div class="ht-bca-card-row" data-dorm="{{ floor.dorm }}" data-floor="{{ floor.floor }}" data-night="{{ night }}">
+                    <span class="ht-bca-card-night">{{ night }}</span>
+                    <div class="ht-bca-chips">
+                        {% if assignments[key] is defined %}
+                            {% for a in assignments[key] %}
+                                <span class="ht-bca-chip" data-id="{{ a.id }}">
+                                    {{ a.staffName }}
+                                    <button class="ht-bca-remove" data-id="{{ a.id }}" aria-label="Remove">&times;</button>
+                                </span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <button class="ht-bca-add" title="Add staff">+</button>
+                    <div class="ht-bca-picker" style="display:none;">
+                        <input type="text" class="ht-bca-picker-input" placeholder="Search staff…">
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchUrl  = '{{ path("bedcheck_assignments_search") }}';
+    const addUrl     = '{{ path("bedcheck_assignments_add") }}';
+    const removeBase = '{{ path("bedcheck_assignments_remove", {id: "__ID__"}) }}';
+
+    let activePicker = null;
+
+    // ── Add button click: show inline Tom Select ────────────
+    document.addEventListener('click', function(e) {
+        const addBtn = e.target.closest('.ht-bca-add');
+        if (!addBtn) return;
+
+        // Close any existing picker
+        closePicker();
+
+        const container = addBtn.closest('.ht-bca-cell, .ht-bca-card-row');
+        const pickerDiv = container.querySelector('.ht-bca-picker');
+        const input     = pickerDiv.querySelector('.ht-bca-picker-input');
+
+        addBtn.style.display = 'none';
+        pickerDiv.style.display = 'block';
+
+        activePicker = new TomSelect(input, {
+            valueField: 'id',
+            labelField: 'name',
+            searchField: 'name',
+            placeholder: 'Search staff…',
+            openOnFocus: true,
+            load: function(query, callback) {
+                if (query.length < 1) return callback();
+                fetch(searchUrl + '?q=' + encodeURIComponent(query))
+                    .then(r => r.json())
+                    .then(data => callback(data))
+                    .catch(() => callback());
+            },
+            onItemAdd: function(value, item) {
+                const dorm  = container.dataset.dorm;
+                const floor = container.dataset.floor;
+                const night = container.dataset.night;
+
+                const formData = new FormData();
+                formData.append('staff_assignment_id', value);
+                formData.append('dorm', dorm);
+                formData.append('floor', floor);
+                formData.append('night', night);
+
+                fetch(addUrl, { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            const chips = container.querySelector('.ht-bca-chips');
+                            const chip = document.createElement('span');
+                            chip.className = 'ht-bca-chip';
+                            chip.dataset.id = data.id;
+                            chip.innerHTML = data.name +
+                                ' <button class="ht-bca-remove" data-id="' + data.id + '" aria-label="Remove">&times;</button>';
+                            chips.appendChild(chip);
+                        }
+                        closePicker();
+                    })
+                    .catch(() => closePicker());
+            },
+            render: {
+                no_results: function() {
+                    return '<div class="no-results">No staff found</div>';
+                }
+            }
+        });
+
+        activePicker.focus();
+    });
+
+    // ── Remove button click ──────────────────────────────────
+    document.addEventListener('click', function(e) {
+        const removeBtn = e.target.closest('.ht-bca-remove');
+        if (!removeBtn) return;
+
+        const id = removeBtn.dataset.id;
+        const url = removeBase.replace('__ID__', id);
+
+        fetch(url, { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    const chip = removeBtn.closest('.ht-bca-chip');
+                    chip.remove();
+                }
+            });
+    });
+
+    // ── Close picker helper ──────────────────────────────────
+    function closePicker() {
+        if (activePicker) {
+            const wrapper = activePicker.wrapper.closest('.ht-bca-picker');
+            const container = wrapper.closest('.ht-bca-cell, .ht-bca-card-row');
+            activePicker.destroy();
+            activePicker = null;
+            wrapper.style.display = 'none';
+            // Reset the input (Tom Select replaces it, so recreate)
+            wrapper.innerHTML = '<input type="text" class="ht-bca-picker-input" placeholder="Search staff…">';
+            container.querySelector('.ht-bca-add').style.display = '';
+        }
+    }
+
+    // Close picker on Escape or click outside
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePicker();
+    });
+    document.addEventListener('click', function(e) {
+        if (activePicker && !e.target.closest('.ht-bca-picker, .ht-bca-add, .ts-dropdown')) {
+            closePicker();
+        }
+    });
+});
+</script>
+{% endblock %}

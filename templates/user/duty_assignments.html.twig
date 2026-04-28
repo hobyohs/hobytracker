@@ -21,6 +21,8 @@
            class="ht-tab {{ tab == 'checkout' ? 'is-active' : '' }}">Check-Out</a>
         <a href="{{ path('app_user_duty_assignments', {'tab': 'cc'}) }}"
            class="ht-tab {{ tab == 'cc' ? 'is-active' : '' }}">Closing Ceremony</a>
+        <a href="{{ path('app_user_duty_assignments', {'tab': 'bedchecks'}) }}"
+           class="ht-tab {{ tab == 'bedchecks' ? 'is-active' : '' }}">Bed Checks</a>
     </div>
 </div>
 
@@ -133,6 +135,52 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
+{% endif %}
+
+{# ── Bed Checks Assignments ───────────────────────────────── #}
+{% if tab == 'bedchecks' %}
+<div class="ht-dt-card ht-responsive-table">
+    {% if bcByStaff is empty %}
+        <div style="padding: 24px; text-align: center; color: var(--ht-sub);">
+            No bed check assignments yet.
+            <a href="{{ path('bedcheck_assignments') }}">Manage assignments</a>
+        </div>
+    {% else %}
+        <table class="table" id="duty-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entry in bcByStaff %}
+                <tr>
+                    <td data-label="Name">
+                        {{ entry.staff.consolidatedFirstName }} {{ entry.staff.lastName }}
+                    </td>
+                    {% for night in ['Thursday', 'Friday', 'Saturday'] %}
+                        <td data-label="{{ night }}">
+                            {% if entry.nights[night] is not empty %}
+                                {{ entry.nights[night]|join(', ') }}
+                            {% else %}
+                                <span style="color: var(--ht-sub);">—</span>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+<div style="margin: 12px 16px;">
+    <a href="{{ path('bedcheck_assignments') }}" class="ht-page-header-action">
+        <i class="fa fa-users-gear"></i> Manage Assignments
+    </a>
 </div>
 {% endif %}
 

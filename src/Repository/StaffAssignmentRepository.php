@@ -116,4 +116,25 @@ class StaffAssignmentRepository extends ServiceEntityRepository
         }
         return 'PSMs not yet updated.';
     }
+
+    /**
+     * Search active staff assignments by name for the given year.
+     * Used by the bed check assignment Tom Select picker.
+     */
+    public function searchActiveByName(string $query, int $year, int $limit = 10): array
+    {
+        return $this->createQueryBuilder('sa')
+            ->join('sa.user', 'u')
+            ->where('sa.seminarYear = :year')
+            ->andWhere('sa.status = :status')
+            ->andWhere('u.firstName LIKE :q OR u.lastName LIKE :q OR u.prefName LIKE :q')
+            ->setParameter('year', $year)
+            ->setParameter('status', 'active')
+            ->setParameter('q', '%' . $query . '%')
+            ->orderBy('u.lastName', 'ASC')
+            ->addOrderBy('u.firstName', 'ASC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
